@@ -1,6 +1,10 @@
-var W = 52; // 80
-W = 80;
+//var NAME = "Kevin Greer", W = 79;
+
 function main() {
+return text(NAME,0.8).scale(0.4*2.2);
+}
+
+function main2() {
   var m = base();
 
   m = m.subtract(name());
@@ -8,7 +12,6 @@ function main() {
 
   return m.scale(2.2).rotateZ(90);
 }
-
 
 function base() {
   var c = cylinder({h:W, r:10}).rotateX(90).translate([0,0,6]);
@@ -20,8 +23,9 @@ function base() {
 function label() {
     return text("KGR, Sept. 2019\nProperty of nanopay\nAll Rights Reserved").rotateZ(-90).rotateX(-180).translate([20,-9.5*W,3.6]).scale([0.1,0.1,0.2]);
 }
+
 function name() {
-  return text("Kevin Greer").translate([-1,-28.8,-3]).rotateZ(90).rotateY(50).scale(0.4).translate([0,-W+3,16]).setColor(1,1,1);
+  return text(NAME).translate([-1,-28.8,-3]).rotateZ(90).rotateY(50).scale(0.4).translate([0,-W+3,16]).setColor(1,1,1);
 }
 
  function text(t, opt_scale) {
