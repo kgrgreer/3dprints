@@ -163,7 +163,7 @@ function createKey(f, k) {
  var key = cube({roundradius: 1, radius: 1, size:[f.d, f.d, -KEY_HEIGHT]});
  key = concaveKey(f, k, key);
  if ( k.home ) {
-     var c = cylinder({r:0.6, h:5}).rotateY(90).translate([f.d/2-2.5, f.d/2+4, -3.7]);
+     var c = cylinder({r:0.6, h:5}).rotateY(90).translate([f.d/2-2.5, f.d/2+4, -5.6]);
      key = key.union(c);
  }
  return key;
