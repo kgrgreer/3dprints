@@ -26,103 +26,151 @@ X Move index finger 1mm right
 X Move index finger 1mm left
 _ Wider outside keys
 
+X Move all keys up
+X raise pinkey keys and make larger, angle in, move closer
+X ring finger tilt in, slightly closer
+X index finger tilt out, slightly closer
+X KEY_A from 17 to 20, radius from 0.9 to 0.8
+_ Make text bigger
+- set sizes of keys
+- set font size
+- move shift up one row and move cmd and opt to outside
+- make outside keys larger
+- Add fnLable to keys
 */
 
-const KEY_A       = 17;
+const LABELS      = false;
+const KEY_A       = 21;
 const KEY_SPACING = 0.0;
 const KEY_HEIGHT  = 8;
 const KEY_SLANT   = 1;
 const ROLL        = -25;
+const TILT        = 0; //-10;
 
-const BLUE = [0.4,0.4,0.9];
+const BLUE = [0.1,0.1,0.8];
 const GRAY = [0.5,0.5,0.5];
 const RED  = [0.8,0.1,0.1];
 
-
-var fingers = [
-    { a:  12, x: -18,  y:  -5, h: 6, diameter: 14, radius: 10, widthM: 1.3 },
-    { a:  6, x: 1,  y:  -2, h: 1, diameter: 14, radius: 10 },
-    { a:   0, x: 17, y:   2, h: 0, diameter: 15, radius: 10 },
-    { a: -10, x: 35, y:   0, h: 1, diameter: 15, radius: 10 },
-    { a: -21, x: 49, y: -12, h: 4, diameter: 12, radius: 10 },
-    { a: -28, x: 58, y: -16, h: 14, diameter: 12, radius: 10, widthM: 1.35 },
-];
-
+var fingers = [];
 
 function main() {
-  return right2().translate([0,0,60]).rotateY(ROLL);
+
+   var r = right2();
+   var kb = r.union(createBase()).translate([0,0,80]).rotateY(ROLL).rotateX(TILT).subtract(cube({size:[2000,2000,1000]}).translate(-1000,-1000,-1000));
+
+   var col = shadow(r.translate([0,0,80]).rotateY(ROLL)).expand(5);
+    kb = kb.intersect(linear_extrude({height:200}, col));
+    return kb;
 }
+
+function createBase() {
+    var c = cube({size:[-550,-200,130]}).translate([70,100,-155]);
+/*    var b = [];
+    for ( var i = 0 ; i < fingers.length ; i++ ) {
+      var f = fingers[i];
+      //b.push(sphere({r:f.r+5}).translate([-f.x, -f.y, 0]));
+      s = cylinder({r:f.r, h:300, center: true}).translate([-f.x, -f.y, 0]).rotateY(-ROLL)
+      if ( f.transform ) s = f.transform(s);
+      b.push(s);
+    }
+    b = union.apply(null, b);*/
+    b = c;
+    for ( var i = 0 ; i < fingers.length ; i++ ) {
+      var f = fingers[i];
+      var s = sphere({r:f.r}).translate([-f.x, -f.y, 0]);
+      if ( f.transform ) s = f.transform(s);
+      b = b.subtract(s);
+    }
+    b = b.intersect(c).intersect(cube({size:[-300, -200, 80]}).translate([175,120,-80]).rotateY(-ROLL));
+    return b;
+}
+
+function shadow(o) {
+  var orthobasis = CSG.OrthoNormalBasis.Z0Plane();
+  var cags = [];
+  o.polygons.map(function(polygon) {
+    var cag = polygon.projectToOrthoNormalBasis(orthobasis);
+    if (cag.sides.length > 0) {
+      cags.push(cag);
+    }
+  });
+  var result = new CAG().union(cags);
+  return result;
+}
+
 
 function right2() {
   return union([
       // index
       forFinger(
-        {x: -18, y: -4, r: 70*0.9, b: -5 },
+        {x: -25, y: -4, r: 70*0.8, b:4 },
         [
           { label: '^\n6', x: -1, y: -2, l: true, t: true },
           { label: 'Y',    x: -1, y: -1, l: true },
           { label: 'H',    x: -1, y:  0, l: true },
           { label: 'N',    x: -1, y:  1, l: true, bt: true },
 
-          { label: '&\n7', x: 0, y: -2, t: true, r: true },
-          { label: 'U',    x: 0, y: -1, r: true },
-          { label: 'J',    x: 0, y: -0, r: true, color: BLUE, home: true },
-          { label: 'M',    x: 0, y: +1, r: true, bt: true}
+          { label: '&\n7', fnLabel: 'pgUp', x: 0, y: -2, t: true},
+          { label: 'U',    fnLabel: 'pgDown', x: 0, y: -1 },
+          { label: 'J',    x: 0, y: -0, color: BLUE, home: true },
+          { label: 'M',    x: 0, y: +1, bt: true}
         ]
       ),
       // middle
       forFinger(
-        {x: 0, y: 0, r: 75*0.9, b: 0 },
+        {x: 0, y: 0, r: 75*0.8, b: 0 },
         [
-          { label: '*\n8', x: 0, y: -2, l: true, r: true, t: true},
-          { label: 'I',    x: 0, y: -1, l: true, r: true },
-          { label: 'K',    x: 0, y: -0, l: true, r: true, color: BLUE },
-          { label: '<\n,', x: 0, y:  1, l: true, r: true },
-          { label: '{\n[', x: 0, y:  2, l: true, r: true, bt: true }
+          { label: '*\n8', x: 0, y: -2, t: true},
+          { label: 'I',    x: 0, y: -1, },
+          { label: 'K', x: 0, y: -0, color: BLUE },
+          { label: '<\n,', x: 0, y:  1 },
+          { label: '{\n[', x: 0, y:  2, bt: true }
         ]
       ),
       // ring
       forFinger(
-        {x:18, y: -4, r: 69*0.9, b: 4 },
+        {x:21, y: -4, r: 69*0.8, b: 0 },
         [
-          { label: '(\n9', x: 0, y: -2, t: true, l: true, r: true },
-          { label: 'O',    x: 0, y: -1, l: true, r: true },
-          { label: 'L',    x: 0, y:  0, l: true, r: true, color: BLUE },
-          { label: '>',    x: 0, y:  1, l: true, r: true },
-          { label: '}\n]', x: 0, y:  2, l: true, r: true, bt: true }
+          { label: '(\n9', fnLabel: 'Home', x: 0, y: -2, t: true, r: true },
+          { label: 'O',    fnLabel: 'End', x: 0, y: -1, r: true },
+          { label: 'L',    x: 0, y:  0, r: true, color: BLUE },
+          { label: '>',    x: 0, y:  1, r: true },
+          { label: '}\n]', x: 0, y:  2, r: true, bt: true }
         ]
       ),
       // pinky
       forFinger(
-        {x:38, y: -12, r:51*0.9, b: 6 },
+        {x:42, y: -12, r:51*0.8+5, b: 0 },
         [
-          { label: ')\n0', x: 0, y: -2, l: true, t: true },
-          { label: 'P',    x: 0, y: -1, l: true },
-          { label: ':\n;', x: 0, y:  0, l: true, color: BLUE },
-          { label: '?\n/', x: 0, y:  1, l: true },
-          { label: 'cmd',  x: 0, y:  2, l: true, bt: true, color: GRAY },
+          { label: ')\n0', x: 0, y: -2, t: true },
+          { label: 'P',    x: 0, y: -1 },
+          { label: ':\n;', x: 0, y:  0, color: BLUE },
+          { label: '?\n/', x: 0, y:  1, bt: true },
 
           { label: '-\n_',  x: 1, y: -2, r: true, t: true },
-          { label: '\\\n|', x: 1, y: -1, r: true },
+          { label: '\\\n|', x: 1, y: -1, r: true, },
           { label: '"\n\'', x: 1, y:  0, r: true },
-          { label: 'shift', x: 1, y:  1, r: true, color: GRAY },
-          { label: 'opt',   x: 1, y:  2, l: true, bt: true, color: GRAY },
+          { label: 'shift', x: 1, y:  1, r: true, bt: true, color: GRAY },
         ]
-      ),
+      ).translate([0,0,3]),
       // thumb
       forFinger(
-        {x:-42, y: -45, r:50, b: 0 },
+        {x:-42, y: -40, r:52, b: 0, transform: function(o) { return o.translate([-50, -45, -8]).rotateZ(-60).translate([45, 50, 0])} },
         [
           { label: 'Space', x: 0, y: 0, l: true, l: true },
-          { label: 'Enter', x: 0, y: 1, l: true, l: true, bt: true },
+          { label: 'Enter', x: 0, y: 1, l: true, l: true, bt: true, color: RED },
+
+          { label: 'Cmd', x: 1, y: 0, color: GRAY },
+          { label: 'Opt', x: 1, y: 1, bt: true, color: GRAY },
         ]
-      ).translate([-45, -50, -10]).scale([1.6,1,1]).rotateZ(-30).translate([45, 50, 0])
+      )
     ]);
 
 //  return union(right(), left()).translate([0,0,45]).subtract(cube({size:[1000,1000,1000]}).translate([-500,-500,-1000]));
 }
 
 function forFinger(f, keys) {
+  fingers.push(f);
   var u = sphere({r:0});
 
   f.d = aToD(f.r, KEY_A);
@@ -132,7 +180,9 @@ function forFinger(f, keys) {
     key.b = f.b + key.x * (KEY_A+KEY_SPACING)
     u = u.union(trim(f, key, forKey(f, key)));
   }
-  return u.translate([-f.x, -f.y, 0]);
+  u = u.translate([-f.x, -f.y, 0]);
+  if ( f.transform ) u = f.transform(u);
+  return u;
 }
 
 
@@ -140,8 +190,6 @@ function forKey(f, k) {
   k.color = k.color || [1,1,1];
   return createKey(f, k)
     .setColor(k.color)
-    .subtract(text(k.label).translate([f.d-2,5,-7]))
-    .translate([-f.d/2,-f.d/2,-f.r])
     .rotateY(k.b)
     .rotateX(-k.a)
 }
@@ -160,13 +208,23 @@ function text(t) {
 
 
 function createKey(f, k) {
- var key = cube({roundradius: 1, radius: 1, size:[f.d, f.d, -KEY_HEIGHT]});
+ var key = cube({roundradius: 1, radius: 1, size:[f.d+6, f.d+6, -KEY_HEIGHT]});
+ key = key.translate([-3, -3, 0]);
  key = concaveKey(f, k, key);
  if ( k.home ) {
      var c = cylinder({r:0.6, h:5}).rotateY(90).translate([f.d/2-2.5, f.d/2+4, -5.6]);
      key = key.union(c);
  }
- return key;
+ if ( LABELS ) key = labelKey(f, k, key);
+ return key.translate([-f.d/2,-f.d/2,-f.r+KEY_HEIGHT])
+}
+
+
+function labelKey(f, k, o) {
+   o = o.subtract(text(k.label).translate([f.d-2.5,6,-7]));
+   if ( k.fnLabel )
+     o = o.subtract(text(k.fnLabel).translate([f.d-2.5,f.d-4,-7]));
+   return o;
 }
 
 
@@ -178,13 +236,13 @@ function concaveKey(f, k, o) {
 
 function trim(f, k, o) {
     // left
-    if ( ! k.l  ) o = o.subtract(cube({size:[5,200,-200]}).translate([0,-100,0]).rotateY(k.b-KEY_A/2+KEY_SLANT).rotateX(-k.a));
+    if ( ! k.l  ) o = o.subtract(cube({size:[10,200,-200]}).translate([0,-100,0]).rotateY(k.b-KEY_A/2+KEY_SLANT).rotateX(-k.a));
     // right
-    if ( ! k.r  ) o = o.subtract(cube({size:[-5,200,-200]}).translate([0,-100,0]).rotateY(k.b+KEY_A/2-KEY_SLANT).rotateX(-k.a));
+    if ( ! k.r  ) o = o.subtract(cube({size:[-10,200,-200]}).translate([0,-100,0]).rotateY(k.b+KEY_A/2-KEY_SLANT).rotateX(-k.a));
     // top
-    if ( ! k.t  ) o = o.subtract(cube({size:[200,-5,-200]}).translate([-100,0,0]).rotateY(-k.b).rotateX(-k.a-KEY_A/2+KEY_SLANT));
+    if ( ! k.t  ) o = o.subtract(cube({size:[200,-10,-200]}).translate([-100,0,0]).rotateY(-k.b).rotateX(-k.a-KEY_A/2+KEY_SLANT));
     // bottom
-    if ( ! k.bt ) o = o.subtract(cube({size:[200,5,-200]}).translate([-100,0,0]).rotateY(-k.b).rotateX(-k.a+KEY_A/2-KEY_SLANT));
+    if ( ! k.bt ) o = o.subtract(cube({size:[200,10,-200]}).translate([-100,0,0]).rotateY(-k.b).rotateX(-k.a+KEY_A/2-KEY_SLANT));
 
     return o;
 }
