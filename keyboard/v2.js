@@ -56,7 +56,7 @@ var fingers = [];
 function main() {
 
    var r = right2();
-   var kb = r.union(createBase()).translate([0,0,80]).rotateY(ROLL).rotateX(TILT).subtract(cube({size:[2000,2000,1000]}).translate(-1000,-1000,-1000));
+   var kb = r/*.union(createBase())*/.translate([0,0,80]).rotateY(ROLL).rotateX(TILT).subtract(cube({size:[2000,2000,1000]}).translate(-1000,-1000,-1000));
 
    var col = shadow(r.translate([0,0,80]).rotateY(ROLL)).expand(5);
     kb = kb.intersect(linear_extrude({height:200}, col));
@@ -169,6 +169,7 @@ function right2() {
 //  return union(right(), left()).translate([0,0,45]).subtract(cube({size:[1000,1000,1000]}).translate([-500,-500,-1000]));
 }
 
+
 function forFinger(f, keys) {
   fingers.push(f);
   var u = sphere({r:0});
@@ -176,8 +177,9 @@ function forFinger(f, keys) {
   f.d = aToD(f.r, KEY_A);
   for ( var i = 0 ; i < keys.length ; i++ ) {
     var key = keys[i];
+if ( key.y < -1 ) continue;
     key.a = -key.y * (KEY_A+KEY_SPACING);
-    key.b = f.b + key.x * (KEY_A+KEY_SPACING)
+    key.b = f.b + key.x * (KEY_A+KEY_SPACING);
     u = u.union(trim(f, key, forKey(f, key)));
   }
   u = u.translate([-f.x, -f.y, 0]);
@@ -191,7 +193,7 @@ function forKey(f, k) {
   return createKey(f, k)
     .setColor(k.color)
     .rotateY(k.b)
-    .rotateX(-k.a)
+    .rotateX(-k.a);
 }
 
 
@@ -207,16 +209,22 @@ function text(t) {
 }
 
 
+function keyswitch() {
+  return cube({size:[15.6,15.6,18.5]});
+}
+
+
 function createKey(f, k) {
  var key = cube({roundradius: 1, radius: 1, size:[f.d+6, f.d+6, -KEY_HEIGHT]});
- key = key.translate([-3, -3, 0]);
+key = key.union(keyswitch().translate([f.d/4+1.5,f.d/4+1.5,-20]));
+key = key.translate([-3, -3, 0]);
  key = concaveKey(f, k, key);
  if ( k.home ) {
      var c = cylinder({r:0.6, h:5}).rotateY(90).translate([f.d/2-2.5, f.d/2+4, -5.6]);
      key = key.union(c);
  }
  if ( LABELS ) key = labelKey(f, k, key);
- return key.translate([-f.d/2,-f.d/2,-f.r+KEY_HEIGHT])
+ return key.translate([-f.d/2,-f.d/2,-f.r+KEY_HEIGHT]);
 }
 
 
@@ -258,61 +266,4 @@ function right() {
 
 function left() {
   return mirror([1,0,0], right());
-}
-
-function palmRest() {
-  return cube({size:[60,60,-80], roundradius:1, radius:5}).translate([0,-90,10]).setColor([0.3,0.3,0.3]);
-}
-
-function tboard() {
-    var keys = [];
-    for ( var i = 0 ; i < 3 ; i++ ) {
-        keys.push(tkey(40 + 12.5*i, 48-i,20));
-        keys.push(tkey(40 + 12.5*i, 70-i, 10));
-    }
-
-    return union.apply(null, keys).translate([20,-80, 7]).setColor([0.9,0.3,0.3]);
-}
-
-function tkey(a, r, h) {
-  return cube({size:[9.5,h,4], round: true, roundradius:.5, radius:1})
-    .translate([0,r,0])
-    .rotateZ(a)
-}
-
-function keycap2(r) {
-    return cylinder({r:r, h:2})
-}
-
-function keycap(r, w) {
-    return cube({size:[r*2*w,r*2,-5], round: true, roundradius:0.5, radius:1});
-}
-
-function key(f, i) {
-    i--;
-    f.widthM = f.widthM || 1;
-    return keycap(f.diameter/2-0.25, f.widthM)
-      .setColor(i == 1 && f.widthM == 1 ? [0.4,0.4,1] : [1,1,1])
-      .rotateX(i*10)
-      .translate([0, i*(f.diameter), 0])
-      .rotateX(i*7)
-      .rotateY(f.a*2)
-      .rotateZ(f.a)
-      .translate([f.x, f.y, f.h]);
-}
-
-function hand() {
-    var keys = [];
-    for ( var i = 0 ; i < fingers.length ; i++ ) {
-        keys.push(column(fingers[i]));
-    }
-    return union.apply(null, keys);
-}
-
-function column(f) {
-    var keys = [];
-    for ( var i = 0 ; i < 5 ; i++ ) {
-        keys.push(key(f, i));
-    }
-    return union.apply(null, keys);
 }
