@@ -1,18 +1,13 @@
 // add switch columns and lower wedge
 
-var PREVIEW       = true;
-const LABELS      = true;
-const KEY_A       = 21;
-const KEY_SPACING = 0.0;
-const KEY_HEIGHT  = 14;
-const KEY_SLANT   = 1;
-const ROLL        = 0; //-20;
-const TILT        = 0; //-10;
-const HEIGHT      = 60;
+const PREVIEW  = true;
+const LABELS   = true;
 
-const BLUE = [0.1,0.1,0.8];
-const GRAY = [0.5,0.5,0.5];
-const RED  = [0.8,0.1,0.1];
+const BLUE  = [0.1,0.1,8];
+const GRAY  = [0.7,0.7,0.7];
+const RED   = [0.8,0.1,0.1];
+const WHITE = [1,1,1];
+const BLACK = [0,0,0];
 
 
 
@@ -22,11 +17,24 @@ const RED  = [0.8,0.1,0.1];
  *********************************************************************/
 
 function axis() {
+  /** Add to scene when developing to keep track of orientation. **/
   return union(
       cube({size:[100,1,1]}).setColor([1,0,0]),
       cube({size:[1,100,1]}).setColor([0,1,0]),
       cube({size:[1,1,100]}).setColor([0,0,1])
       );
+}
+
+
+function text(t) {
+  var o = [];
+  var l = vector_text(0, 0, t);
+
+  l.forEach(function (s) {
+    o.push(rectangular_extrude(s, {w: 6, h:4}));
+  });
+
+  return union(o).setColor([0,0,0]).scale([0.12,0.12,1]);
 }
 
 
@@ -124,6 +132,36 @@ const SWITCH = {
 
 
 /*********************************************************************
+ *                                                             CAP
+ *********************************************************************/
+
+function createKeyCap(k) {
+  return Object.assign(k, {
+      toSolid: function() {
+         var w   = wedge(this.f.r-15, 0, -8, 8, -8, 8);
+         var key = w.intersect(cube({size:[20,20,this.capHeight]}).translate([-10,-10,0]));
+
+         key = key.setColor(this.color);
+
+         key = this.addLabel(key, -6.5,  3, this.label,   WHITE);
+         key = this.addLabel(key, -6.5, -3, this.swLabel, WHITE);
+         key = this.addLabel(key, -2,   -6, this.seLabel, RED);
+
+         return key.translate([0,0,SWITCH.stem]);
+
+      },
+      addLabel: function(o, x, y, label, color) {
+        if ( LABELS && label ) {
+          o = o.subtract(text(label).setColor(color).translate([x, y, 3]));
+        }
+
+        return o;
+      }
+  });
+}
+
+
+/*********************************************************************
  *                                                             KEY
  *********************************************************************/
 
@@ -135,14 +173,12 @@ function createKey(m) {
     var keyAngleRadius = 8;
 
     return Object.assign({
-       color: GRAY,
+       color: BLACK,
        capHeight: 5,
        a: 0, a1: -keyAngleRadius, a2: keyAngleRadius,
        b: 0, b1: -keyAngleRadius, b2: keyAngleRadius,
        createCap: function() {
-         var w   = wedge(this.f.r-15, 0, -8, 8, -8, 8);
-         var key = w.intersect(cube({size:[20,20,this.capHeight]}).translate([-10,-10,0]));
-         return key.translate([0,0,SWITCH.stem]).setColor(this.color);
+         return createKeyCap(this).toSolid();
        },
        createSwitchAndCap: function () {
            return this.createCap().union(SWITCH.toSolid());
@@ -152,10 +188,8 @@ function createKey(m) {
        },
        toNegative: function() {
          return this.transform(SWITCH.toSolid());
-         // return this.transform(SWITCH.toSolid().union(this.createCap().translate([0,0,-SWITCH.stem])));
        },
        toSolid: function() {
-         //  return this.toNegative();
            return this.transform(this.createSwitchAndCap());//.union(SWITCH.createHolder()));
        }
     }, m);
@@ -250,11 +284,11 @@ function right() {
         r: 80,
         a: 8,
         keys: [
-            { y:  -2 },
-            { y:  -1 },
-            {  },
-            { y:  1 },
-          //  { y:  2 }
+            { y:  -2, label: '^', swLabel: '6', seLabel: 'F6' },
+            { y:  -1, label: 'Y' },
+            { label: 'H' },
+            { y:  1, label: 'N' },
+            //{ y:  2, label: 'Ctrl' },
         ]
     });
     var f2 = createFinger({
@@ -262,11 +296,11 @@ function right() {
         r: 84,
         a: 5,
         keys: [
-            { y:  -2 },
-            { y:  -1 },
-            { color: BLUE },
-            { y:  1 },
-          //  { y:  2 }
+            { y:  -2, label: '7', swLabel: '&', seLabel: 'F7' },
+            { y:  -1, label: 'U', seLabel: 'PgUp' },
+            { label: 'J', seLabel: 'Left', color: BLUE },
+            { y:  1, label: 'M', seLabel: 'PgDn' },
+          //  { y:  2, label: 'Cmd' },
         ]
     });
     // middle finger
@@ -275,11 +309,11 @@ function right() {
         r: 88,
         a: 1,
         keys: [
-            { y:  -2 },
-            { y:  -1 },
-            { color: BLUE },
-            { y:  1 },
-         //   { y:  2 }
+            { y:  -2, label: '*', swLabel: '8', seLabel: 'F8' },
+            { y:  -1, label: 'I' },
+            { label: 'K', seLabel: 'Up', color: BLUE },
+            { y:  1, label: '<', swLabel: ',', seLabel: 'Down',  },
+            { y:  2, label: '{', swLabel: '[' }
         ]
     });
     // ring finger
@@ -287,11 +321,11 @@ function right() {
         padding: [-3, 0],
         r: 86,
         keys: [
-            { y:  -2 },
-            { y:  -1 },
-            { color: BLUE },
-            { y:  1 },
-         //   { y:  2 }
+            { y:  -2, label: '(', swLabel: '9', seLabel: 'F9' },
+            { y:  -1, label: 'O', seLabel: 'Home' },
+            { label: 'L', seLabel: 'Right', color: BLUE },
+            { y:  1, label: '>', swLabel: '.', seLabel: 'End' },
+            { y:  2, label: '}', swLabel: ']' }
         ]
     });
     // pinky
@@ -300,11 +334,10 @@ function right() {
         r: 76,
         a: 0,
         keys: [
-            { y:  -2 },
-            { y:  -1 },
-            { color: BLUE },
-            { y:  1 },
-       //     { y:  2 }
+            { y:  -2, label: ')', swLabel: '0', seLabel: 'F10' },
+            { y:  -1, label: 'P' },
+            { label: '', color: BLUE, label: ':', swLabel: ';' },
+            { y:  1, label: '?', swLabel: '/' },
         ]
     });
     var f6 = createFinger({
@@ -312,11 +345,10 @@ function right() {
         r: 76,
         a: -5,
         keys: [
-            { y:  -2 },
-            { y:  -1 },
-            { },
-            { y:  1 },
-     //       { y:  2 }
+            { y:  -2, label: '+', swLabel: '=' },
+            { y:  -1, label: '|', swLabel: '\\' },
+            { label: '"', swLabel: "'" },
+            { y:  1, label: 'Shift', seLabel: 'Caps', color: GRAY }
         ]
     });
 
@@ -325,20 +357,18 @@ function right() {
         r: 70,
         a: 8,
         keys: [
-            { y: -1 },
-            { y:  0  },
-            { y:  1 },
-            { x: -1, y: -1 },
-            { x: -1, y:  0  },
-            { x: -1, y:  1 }
+            { y: -1, label: 'Cmd', color: GRAY },
+            { y:  0, label: 'Opt', color: GRAY  },
+            { y:  1, label: 'Ctrl', color: GRAY },
+            { x: -1, y: -1, label: 'Space' },
+            { x: -1, y:  0, label: 'Enter', color: RED },
+            { x: -1, y:  1, label: 'Func', color: RED }
         ]
     });
 
-
-
     return union(
        // island(),
-        f1.toSolid().translate([-33*0.7,0,-0]),
+      f1.toSolid().translate([-33*0.7,0,-0]),
         f2.toSolid().translate([-15*0.7,0,-0]),
         f3.toSolid().translate([2*0.7,5,-0]),
         f4.toSolid().translate([29*0.7,0,0]),
