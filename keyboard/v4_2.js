@@ -1,4 +1,11 @@
 // add switch columns and lower wedge
+// move pinky 1 mm right and down
+// right-justify right-labels
+// change key sizes
+// elongate first-row thumb keys
+// design legs
+// design place for lights
+// design left hand
 
 const PREVIEW  = true;
 const LABELS   = true;
@@ -31,10 +38,10 @@ function text(t) {
   var l = vector_text(0, 0, t);
 
   l.forEach(function (s) {
-    o.push(rectangular_extrude(s, {w: 3, h:4}));
+    o.push(rectangular_extrude(s, {w: 7, h:5}));
   });
 
-  return union(o).setColor([0,0,0]).scale([0.22,0.22,1]);
+  return union(o).setColor([0,0,0]).scale([0.13,0.13,1]);
 }
 
 
@@ -132,6 +139,7 @@ var SWITCH = {
 
 const BLANK_SWITCH = {
   w:    16,    // width of sides of switch
+  w2:   15.2,
   d:    5/*+3.3*/, // depth below surface
   h:    5,     // height above surface
   stem: 3.6,     // height of stem, 4mm travel
@@ -146,8 +154,8 @@ const BLANK_SWITCH = {
     return holder.subtract(top);
   },
   createSwitch: function() {
-    var top    = cube({roundradius: 1, radius: 1,size:[this.w, this.w, this.h]}).translate([-this.w/2,-this.w/2,-this.h]);
-    var bottom = cube({roundradius: 1, radius: 1,size:[15, 15, this.d]}).translate([-15/2,-15/2, -this.h + -this.d]);
+    var top    = cube({size:[this.w, this.w, this.h]}).translate([-this.w/2,-this.w/2,-this.h]);
+    var bottom = cube({roundradius: 1, radius: 1,size:[this.w2, this.w2, this.d]}).translate([-this.w2/2,-this.w2/2, -this.h + -this.d]);
     return union(top, bottom);
   },
   toSolid: function() {
@@ -172,16 +180,21 @@ function createKeyCap(k) {
 
          key = key.setColor(this.color);
 
-         key = this.addLabel(key, -7,  2, this.label,   WHITE);
-         key = this.addLabel(key, -7, -6, this.swLabel, WHITE);
-         key = this.addLabel(key, 0,   -6, this.seLabel, RED);
+         key = this.addLabel(key, -6.2,  2, this.label,   WHITE);
+         key = this.addLabel(key, -6.2, -5, this.swLabel, WHITE);
+         key = this.addLabel(key, 3,   -5, this.seLabel, RED, this.seAngle);
 
          return key.translate([0,0,SWITCH.stem]);
 
       },
-      addLabel: function(o, x, y, label, color) {
+      addLabel: function(o, x, y, label, color, angle) {
         if ( LABELS && label ) {
-          o = o.subtract(text(label).setColor(color).translate([x, y, 4.2]));
+          var txt = text(label);
+          if ( angle ) {
+            txt = txt.rotateZ(angle);
+            txt = txt.translate([2,2,0]);
+          }
+          o = o.subtract(txt.setColor(color).translate([x, y, 3]));
         }
 
         return o;
@@ -340,8 +353,8 @@ function right() {
         keys: [
             { y:  -2, label: '*', swLabel: '8', seLabel: 'F8' },
             { y:  -1, label: 'I' },
-            { label: 'K', seLabel: 'Up', color: BLUE },
-            { y:  1, label: '<', swLabel: ',', seLabel: 'Down',  },
+            { label: 'K', seLabel: '^', color: BLUE },
+            { y:  1, label: '<', swLabel: ',', seLabel: '^', seAngle: 180  },
             { y:  2, label: '{', swLabel: '[' }
         ]
     });
@@ -395,7 +408,13 @@ function right() {
         ]
     });
 
-return f4.keys[0].toSolid();
+    var x = 0;
+    var keys = f3.keys.map(k => {
+       return k.toSolid().translate([20*x++, 0, 0]);
+    });
+    console.log(keys);
+    return union.apply(null, keys).rotateX(180);
+return f6.keys[0].toSolid();
 
     return union(
        // island(),
