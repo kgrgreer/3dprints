@@ -31,10 +31,10 @@ function text(t) {
   var l = vector_text(0, 0, t);
 
   l.forEach(function (s) {
-    o.push(rectangular_extrude(s, {w: 6, h:4}));
+    o.push(rectangular_extrude(s, {w: 3, h:4}));
   });
 
-  return union(o).setColor([0,0,0]).scale([0.12,0.12,1]);
+  return union(o).setColor([0,0,0]).scale([0.22,0.22,1]);
 }
 
 
@@ -103,7 +103,7 @@ function wedge(r, w, a1, a2, b1, b2) {
  *                                                             SWITCH
  *********************************************************************/
 
-const SWITCH = {
+var SWITCH = {
   w:    15.6,    // width of sides of switch
   d:    5+3.3+3, // depth below surface
   h:    6.6,     // height above surface
@@ -130,6 +130,35 @@ const SWITCH = {
   }
 };
 
+const BLANK_SWITCH = {
+  w:    16,    // width of sides of switch
+  d:    5/*+3.3*/, // depth below surface
+  h:    5,     // height above surface
+  stem: 3.6,     // height of stem, 4mm travel
+  holderThickness: 3,
+  holderHeight: 10,
+  createHolder: function() {
+    var h = this.holderHeight;
+    var t = this.holderThickness;
+    var holder = cube({size:[this.w+t-1, this.w+t-1, h]}).translate([-this.w/2-t/2+0.5,-this.w/2-t/2+0.5,-this.h-h]).setColor([1,1,1]);
+    var top    = cube({size:[this.w, this.w, this.h+4]}).translate([-this.w/2,-this.w/2,-this.h-h]);
+
+    return holder.subtract(top);
+  },
+  createSwitch: function() {
+    var top    = cube({roundradius: 1, radius: 1,size:[this.w, this.w, this.h]}).translate([-this.w/2,-this.w/2,-this.h]);
+    var bottom = cube({roundradius: 1, radius: 1,size:[15, 15, this.d]}).translate([-15/2,-15/2, -this.h + -this.d]);
+    return union(top, bottom);
+  },
+  toSolid: function() {
+    var sw   = this.createSwitch().setColor([0,0,0]);
+    var stem = cube({size:[this.w, this.w, 4]}).translate([-this.w/2,-this.w/2,0]).setColor([165/256,42/256,42/256]);
+    return sw.union(stem);
+  }
+};
+
+SWITCH = BLANK_SWITCH;
+
 
 /*********************************************************************
  *                                                             CAP
@@ -139,20 +168,20 @@ function createKeyCap(k) {
   return Object.assign(k, {
       toSolid: function() {
          var w   = wedge(this.f.r-15, 0, -8, 8, -8, 8);
-         var key = w.intersect(cube({size:[20,20,this.capHeight]}).translate([-10,-10,0]));
+         var key = w.intersect(cube({radius:1, roundradius: 1, size:[20,20,this.capHeight]}).translate([-10,-10,0]));
 
          key = key.setColor(this.color);
 
-         key = this.addLabel(key, -6.5,  3, this.label,   WHITE);
-         key = this.addLabel(key, -6.5, -3, this.swLabel, WHITE);
-         key = this.addLabel(key, -2,   -6, this.seLabel, RED);
+         key = this.addLabel(key, -7,  2, this.label,   WHITE);
+         key = this.addLabel(key, -7, -6, this.swLabel, WHITE);
+         key = this.addLabel(key, 0,   -6, this.seLabel, RED);
 
          return key.translate([0,0,SWITCH.stem]);
 
       },
       addLabel: function(o, x, y, label, color) {
         if ( LABELS && label ) {
-          o = o.subtract(text(label).setColor(color).translate([x, y, 3]));
+          o = o.subtract(text(label).setColor(color).translate([x, y, 4.2]));
         }
 
         return o;
@@ -366,6 +395,8 @@ function right() {
         ]
     });
 
+return f4.keys[0].toSolid();
+
     return union(
        // island(),
       f1.toSolid().translate([-33*0.7,0,-0]),
@@ -383,6 +414,7 @@ function trimZ(o) {
 }
 
 function main() {
+    return right().rotateX(180);
     return trimZ(right());
 //    return union(right(), island());
 }
