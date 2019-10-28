@@ -2,10 +2,11 @@
 // elongate first-row thumb keys
 // design place for lights
 // BUG: Can't make holderWidth smaller
+// BUG: left thum well in wrong spot
 
-const PREVIEW  = true;
-const LABELS   = true;
-const ROLL     = 0;
+const PREVIEW  = false;
+const LABELS   = false;
+var   ROLL     = 10;
 
 
 const BLUE  = [100/255, 149/255, 237/255]; //corn blue
@@ -281,7 +282,6 @@ function createFinger(m) {
     m = m || {};
     var f = Object.assign({
         neg: sphere({r:0}),
-        padding: [0, 0],
         a: 0, b: 0,
         a1: 1000, a2: -1000,
         b1: 1000, b2: -1000,
@@ -372,14 +372,12 @@ function island() {
 function createHand(d, k1, k2, k3, k4, k5, k6, kt) {
     // index finger
     var f1 = createFinger({
-        padding: [-7,-2],
         translate: [d*-33*0.7,0,-0],
         r: 75,
         a: d*8,
         keys: k1
     });
     var f2 = createFinger({
-        padding: [1, -1],
         translate: [d*-15*0.7,0,-0],
         r: 75,
         a: d*5,
@@ -387,7 +385,6 @@ function createHand(d, k1, k2, k3, k4, k5, k6, kt) {
     });
     // middle finger
     var f3 = createFinger({
-        padding: [2, 3],
         translate: [d*2*0.7,5,-0],
         r: 76,
         a: d*1,
@@ -395,20 +392,17 @@ function createHand(d, k1, k2, k3, k4, k5, k6, kt) {
     });
     // ring finger
     var f4 = createFinger({
-        padding: [-3, 1],
         translate: [d*29*0.7,0,0],
         r: 76,
         keys: k4
     });
     // pinky
     var f5 = createFinger({
-        padding: [-1.5, -0],
         translate: [d*59*0.7,-17,0],
         r: 75,
         keys: k5
     });
     var f6 = createFinger({
-        padding: [0,-7],
         translate: [d*74*0.7,-17,0],
         r: 75,
         a: d*-4,
@@ -416,9 +410,8 @@ function createHand(d, k1, k2, k3, k4, k5, k6, kt) {
     });
 
     var t1 = createFinger({
-        padding: [-18,5],
         r: 75,
-        a: d*8,
+        a: d*6,
         keys: kt,
         transform: function(o) {
           return o.translate([d*-15,0,0]).rotateZ(d*-35).translate([d*-30,-80,0]);
@@ -450,6 +443,7 @@ function createHand(d, k1, k2, k3, k4, k5, k6, kt) {
 
 
 function right() {
+  ROLL = -ROLL;
 
   var h = createHand(1,
       [
@@ -493,12 +487,12 @@ function right() {
             { y:  1, label: 'Shift', seLabel: 'Caps', color: GRAY, concave: false, capHeight: 7 }
         ],
         [
-            { y: -1, label: 'Cmd', color: GRAY, concave: false, capHeight: 8 },
-            { y:  0, label: 'Opt', color: GRAY, concave: false, capHeight: 8  },
-            { y:  1, label: 'Ctrl', color: GRAY, concave: false, capHeight: 8 },
-            { x: -1.1, y: -1, label: 'Space' },
-            { x: -1.1, y:  0, label: 'Enter', color: RED },
-            { x: -1.1, y:  1, seLabel: 'Func', color: WHITE }
+            { x: -1.1, y: -1, label: 'Cmd', color: GRAY, concave: false, capHeight: 8 },
+            { x: -1.1, y:  0, label: 'Opt', color: GRAY, concave: false, capHeight: 8  },
+            { x: -1.1, y:  1, label: 'Ctrl', color: GRAY, concave: false, capHeight: 8 },
+            { y: -1, label: 'Space' },
+            { y:  0, label: 'Enter', color: RED },
+            { y:  1, seLabel: 'Func', color: WHITE }
         ]
     );
 
@@ -507,6 +501,8 @@ function right() {
 
 
 function left() {
+  ROLL = -ROLL;
+
   var h = createHand(-1,
         [
             { y:  -2, label: '%', swLabel: '5', color: GRAY, seLabel: 'F5' },
@@ -558,7 +554,6 @@ function left() {
         ]
     );
 
-
     return h;
 }
 
@@ -567,9 +562,10 @@ function trimZ(o) {
   return o.intersect(cube({size:[1000,1000,1000]}).translate([-500,-500,0]));
 }
 
+
 function main() {
 //    return right();
-    return left().rotateZ(-30).translate([-150,0,0]).union(right().rotateZ(30));
+    return left().rotateZ(-30).translate([-200,0,0]).union(right().rotateZ(30));
     return trimZ(right());
 //    return union(right(), island());
 }
