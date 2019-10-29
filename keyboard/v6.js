@@ -1,8 +1,9 @@
 
 // elongate first-row thumb keys
 // design place for lights
+// raise front of thumb well
+// fix key heights and positions
 // BUG: Can't make holderWidth smaller
-// BUG: left thum well in wrong spot
 
 const PREVIEW  = false;
 const LABELS   = false;
@@ -316,7 +317,7 @@ function createFinger(m) {
             var neg = hull(sh).subtract(sh);
             neg = linear_extrude({height:100}, neg).translate([0,0,-50]);
             this.neg = this.neg.union(neg);
-            ko = linear_extrude({height:100}, sh);
+            ko = linear_extrude({height:100}, sh).translate([0,0,-50]);
             w = w.union(ko);
           });
           this.neg = this.transform(this.neg.translate(this.translate));
@@ -414,7 +415,7 @@ function createHand(d, k1, k2, k3, k4, k5, k6, kt) {
         a: d*6,
         keys: kt,
         transform: function(o) {
-          return o.translate([d*-15,0,0]).rotateZ(d*-35).translate([d*-30,-80,0]);
+          return o.translate([d*-15,0,0]).rotateZ(d*-35).translate([d*-35,-75,10]);
         }
     });
 
@@ -438,12 +439,12 @@ function createHand(d, k1, k2, k3, k4, k5, k6, kt) {
     base = base.subtract(f6.neg);
     base = base.subtract(t1.neg);
     base = base.setColor(WHITE);
-    return h.union(base);
+    return trimZ(h.union(base));
 }
 
 
 function right() {
-  ROLL = -ROLL;
+  ROLL = Math.abs(ROLL);
 
   var h = createHand(1,
       [
@@ -487,12 +488,12 @@ function right() {
             { y:  1, label: 'Shift', seLabel: 'Caps', color: GRAY, concave: false, capHeight: 7 }
         ],
         [
-            { x: -1.1, y: -1, label: 'Cmd', color: GRAY, concave: false, capHeight: 8 },
-            { x: -1.1, y:  0, label: 'Opt', color: GRAY, concave: false, capHeight: 8  },
-            { x: -1.1, y:  1, label: 'Ctrl', color: GRAY, concave: false, capHeight: 8 },
-            { y: -1, label: 'Space' },
-            { y:  0, label: 'Enter', color: RED },
-            { y:  1, seLabel: 'Func', color: WHITE }
+            { x: -1.1, y: 0, label: 'Cmd', color: GRAY, concave: false, capHeight: 8 },
+            { x: -1.1, y:  1, label: 'Opt', color: GRAY, concave: false, capHeight: 8  },
+            { x: -1.1, y:  2, label: 'Ctrl', color: GRAY, concave: false, capHeight: 8 },
+            { y: 0, label: 'Space' },
+            { y:  1, label: 'Enter', color: RED },
+            { y:  2, seLabel: 'Func', color: WHITE }
         ]
     );
 
@@ -501,7 +502,7 @@ function right() {
 
 
 function left() {
-  ROLL = -ROLL;
+  ROLL = -Math.abs(ROLL);
 
   var h = createHand(-1,
         [
@@ -545,12 +546,12 @@ function left() {
             //{ y:  2, label: 'Ctrl' },
         ],
         [
-            { x: -1.1, y: -1, label: 'Cmd', color: GRAY, concave: false, capHeight: 8 },
-            { x: -1.1, y:  0, label: 'Opt', color: GRAY, concave: false, capHeight: 8  },
-            { x: -1.1, y:  1, label: 'Ctrl', color: GRAY, concave: false, capHeight: 8 },
-            { y: -1, label: 'Bksp', color: RED },
-            { y:  0, label: 'Del', color: RED },
-            { y:  1, seLabel: 'Func', color: WHITE }
+            { x: 0, y: -1, label: 'Cmd', color: GRAY, concave: false, capHeight: 8 },
+            { x: 0, y:  0, label: 'Opt', color: GRAY, concave: false, capHeight: 8  },
+            { x: 0, y:  1, label: 'Ctrl', color: GRAY, concave: false, capHeight: 8 },
+            { x: 1.1, y: -1, label: 'Bksp', color: RED },
+            { x: 1.1, y:  0, label: 'Del', color: RED },
+            { x: 1.1, y:  1, seLabel: 'Func', color: WHITE }
         ]
     );
 
@@ -564,8 +565,6 @@ function trimZ(o) {
 
 
 function main() {
-//    return right();
+    return right();
     return left().rotateZ(-30).translate([-200,0,0]).union(right().rotateZ(30));
-    return trimZ(right());
-//    return union(right(), island());
 }
