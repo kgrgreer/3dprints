@@ -1,20 +1,16 @@
-// add switch columns and lower wedge
-// right-justify right-labels
-// change key sizes
+
 // elongate first-row thumb keys
-// design legs
 // design place for lights
-// design left hand
+// BUG: Can't make holderWidth smaller
 
-
-const PREVIEW  = false;
-const LABELS   = false;
+const PREVIEW  = true;
+const LABELS   = true;
 const ROLL     = 0;
 
 
 const BLUE  = [100/255, 149/255, 237/255]; //corn blue
 const RED   = [0.8,0.1,0.1];
-const GRAY  = [0.7,0.7,0.7];
+const GRAY  = [0.6,0.6,0.6];
 const WHITE = [1,1,1];
 const BLACK = [0,0,0];
 
@@ -32,11 +28,6 @@ function axis() {
       );
 }
 
-/*
-function main() {
-    return createText({text: 'Caps', justify: 'C', color: RED, a: 90}).toSolid();
-}
-*/
 
 function memoize(f) {
   var val;
@@ -206,7 +197,7 @@ var SWITCH = {
 function createKeyCap(k) {
   return Object.assign(k, {
       toSolid: memoize(function() {
-         var w   = wedge(this.f.r, 0, -8, 8, -8, 8);
+         var w   = wedge(this.f.r-15, 0, -8, 8, -8, 8);
          var key = w.intersect(cube({radius:1, roundradius: 1, size:[18,18,this.capHeight]}).translate([-9,-9,0]));
 
          if ( this.concave ) key = this.concaveKey(key);
@@ -443,7 +434,6 @@ function createHand(d, k1, k2, k3, k4, k5, k6, kt) {
       f6,
       t1
     ]).toSolid();
-      //t1.toSolid().translate([d*-15,0,0]).rotateZ(d*-35).translate([d*-30,-80,-15])
 
     var sh = hull(shadow(h)).contract(14);
     var base = linear_extrude({height:11}, sh);
@@ -454,6 +444,7 @@ function createHand(d, k1, k2, k3, k4, k5, k6, kt) {
     base = base.subtract(f5.neg);
     base = base.subtract(f6.neg);
     base = base.subtract(t1.neg);
+    base = base.setColor(WHITE);
     return h.union(base);
 }
 
@@ -499,12 +490,12 @@ function right() {
             { y:  -2, label: '+', swLabel: '=', color: GRAY },
             { y:  -1, label: '|', swLabel: '\\' },
             { label: '"', swLabel: "'" },
-            { y:  1, label: 'Shift', seLabel: 'Caps', color: GRAY, concave: false }
+            { y:  1, label: 'Shift', seLabel: 'Caps', color: GRAY, concave: false, capHeight: 7 }
         ],
         [
-            { y: -1, label: 'Cmd', color: GRAY },
-            { y:  0, label: 'Opt', color: GRAY  },
-            { y:  1, label: 'Ctrl', color: GRAY },
+            { y: -1, label: 'Cmd', color: GRAY, concave: false, capHeight: 8 },
+            { y:  0, label: 'Opt', color: GRAY, concave: false, capHeight: 8  },
+            { y:  1, label: 'Ctrl', color: GRAY, concave: false, capHeight: 8 },
             { x: -1.1, y: -1, label: 'Space' },
             { x: -1.1, y:  0, label: 'Enter', color: RED },
             { x: -1.1, y:  1, seLabel: 'Func', color: WHITE }
@@ -554,19 +545,18 @@ function left() {
             { y:  -2, label: '~', swLabel: "`", color: GRAY },
             { y:  -1, label: 'Tab' },
             { label: 'Esc', color: RED },
-            { y:  1, label: 'Shift', seLabel: 'Caps', color: GRAY },
+            { y:  1, label: 'Shift', seLabel: 'Caps', color: GRAY, concave: false, capHeight: 7 },
             //{ y:  2, label: 'Ctrl' },
         ],
         [
-            { x: -1.1, y: -1, label: 'Cmd', color: GRAY },
-            { x: -1.1, y:  0, label: 'Opt', color: GRAY  },
-            { x: -1.1, y:  1, label: 'Ctrl', color: GRAY },
+            { x: -1.1, y: -1, label: 'Cmd', color: GRAY, concave: false, capHeight: 8 },
+            { x: -1.1, y:  0, label: 'Opt', color: GRAY, concave: false, capHeight: 8  },
+            { x: -1.1, y:  1, label: 'Ctrl', color: GRAY, concave: false, capHeight: 8 },
             { y: -1, label: 'Bksp', color: RED },
             { y:  0, label: 'Del', color: RED },
             { y:  1, seLabel: 'Func', color: WHITE }
         ]
     );
-
 
     return h;
 }
@@ -576,10 +566,10 @@ function trimZ(o) {
   return o.intersect(cube({size:[1000,1000,1000]}).translate([-500,-500,0]));
 }
 
+
 function main() {
-    return right();
+//    return right();
     return left().rotateZ(-30).translate([-150,0,0]).union(right().rotateZ(30));
-    return right().rotateX(180);
     return trimZ(right());
 //    return union(right(), island());
 }
