@@ -4,15 +4,19 @@
 // raise front of thumb well
 // fix key heights and positions
 // BUG: Can't make holderWidth smaller
+// adjust height and x based on ROLL
+// replace translate: with x and y
+// unify use of transformKey
+// cut out webbing between sections
 
-const PREVIEW  = false;
+
+const PREVIEW  = true;
 const LABELS   = false;
-var   ROLL     = 10;
-
+const ROLL     = 10;
 
 const BLUE  = [100/255, 149/255, 237/255]; //corn blue
 const RED   = [0.8,0.1,0.1];
-const GRAY  = [0.6,0.6,0.6];
+const GRAY  = [0.5,0.5,0.5];
 const WHITE = [1,1,1];
 const BLACK = [0,0,0];
 
@@ -24,10 +28,10 @@ const BLACK = [0,0,0];
 function axis() {
   /** Add to scene when developing to keep track of orientation. **/
   return union(
-      cube({size:[100,1,1]}).setColor([1,0,0]),
-      cube({size:[1,100,1]}).setColor([0,1,0]),
-      cube({size:[1,1,100]}).setColor([0,0,1])
-      );
+    cube({size:[100,1,1]}).setColor([1,0,0]),
+    cube({size:[1,100,1]}).setColor([0,1,0]),
+    cube({size:[1,1,100]}).setColor([0,0,1])
+  );
 }
 
 
@@ -244,8 +248,8 @@ function createKeyCap(k) {
 
 function createKey(m) {
     m = m || {};
-    if ( m.x ) m.a = 8*m.x;
-    if ( m.y ) { m.b = 8*m.y-4 } else m.b = -4;
+    if ( m.x ) m.a = 16*m.x;
+    if ( m.y ) { m.b = 16*m.y-8 } else m.b = -8;
 
     var keyAngleRadius = 8;
 
@@ -282,11 +286,12 @@ function createFinger(m) {
     m.r = (m.r || 30 ) * 0.95;
     m = m || {};
     var f = Object.assign({
+        direction: 1,
         neg: sphere({r:0}),
         a: 0, b: 0,
         a1: 1000, a2: -1000,
         b1: 1000, b2: -1000,
-        height: 84,
+        height: 86,
         x: 0,
         y: 0,
         translate: [1,1,1],
@@ -307,12 +312,12 @@ function createFinger(m) {
         },
         createBase: memoize(function() {
           var w = this.neg;// flatWedge(this.r+SWITCH.holderHeight-1, this.a1-this.padding[0], this.a2+this.padding[1], -2*this.b2+19, -2*this.b1-23);
-          this.neg = flatWedge(this.r+SWITCH.holderHeight-2, this.a1-10, this.a2+10, -2*this.b2-10, -2*this.b1+10);
+          this.neg = flatWedge(this.r+SWITCH.holderHeight-5, this.direction*this.a1-10, this.direction*this.a2+10, -this.b2-10, -this.b1+10);
           this.neg =  this.neg.translate([0,0,83])
           this.keys.forEach(k => {
             var ko = this.transformKey(k, k.transform(SWITCH.createHolder()));
             ko  = ko.subtract(sphere({r:this.r+SWITCH.holderHeight-1.2}));
-            ko = ko.rotateY(this.a*2+ROLL)
+            ko = this.tilt(ko);
             var sh = shadow(ko);
             var neg = hull(sh).subtract(sh);
             neg = linear_extrude({height:100}, neg).translate([0,0,-50]);
@@ -321,22 +326,31 @@ function createFinger(m) {
             w = w.union(ko);
           });
           this.neg = this.transform(this.neg.translate(this.translate));
-         w =  w.translate([0,0,-this.height]);
-         w = w.subtract(sphere({r:this.r+SWITCH.holderHeight-1}));
+          w =  w.translate([0,0,-this.height]);
+          w = w.subtract(sphere({r:this.r+SWITCH.holderHeight-1}));
           return w.setColor(WHITE);
         }),
-        transformKey: function(k, o) {
-          return o.rotateX(-2*k.b).rotateY(2*k.a+ROLL);
+
+        tilt: function(o) {
+            return o;
+          return o.rotateY((this.a+ROLL)*this.direction);
         },
+
+        transformKey: function(k, o) {
+          return o.rotateX(-k.b).rotateY(k.a+ROLL*this.direction);
+        },
+        toNegative: function() { return this.neg; },
+
         toSolid: function() {
           var base = this.createBase();
           this.keys.forEach(k => {
-            if ( PREVIEW )   base = base.union(this.transformKey(k, k.toSolid()).rotateY(2*this.a+ROLL));
-            base = base.union(this.transformKey(k, k.transform(SWITCH.createHolder())).rotateY(2*this.a+ROLL));
-            if ( ! PREVIEW ) base = base.subtract(this.transformKey(k, k.toNegative()).rotateY(2*this.a+ROLL));
+            if ( PREVIEW )   base = base.union(this.transformKey(k, k.toSolid()));
+            base = base.union(this.transformKey(k, k.transform(SWITCH.createHolder())));
+            if ( ! PREVIEW ) base = base.subtract(this.transformKey(k, k.toNegative()));
           });
           base = base.translate([0,0,this.height]).translate(this.translate);
           base = f.transform(base);
+          base = base.translate([0,0,Math.tan(degToRad(-this.direction*ROLL))*this.translate[0]]);
           return base;
         }
     }, m);
@@ -345,7 +359,6 @@ function createFinger(m) {
 
     return f;
 }
-
 
 
 
@@ -373,93 +386,85 @@ function island() {
 function createHand(d, k1, k2, k3, k4, k5, k6, kt) {
     // index finger
     var f1 = createFinger({
-        translate: [d*-33*0.7,0,-0],
+        direction: d,
+        translate: [d*-40,0,-0],
         r: 75,
-        a: d*8,
+        a: 16,
         keys: k1
     });
     var f2 = createFinger({
-        translate: [d*-15*0.7,0,-0],
+        direction: d,
+        translate: [d*-20,0,-0],
         r: 75,
-        a: d*5,
+        a: 10,
         keys: k2
     });
     // middle finger
     var f3 = createFinger({
-        translate: [d*2*0.7,5,-0],
+        direction: d,
+        translate: [0,5,-0],
         r: 76,
-        a: d*1,
+        a: 2,
         keys: k3
     });
     // ring finger
     var f4 = createFinger({
-        translate: [d*29*0.7,0,0],
+        direction: d,
+        translate: [d*20,0,0],
         r: 76,
         keys: k4
     });
     // pinky
     var f5 = createFinger({
-        translate: [d*59*0.7,-17,0],
+        direction: d,
+        translate: [d*40,-17,0],
         r: 75,
         keys: k5
     });
     var f6 = createFinger({
-        translate: [d*74*0.7,-17,0],
+        direction: d,
+        translate: [d*60,-17,0],
         r: 75,
-        a: d*-4,
+        a: -8,
         keys: k6
     });
 
     var t1 = createFinger({
+        direction: d,
         r: 75,
-        a: d*6,
+        a: 12,
         keys: kt,
         transform: function(o) {
-          return o.translate([d*-15,0,0]).rotateZ(d*-35).translate([d*-35,-75,10]);
+          return o.translate([d*-15,0,0]).rotateZ(d*-35).translate([d*-55,-77,10]);
         }
     });
 
     var h = createComposite([
-      f1,
-      f2,
-      f3,
-      f4,
-      f5,
-      f6,
-      t1
-    ]).toSolid();
+      f1, f2, f3, f4, f5, f6, t1
+    ]);
 
-    var sh = hull(shadow(h)).contract(14);
+return trimZ(h.toSolid());
+    var sh = hull(shadow(h.toSolid())).contract(14);
     var base = linear_extrude({height:11}, sh);
-    base = base.subtract(f1.neg);
-    base = base.subtract(f2.neg);
-    base = base.subtract(f3.neg);
-    base = base.subtract(f4.neg);
-    base = base.subtract(f5.neg);
-    base = base.subtract(f6.neg);
-    base = base.subtract(t1.neg);
-    base = base.setColor(WHITE);
-    return trimZ(h.union(base));
+    base = base.subtract(h.toNegative());
+    base = base.setColor(GRAY);
+    return trimZ(h.toSolid().union(base));
 }
 
 
 function right() {
-  ROLL = Math.abs(ROLL);
-
   var h = createHand(1,
       [
             { y:  -2, label: '^', swLabel: '6', color: GRAY, seLabel: 'F6' },
             { y:  -1, label: 'Y' },
             { label: 'H' },
             { y:  1, label: 'N' },
-            //{ y:  2, label: 'Ctrl' },
         ],
         [
             { y:  -2, label: '7', color: GRAY, swLabel: '&', seLabel: 'F7' },
             { y:  -1, label: 'U', seLabel: 'PgUp' },
             { label: 'J', seLabel:  { text: '^', a: 90 }, color: BLUE },
             { y:  1, label: 'M', seLabel: 'PgDn' },
-          //  { y:  2, label: 'Cmd' },
         ],
         [
             { y:  -2, label: '*', swLabel: '8', color: GRAY, seLabel: 'F8' },
@@ -488,12 +493,12 @@ function right() {
             { y:  1, label: 'Shift', seLabel: 'Caps', color: GRAY, concave: false, capHeight: 7 }
         ],
         [
-            { x: -1.1, y: 0, label: 'Cmd', color: GRAY, concave: false, capHeight: 8 },
-            { x: -1.1, y:  1, label: 'Opt', color: GRAY, concave: false, capHeight: 8  },
-            { x: -1.1, y:  2, label: 'Ctrl', color: GRAY, concave: false, capHeight: 8 },
-            { y: 0, label: 'Space' },
-            { y:  1, label: 'Enter', color: RED },
-            { y:  2, seLabel: 'Func', color: WHITE }
+            { y: -1, label: 'Cmd', color: GRAY, concave: false, capHeight: 8 },
+            { y:  0, label: 'Opt', color: GRAY, concave: false, capHeight: 8  },
+            { y:  1, label: 'Ctrl', color: GRAY, concave: false, capHeight: 8 },
+            {  x: -1.1, y: -1, label: 'Space' },
+            {  x: -1.1, y:  0, label: 'Enter', color: RED },
+            {  x: -1.1, y:  1, seLabel: 'Func', color: WHITE }
         ]
     );
 
@@ -502,8 +507,6 @@ function right() {
 
 
 function left() {
-  ROLL = -Math.abs(ROLL);
-
   var h = createHand(-1,
         [
             { y:  -2, label: '%', swLabel: '5', color: GRAY, seLabel: 'F5' },
@@ -515,35 +518,31 @@ function left() {
             { y:  -2, label: '$', swLabel: '4', color: GRAY, seLabel: 'F4' },
             { y:  -1, label: 'R' },
             { color: BLUE, label: 'F' },
-            { y:  1, label: 'V', seLabel: 'Paste' },
+            { y:  1, label: 'V', seLabel: 'Paste' }
         ],
         [
             { y:  -2, label: '#', swLabel: '3', color: GRAY, seLabel: 'F3' },
             { y:  -1, label: 'E' },
             { label: 'D', color: BLUE },
             { y:  1, label: 'C', seLabel: 'Copy' }
-//            { y:  2, label: '}', swLabel: ']' }
         ],
         [
             { y:  -2, label: '@', swLabel: '2', color: GRAY, seLabel: 'F2' },
             { y:  -1, label: 'W' },
             { label: 'S', color: BLUE },
             { y:  1, label: 'X', seLabel: 'Cut'  }
-//            { y:  2, label: '{', swLabel: '[' }
         ],
         [
             { y:  -2, label: '!', swLabel: '1', color: GRAY, seLabel: 'F1' },
             { y:  -1, label: 'Q' },
             { label: 'A', color: BLUE, seLabel: 'All' },
-            { y:  1, label: 'Z' },
-          //  { y:  2, label: 'Cmd' },
+            { y:  1, label: 'Z' }
         ],
         [
             { y:  -2, label: '~', swLabel: "`", color: GRAY },
             { y:  -1, label: 'Tab' },
             { label: 'Esc', color: RED },
-            { y:  1, label: 'Shift', seLabel: 'Caps', color: GRAY, concave: false, capHeight: 7 },
-            //{ y:  2, label: 'Ctrl' },
+            { y:  1, label: 'Shift', seLabel: 'Caps', color: GRAY, concave: false, capHeight: 7 }
         ],
         [
             { x: 0, y: -1, label: 'Cmd', color: GRAY, concave: false, capHeight: 8 },
@@ -560,11 +559,11 @@ function left() {
 
 
 function trimZ(o) {
-  return o.intersect(cube({size:[1000,1000,1000]}).translate([-500,-500,0]));
+  return o.subtract(cube({size:[600,600,200]}).translate([-300,-300,-200]));
 }
 
 
 function main() {
-    return right();
-    return left().rotateZ(-30).translate([-200,0,0]).union(right().rotateZ(30));
+   return right().rotateZ(25);
+    return left().rotateZ(-30).translate([-100,0,0]).union(right().rotateZ(30).translate([100,0,0]));
 }
