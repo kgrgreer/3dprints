@@ -12,7 +12,7 @@
 
 const PREVIEW  = true;
 const LABELS   = false;
-const ROLL     = 10;
+const ROLL     = 15;
 
 const BLUE  = [100/255, 149/255, 237/255]; //corn blue
 const RED   = [0.8,0.1,0.1];
@@ -163,11 +163,11 @@ function wedge(r, w, a1, a2, b1, b2) {
  *********************************************************************/
 
 var SWITCH = {
-  w:    15.6,    // width of sides of switch
-  d:    5+3.3+3, // depth below surface
-  h:    5, // 6.6,     // height above surface
+  w:    13.6,    // width of sides of switch
+  d:    10, // depth below surface
+  h:    4.7, // 6.6,     // height above surface
   stem: 3.6,     // height of stem, 4mm travel
-  holderThickness: 2,
+  holderThickness: 1,
   holderHeight: 10,
   createHolderOutline: memoize(function() {
     var h = this.holderHeight;
@@ -218,7 +218,7 @@ function createKeyCap(k) {
 
       }),
       concaveKey: function(o) {
-        return o.subtract(sphere({r:30}).scale([1,1,1.3]).translate([0,0,42]));
+        return o.subtract(sphere({r:40}).scale([1,1,1.3]).translate([0,0,56]));
       },
       markAsHomeKey: function(o) {
           /*
@@ -291,7 +291,7 @@ function createFinger(m) {
         a: 0, b: 0,
         a1: 1000, a2: -1000,
         b1: 1000, b2: -1000,
-        height: 86,
+        height: 79,
         x: 0,
         y: 0,
         translate: [1,1,1],
@@ -316,8 +316,8 @@ function createFinger(m) {
           this.neg =  this.neg.translate([0,0,83])
           this.keys.forEach(k => {
             var ko = this.transformKey(k, k.transform(SWITCH.createHolder()));
-            ko  = ko.subtract(sphere({r:this.r+SWITCH.holderHeight-1.2}));
-            ko = this.tilt(ko);
+            ko  = ko.subtract(sphere({r:this.r+SWITCH.holderHeight-3}));
+            ko  = ko.intersect(sphere({r:this.r+SWITCH.holderHeight-2.9}));
             var sh = shadow(ko);
             var neg = hull(sh).subtract(sh);
             neg = linear_extrude({height:100}, neg).translate([0,0,-50]);
@@ -327,17 +327,12 @@ function createFinger(m) {
           });
           this.neg = this.transform(this.neg.translate(this.translate));
           w =  w.translate([0,0,-this.height]);
-          w = w.subtract(sphere({r:this.r+SWITCH.holderHeight-1}));
+          w = w.subtract(sphere({r:this.r+SWITCH.holderHeight-2.8}));
           return w.setColor(WHITE);
         }),
 
-        tilt: function(o) {
-            return o;
-          return o.rotateY((this.a+ROLL)*this.direction);
-        },
-
         transformKey: function(k, o) {
-          return o.rotateX(-k.b).rotateY(k.a+ROLL*this.direction);
+          return o.rotateX(-k.b).rotateY((this.a+k.a+ROLL)*this.direction);
         },
         toNegative: function() { return this.neg; },
 
@@ -351,6 +346,7 @@ function createFinger(m) {
           base = base.translate([0,0,this.height]).translate(this.translate);
           base = f.transform(base);
           base = base.translate([0,0,Math.tan(degToRad(-this.direction*ROLL))*this.translate[0]]);
+          base = base.translate([this.r*(Math.sin(degToRad(ROLL+this.a))-Math.sin(degToRad(ROLL))), 0,0]);
           return base;
         }
     }, m);
@@ -387,14 +383,14 @@ function createHand(d, k1, k2, k3, k4, k5, k6, kt) {
     // index finger
     var f1 = createFinger({
         direction: d,
-        translate: [d*-40,0,-0],
+        translate: [d*-31,0,-0],
         r: 75,
         a: 16,
         keys: k1
     });
     var f2 = createFinger({
         direction: d,
-        translate: [d*-20,0,-0],
+        translate: [d*-15,0,-0],
         r: 75,
         a: 10,
         keys: k2
@@ -410,20 +406,20 @@ function createHand(d, k1, k2, k3, k4, k5, k6, kt) {
     // ring finger
     var f4 = createFinger({
         direction: d,
-        translate: [d*20,0,0],
+        translate: [d*17,0,2],
         r: 76,
         keys: k4
     });
     // pinky
     var f5 = createFinger({
         direction: d,
-        translate: [d*40,-17,0],
+        translate: [d*38,-17,10],
         r: 75,
         keys: k5
     });
     var f6 = createFinger({
         direction: d,
-        translate: [d*60,-17,0],
+        translate: [d*53,-17,10],
         r: 75,
         a: -8,
         keys: k6
@@ -435,7 +431,7 @@ function createHand(d, k1, k2, k3, k4, k5, k6, kt) {
         a: 12,
         keys: kt,
         transform: function(o) {
-          return o.translate([d*-15,0,0]).rotateZ(d*-35).translate([d*-55,-77,10]);
+          return o.translate([d*-15,0,0]).rotateZ(d*-35).translate([d*-51,-80,10]);
         }
     });
 
