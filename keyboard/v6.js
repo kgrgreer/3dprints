@@ -10,7 +10,7 @@
 // cut out webbing between sections
 
 
-const PREVIEW  = true;
+const PREVIEW  = false;
 const LABELS   = false;
 const ROLL     = 15;
 
@@ -100,10 +100,11 @@ function createText(m) {
 function shadow(o) {
   var orthobasis = CSG.OrthoNormalBasis.Z0Plane();
   var cags = [];
-  o.polygons.map(function(polygon) {
+  for ( var i = 0 ; i < o.polygons.length ; i++ ) {
+    var polygon = o.polygons[i];
     var cag = polygon.projectToOrthoNormalBasis(orthobasis);
     if ( cag.sides.length > 0 ) cags.push(cag);
-  });
+  }
   return new CAG().union(cags);
 }
 
@@ -163,20 +164,26 @@ function wedge(r, w, a1, a2, b1, b2) {
  *********************************************************************/
 
 var SWITCH = {
-  w:    13.6,    // width of sides of switch
-  d:    10, // depth below surface
-  h:    4.7, // 6.6,     // height above surface
+  w:    13.7, // use 13.7 for testing, 13.6,    // width of sides of switch
+  d:    8, // depth below surface
+  h:    5, // 6.6,     // height above surface
   stem: 3.6,     // height of stem, 4mm travel
+  latchDepth: 1.45, // 1.5
+  latchWidth: 3.7,
+  latchHeight: 1,
   holderThickness: 1,
   holderHeight: 10,
   createHolderOutline: memoize(function() {
     var h = this.holderHeight;
     var t = this.holderThickness;
-    var holder = cube({size:[this.w+2*t-1, this.w+2*t-1, h]}).translate([-this.w/2-t+0.5,-this.w/2-t+0.5,-this.h-h]).setColor([1,1,1]);
+    var holder = cube({size:[this.w+2*t, this.w+2*t, h]}).translate([-this.w/2-t,-this.w/2-t,-this.h-h]).setColor([1,1,1]);
     return holder;
   }),
+  createLatch: function() {
+     return cube({size:[this.latchWidth,20,this.latchHeight]}).translate([-this.latchWidth/2,-10,-this.latchDepth-this.h-this.latchHeight]);
+  },
   createHolder: memoize(function() {
-    var h = this.holderHeight;
+    var h      = this.holderHeight;
     var holder = this.createHolderOutline();
     var top    = cube({size:[this.w, this.w, this.h+4]}).translate([-this.w/2,-this.w/2,-this.h-h]);
 
@@ -184,8 +191,9 @@ var SWITCH = {
   }),
   createSwitch: memoize(function() {
     var top    = cube({size:[this.w, this.w, this.h]}).translate([-this.w/2,-this.w/2,-this.h]);
-    var bottom = cube({size:[this.w-2, this.w-2, this.d]}).translate([-this.w/2+1,-this.w/2+1, -this.h + -this.d]);
-    return union(top, bottom);
+    var bottom = cube({size:[this.w, this.w, this.d]}).translate([-this.w/2,-this.w/2, -this.h + -this.d]);
+    var latch  = this.createLatch();
+    return union(top, bottom, latch);
   }),
   toSolid: memoize(function() {
     var sw   = this.createSwitch().setColor([0,0,0]);
@@ -291,7 +299,7 @@ function createFinger(m) {
         a: 0, b: 0,
         a1: 1000, a2: -1000,
         b1: 1000, b2: -1000,
-        height: 79,
+        height: 77,
         x: 0,
         y: 0,
         translate: [1,1,1],
@@ -316,8 +324,8 @@ function createFinger(m) {
           this.neg =  this.neg.translate([0,0,83])
           this.keys.forEach(k => {
             var ko = this.transformKey(k, k.transform(SWITCH.createHolder()));
-            ko  = ko.subtract(sphere({r:this.r+SWITCH.holderHeight-3}));
-            ko  = ko.intersect(sphere({r:this.r+SWITCH.holderHeight-2.9}));
+            ko  = ko.subtract(sphere({r:this.r+SWITCH.holderHeight-3.001}));
+            ko  = ko.intersect(sphere({r:this.r+SWITCH.holderHeight-3}));
             var sh = shadow(ko);
             var neg = hull(sh).subtract(sh);
             neg = linear_extrude({height:100}, neg).translate([0,0,-50]);
@@ -326,8 +334,9 @@ function createFinger(m) {
             w = w.union(ko);
           });
           this.neg = this.transform(this.neg.translate(this.translate));
+          // this.neg = this.neg.translate([0,0,Math.tan(degToRad(-this.direction*ROLL))*this.translate[0]]);
           w =  w.translate([0,0,-this.height]);
-          w = w.subtract(sphere({r:this.r+SWITCH.holderHeight-2.8}));
+          w = w.subtract(sphere({r:this.r+SWITCH.holderHeight-3.3}));
           return w.setColor(WHITE);
         }),
 
@@ -339,15 +348,17 @@ function createFinger(m) {
         toSolid: function() {
           var base = this.createBase();
           this.keys.forEach(k => {
+              var key = k.transform(SWITCH.createHolder());
+            key  = key.intersect(sphere({r:this.r+SWITCH.holderHeight-3.1}));
             if ( PREVIEW )   base = base.union(this.transformKey(k, k.toSolid()));
-            base = base.union(this.transformKey(k, k.transform(SWITCH.createHolder())));
+            base = base.union(this.transformKey(k, key));
             if ( ! PREVIEW ) base = base.subtract(this.transformKey(k, k.toNegative()));
           });
           base = base.translate([0,0,this.height]).translate(this.translate);
           base = f.transform(base);
+          // Adjust height based on ROLL
           base = base.translate([0,0,Math.tan(degToRad(-this.direction*ROLL))*this.translate[0]]);
-          base = base.translate([this.r*(Math.sin(degToRad(ROLL+this.a))-Math.sin(degToRad(ROLL))), 0,0]);
-          return base;
+          return trimZ(base);
         }
     }, m);
 
@@ -383,19 +394,19 @@ function createHand(d, k1, k2, k3, k4, k5, k6, kt) {
     // index finger
     var f1 = createFinger({
         direction: d,
-        translate: [d*-31,0,-0],
+        translate: [d*-23,0,-0],
         r: 75,
         a: 16,
         keys: k1
     });
     var f2 = createFinger({
         direction: d,
-        translate: [d*-15,0,-0],
+        translate: [d*-10.5,0,-0],
         r: 75,
         a: 10,
         keys: k2
     });
-    // middle finger
+    // middle finger, origin
     var f3 = createFinger({
         direction: d,
         translate: [0,5,-0],
@@ -406,20 +417,20 @@ function createHand(d, k1, k2, k3, k4, k5, k6, kt) {
     // ring finger
     var f4 = createFinger({
         direction: d,
-        translate: [d*17,0,2],
+        translate: [d*16,0,2],
         r: 76,
         keys: k4
     });
     // pinky
     var f5 = createFinger({
         direction: d,
-        translate: [d*38,-17,10],
+        translate: [d*37,-17,10],
         r: 75,
         keys: k5
     });
     var f6 = createFinger({
         direction: d,
-        translate: [d*53,-17,10],
+        translate: [d*48,-17,10],
         r: 75,
         a: -8,
         keys: k6
@@ -439,12 +450,12 @@ function createHand(d, k1, k2, k3, k4, k5, k6, kt) {
       f1, f2, f3, f4, f5, f6, t1
     ]);
 
-return trimZ(h.toSolid());
-    var sh = hull(shadow(h.toSolid())).contract(14);
-    var base = linear_extrude({height:11}, sh);
+//return h.toSolid();
+    var sh = hull(shadow(h.toSolid().intersect(cube({size:[500,500,1]}).translate([-250,-250,0])))).contract(8);
+    var base = linear_extrude({height:4}, sh);
     base = base.subtract(h.toNegative());
     base = base.setColor(GRAY);
-    return trimZ(h.toSolid().union(base));
+    return h.toSolid().union(base);
 }
 
 
@@ -560,6 +571,9 @@ function trimZ(o) {
 
 
 function main() {
-   return right().rotateZ(25);
+//return SWITCH.createHolder();
+ //return SWITCH.createHolder().subtract(SWITCH.toSolid());
+  //  return SWITCH.toSolid();
+   return right().rotateZ(-25);
     return left().rotateZ(-30).translate([-100,0,0]).union(right().rotateZ(30).translate([100,0,0]));
 }
