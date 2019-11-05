@@ -10,8 +10,9 @@
 // cut out webbing between sections
 
 
+// TODO: move middle row up 3mm, t1 3mm up, t1 higher, change angle
 const PREVIEW  = false;
-const LABELS   = false;
+const LABELS   = true;
 const ROLL     = 15;
 
 const BLUE  = [100/255, 149/255, 237/255]; //corn blue
@@ -32,6 +33,11 @@ function axis() {
     cube({size:[1,100,1]}).setColor([0,1,0]),
     cube({size:[1,1,100]}).setColor([0,0,1])
   );
+}
+
+
+function trimZ(o) {
+  return o.subtract(cube({size:[600,600,200]}).translate([-300,-300,-200]));
 }
 
 
@@ -67,8 +73,8 @@ function createText(m) {
 
     return Object.assign({
       text: 'A',
-      w: 3,
-      scale: 0.13,
+      w: 4,
+      scale: 0.17,
       justify: 'L',
       a: 0,
       color: BLACK,
@@ -76,7 +82,7 @@ function createText(m) {
         var o = [];
         var l = vector_text(0, 0, this.text);
 
-        l.forEach(s => o.push(rectangular_extrude(s, {w: this.w, h:5})));
+        l.forEach(s => o.push(rectangular_extrude(s, {w: this.w, h:7})));
 
         var txt = union(o).setColor(this.color).scale([this.scale, this.scale, 1]);
 
@@ -84,11 +90,11 @@ function createText(m) {
 
         var bounds = txt.getBounds();
         if ( this.justify === 'R' ) {
-          txt = txt.translate([-bounds[1].x, -bounds[0].y, 0]);
+          txt = txt.translate([-bounds[1].x, -bounds[0].y, -2]);
         } else if ( this.justify === 'C' ) {
-          txt = txt.translate([-bounds[1].x/2, -bounds[0].y, 0]);
+          txt = txt.translate([-bounds[1].x/2, -bounds[0].y, -2]);
         } else {
-          txt = txt.translate([-bounds[0].x, -bounds[0].y, 0]);
+          txt = txt.translate([-bounds[0].x, -bounds[0].y, -2]);
         }
 
         return txt;
@@ -167,7 +173,7 @@ var SWITCH = {
   w:    13.7, // use 13.7 for testing, 13.6,    // width of sides of switch
   d:    8, // depth below surface
   h:    5, // 6.6,     // height above surface
-  stem: 3.6,     // height of stem, 4mm travel
+  stem: 4, //3.6,     // height of stem, 4mm travel
   latchDepth: 1.45, // 1.5
   latchWidth: 3.7,
   latchHeight: 1,
@@ -220,13 +226,20 @@ function createKeyCap(k) {
 
          key = this.addLabel(key, -6.2,    2, this.label,   { color: BLACK });
          key = this.addLabel(key, -6.2, -5.4, this.swLabel, { color: BLACK });
-         key = this.addLabel(key,  6,   -5.4, this.seLabel, { color: RED, justify: 'R', scale: 0.11});
+         key = this.addLabel(key,  6,   -5.4, this.seLabel, { color: RED, justify: 'R', scale: 0.14});
 
          return key.translate([0,0,SWITCH.stem]);
-
       }),
+      toProductionSolid: function() {
+        const W = 4.1;
+        const H = 1.2;
+        const D = 4;
+        var stem = cylinder({r:5.4/2, h: D});
+        var hollow = cube({size:[W,H,3.7]}).translate([-W/2,-H/2,0]).union(cube({size:[H,W,3.7]}).translate([-H/2,-W/2,0]));
+        return this.toSolid().union(stem.subtract(hollow));
+      },
       concaveKey: function(o) {
-        return o.subtract(sphere({r:40}).scale([1,1,1.3]).translate([0,0,56]));
+        return o.subtract(sphere({r:30}).scale([1,1,1.3]).translate([0,0,41]));
       },
       markAsHomeKey: function(o) {
           /*
@@ -565,12 +578,11 @@ function left() {
 }
 
 
-function trimZ(o) {
-  return o.subtract(cube({size:[600,600,200]}).translate([-300,-300,-200]));
-}
-
-
 function main() {
+    return createKeyCap(
+      createKey({ f: {r:76}, y:  -2, label: '*', swLabel: '8', color: GRAY, seLabel: 'F8' })
+    ).toProductionSolid();
+
 //return SWITCH.createHolder();
  //return SWITCH.createHolder().subtract(SWITCH.toSolid());
   //  return SWITCH.toSolid();
