@@ -12,7 +12,7 @@
 
 // TODO: move middle row up 3mm, t1 3mm up, t1 higher, change angle
 const PREVIEW  = true;
-const LABELS   = false;
+const LABELS   = true;
 
 const BLUE  = [100/255, 149/255, 237/255]; //corn blue
 const RED   = [0.8,0.1,0.1];
@@ -27,6 +27,7 @@ const SECONDARY_KEY_COLOR    = GRAY;
 const HOME_KEY_COLOR         = BLUE;
 const DEST_KEY_COLOR         = RED;
 
+var caps = [];
 /*********************************************************************
  *                                                             UTIL
  *********************************************************************/
@@ -70,9 +71,6 @@ function createComposite(a) {
       }),
       hull: function() {
         return union.apply(null, this.array.filter(e => e.toSolid).map(e => linear_extrude({h: 4}, baseShadow(e.toSolid()))));
-      },
-      shadow: function() {
-        return union.apply(null, this.array.filter(e => e.toSolid).map(e => baseShadow(e.toSolid())));
       }
     };
 }
@@ -84,15 +82,16 @@ function createText(m) {
     return Object.assign({
       text: 'A',
       w: 4,
-      scale: 0.17,
-      justify: 'L',
-      a: 0,
+      h: 7,          // depth
+      scale: 0.15,
+      justify: 'L',  // justification: R, C or defaults to Left
+      a: 0,          // angle of rotation
       color: BLACK,
       toSolid: function() {
         var o = [];
         var l = vector_text(0, 0, this.text);
 
-        l.forEach(s => o.push(rectangular_extrude(s, {w: this.w, h:4})));
+        l.forEach(s => o.push(rectangular_extrude(s, {w: this.w, h: this.h})));
 
         var txt = union(o).setColor(this.color).scale([this.scale, this.scale, 1]);
 
@@ -100,11 +99,11 @@ function createText(m) {
 
         var bounds = txt.getBounds();
         if ( this.justify === 'R' ) {
-          txt = txt.translate([-bounds[1].x, -bounds[0].y, -2]);
+          txt = txt.translate([-bounds[1].x, -bounds[0].y, -2.5]);
         } else if ( this.justify === 'C' ) {
-          txt = txt.translate([-bounds[1].x/2, -bounds[0].y, -2]);
+          txt = txt.translate([-bounds[1].x/2, -bounds[0].y, -2.5]);
         } else {
-          txt = txt.translate([-bounds[0].x, -bounds[0].y, -2]);
+          txt = txt.translate([-bounds[0].x, -bounds[0].y, -2.5]);
         }
 
         return txt;
@@ -185,13 +184,13 @@ function wedge(r, w, a1, a2, b1, b2) {
 var SWITCH = {
   w:    13.7, // use 13.7 for testing, 13.6,    // width of sides of switch
   d:    6, //8, // depth below surface
-  h:    5, // 6.6,     // height above surface
+  h:    6.6, // 6.6,     // height above surface
   stem: 4, //3.6,     // height of stem, 4mm travel
   latchDepth: 1.45, // 1.5
   latchWidth: 3.7,
   latchHeight: 1,
   holderThickness: 1,
-  holderHeight: 7,
+  holderHeight: 6,
   createHolderOutline: memoize(function() {
     var h = this.holderHeight;
     var t = this.holderThickness;
@@ -228,11 +227,11 @@ var SWITCH = {
  *********************************************************************/
 
 function createKeyCap(k) {
-  return Object.assign(k, {
+  var cap = Object.assign(k, {
       toSolid: memoize(function() {
          const KEYW = 17;
          const WW   = 7.5;
-         var w   = wedge(this.f.r-12, 0, -WW, WW, -WW, WW);
+         var w   = wedge(this.f.r-13, 0, -WW, WW, -WW, WW);
          var key = w.intersect(cube({radius:0, size:[KEYW,KEYW,3.6+this.capHeight+11]}).translate([-KEYW/2,-KEYW/2,-4-11]).intersect(cube({size:[100,100,100]}).translate([-50,-50,-4])));
 
          key = key.intersect(cylinder({r2:5,r1:12.8,h:32}).translate([0,0,-10]));
@@ -240,20 +239,21 @@ function createKeyCap(k) {
 
          key = key.setColor(this.color);
 
-         key = this.addLabel(key, -6.2,    2, this.label,   { color: BLACK });
+         key = this.addLabel(key, -6.2,  1.7, this.label,   { color: BLACK });
          key = this.addLabel(key, -6.2, -5.4, this.swLabel, { color: BLACK });
-         key = this.addLabel(key,  6,   -5.4, this.seLabel, { color: RED, justify: 'R', scale: 0.14});
+         key = this.addLabel(key,  6,   -5.4, this.seLabel, { color: RED, justify: 'R', scale: 0.12});
 
          return key.translate([0,0,SWITCH.stem]);
       }),
       toProductionSolid: function() {
-        const W = 4.6;
-        const H = 1.4;
-        const D = 4;
+        const W = 4.6 +0.1; // add 0.2 when testing to make easier to put on and remove
+        const H = 1.4 +0.1;
+        const D = 5;
         var s = this.toSolid();
-        s = s.subtract(cube({radius:3.75, roundradius: 3.75, size:[SWITCH.w+2,SWITCH.w+2, D+3.5]}).translate([-SWITCH.w/2-2/2,-SWITCH.w/2-2/2,-3]));
+        var PAD_W = SWITCH.w+2.25; // was 2.5
+        s = s.subtract(cube({radius:3.75, roundradius: 3.75, size:[PAD_W,PAD_W, D+5]}).translate([-PAD_W/2,-PAD_W/2,-5]));
 //        var stem = cylinder({r:5.4/2, h: D});
-        var stem = cube({radius:0.9, roundradius: 0.9,size:[5.4+1.5,5.5, D+2]}).intersect(cube({size:[5.4+1.5,5.5, D]})).translate([-5.4/2-1.5/2,-5.5/2,0]).setColor(WHITE);
+        var stem = cube({radius:0.9, roundradius: 0.9,size:[/*make smaller to reduce friction Was: 5.4+1.5*/5.4+1.4,5.5, D+2]}).intersect(cube({size:[5.4+1.5,5.5, D]})).translate([-5.4/2-1.5/2,-5.5/2,0]).setColor(WHITE);
         var hollow = cube({size:[W,H,3.8]}).translate([-W/2,-H/2,0]).union(cube({size:[H,W,3.8]}).translate([-H/2,-W/2,0]));
         return s.union(stem.subtract(hollow));
       },
@@ -276,12 +276,16 @@ function createKeyCap(k) {
           if ( opt_args ) label = Object.assign(opt_args, label);
 
           var txt = createText(label);
-          o = o.subtract(txt.toSolid().translate([x, y, 3.5]));
+          o = o.subtract(txt.toSolid().translate([x, y, 4]));
         }
 
         return o;
       }
   });
+
+  if ( cap.color == GRAY ) caps.push(cap);
+
+  return cap;
 }
 
 
@@ -335,7 +339,7 @@ function createFinger(m) {
         a: 0, b: 0,
         a1: 1000, a2: -1000,
         b1: 1000, b2: -1000,
-        height: 83,
+        height: 79,
         x: 0,
         y: 0,
         translate: [1,1,1],
@@ -428,43 +432,45 @@ function createHand(d, k1, k2, k3, k4, k5, k6, kt) {
     // index finger
     var f1 = createFinger({
         direction: d,
-        translate: [d*-23,0,-0],
+        translate: [d*-26,-10,3],
         r: 77,
-        a: 16,
+        a: 14,
         keys: k1
     });
     var f2 = createFinger({
         direction: d,
-        translate: [d*-10.5,0,-0],
+        translate: [d*-15.5,-10,2],
         r: 77,
-        a: 10,
+        a: 5,
         keys: k2
     });
     // middle finger, origin
     var f3 = createFinger({
         direction: d,
-        translate: [0,5,-0],
+        translate: [d*4,0,0],
         r: 77,
-        a: 2,
+        a: 5,
         keys: k3
     });
     // ring finger
     var f4 = createFinger({
         direction: d,
-        translate: [d*16,0,2],
+        translate: [d*19,-3.5,4],
         r: 77,
+        a: 0,
         keys: k4
     });
     // pinky
     var f5 = createFinger({
         direction: d,
-        translate: [d*37,-17,10],
+        translate: [d*41,-24,12],
         r: 77,
+        a: 0,
         keys: k5
     });
     var f6 = createFinger({
         direction: d,
-        translate: [d*48,-17,10],
+        translate: [d*52,-32,13],
         r: 77,
         a: -8,
         keys: k6
@@ -472,11 +478,11 @@ function createHand(d, k1, k2, k3, k4, k5, k6, kt) {
 
     var t1 = createFinger({
         direction: d,
-        r: 75,
+        r: 77,
         a: 12,
         keys: kt,
         transform: function(o) {
-          return o.translate([d*-15,0,0]).rotateZ(d*-35).translate([d*-51,-80,10]);
+          return o.translate([d*-15,0,0]).rotateZ(d*-45).translate([d*-57,-76,8]);
         }
     });
 
@@ -484,54 +490,62 @@ function createHand(d, k1, k2, k3, k4, k5, k6, kt) {
       f1, f2, f3, f4, f5, f6, t1
     ]);
 
-//return h.toNegative();
-//return h.toSolid();
-h.toSolid();
-   // var sh = hull(baseShadow(h.toSolid())).contract(8);
+return h.toSolid();
+    //if ( ! PREVIEW ) return h.toSolid();
+
+    h.toSolid();
     var sh = hull(baseShadow(h.toNegative()));
-    var base = linear_extrude({height:4}, sh);
+    var base = linear_extrude({height:2}, sh);
     base = base.subtract(h.toNegative());
     base = base.setColor(GRAY);
-    return h.toSolid().union(base);
+    var o = h.toSolid().union(base);
+    return o;
+
+    var c = cube({size:[70,22,14]}).translate([-46,33,0]);
+    o = o.union(c);
+    c = c.scale([0.98,0.98,0.98]);
+    o = o.subtract(c);
+    o = o.subtract(h.toNegative());
+    return o;
 }
 
 
 function right() {
   var h = createHand(1,
       [
-            { y:  -2, label: '^', swLabel: '6', color: GRAY, capHeight: 7.5, capTilt: 40, seLabel: 'F6' },
+            { y:  -2, label: '^', swLabel: '6', color: GRAY, capHeight: 8, capTilt: 45, seLabel: 'F6' },
             { y:  -1, label: 'Y' },
             { label: 'H' },
-            { y:  1, label: 'N', capHeight: 7.5, capTilt: -20 },
+            { y:  1, label: 'N', capHeight: 7.1, capTilt: -25 },
         ],
         [
-            { y:  -2, label: '7', color: GRAY, capHeight: 7.5, capTilt: 40, swLabel: '&', seLabel: 'F7' },
+            { y:  -2, swLabel: '7', color: GRAY, capHeight: 7.5, capTilt: 40, label: '&', seLabel: 'F7' },
             { y:  -1, label: 'U', seLabel: 'PgUp' },
             { label: 'J', seLabel:  { text: '^', a: 90 }, color: BLUE },
-            { y:  1, label: 'M', seLabel: 'PgDn', capHeight: 7.5, capTilt: -20 },
+            { y:  1, label: 'M', seLabel: 'PgDn', capHeight: 7.1, capTilt: -25 },
         ],
         [
-            { y:  -2, label: '*', swLabel: '8', color: GRAY, capHeight: 7.5, capTilt: 40, seLabel: 'F8' },
+            { y:  -2, label: '*', swLabel: '8', color: GRAY, capHeight: 8, capTilt: 40, seLabel: 'F8' },
             { y:  -1, label: 'I' },
             { label: 'K', seLabel: '^', color: BLUE },
             { y:  1, label: '<', swLabel: ',', seLabel: { text: '^', a: 180 }  },
-            { y:  2, label: '{', swLabel: '[', capHeight: 7.5, capTilt: -20 }
+            { y:  2, label: '{', swLabel: '[', capHeight: 7.1, capTilt: -25 }
         ],
         [
-            { y:  -2, label: '(', swLabel: '9', color: GRAY, capHeight: 7.5, capTilt: 40, seLabel: 'F9' },
+            { y:  -2, label: {text: '(', scale: 0.12}, swLabel: '9', color: GRAY, capHeight: 8, capTilt: 40, seLabel: 'F9' },
             { y:  -1, label: 'O', seLabel: 'Home' },
             { label: 'L', seLabel:  { text: '^', a: -90 }, color: BLUE },
             { y:  1, label: '>', swLabel: '.', seLabel: 'End' },
-            { y:  2, label: '}', swLabel: ']', capHeight: 7.5, capTilt: -20 }
+            { y:  2, label: '}', swLabel: ']', capHeight: 7.1, capTilt: -25 }
         ],
         [
-            { y:  -2, label: ')', swLabel: '0', color: GRAY, capHeight: 7.5, capTilt: 40, seLabel: 'F10' },
+            { y:  -2, label: {text: ')', scale: 0.12}, swLabel: '0', color: GRAY, capHeight: 8, capTilt: 40, seLabel: 'F10' },
             { y:  -1, label: 'P' },
             { color: BLUE, label: ':', swLabel: ';' },
-            { y:  1, label: '?', swLabel: '/', capHeight: 7.5, capTilt: -20 },
+            { y:  1, label: '?', swLabel: '/', capHeight: 7.1, capTilt: -25 },
         ],
         [
-            { y:  -2, label: '+', swLabel: '=', color: GRAY, capHeight: 7.5, capTilt: 40 },
+            { y:  -2, label: '+', swLabel: '=', color: GRAY, capHeight: 8, capTilt: 40 },
             { y:  -1, label: '|', swLabel: '\\' },
             { label: '"', swLabel: "'" },
             { y:  1, label: 'Shift', seLabel: 'Caps', color: GRAY, concave: false, capHeight: 5 }
@@ -540,7 +554,7 @@ function right() {
             { y: -1, label: 'Cmd', color: GRAY, concave: false, capHeight: 8 },
             { y:  0, label: 'Opt', color: GRAY, concave: false, capHeight: 8  },
             { y:  1, label: 'Ctrl', color: GRAY, concave: false, capHeight: 8 },
-            {  x: -1.1, y: -1, label: 'Space' },
+            {  x: -1.1, y: -1, label: {text: 'Space'} },
             {  x: -1.1, y:  0, label: 'Enter', color: RED },
             {  x: -1.1, y:  1, seLabel: 'Func', color: WHITE }
         ]
@@ -603,15 +617,47 @@ function left() {
 
 
 function main() {
+    var holes = union(
+        cylinder({r:2, h:100}).translate([0,-60,0]),
+        cylinder({r:2, h:100}).translate([-20,-60,0]),
+        cylinder({r:2, h:100}).translate([-40,-60,0])
+    );
     /*
-    return createKeyCap(
+return union(
+    createKeyCap(
+      createKey({ f: {r:76}, y:  2, label: {text: '}', scale:.14}, swLabel: {text:']',scale:.14}, capHeight: 7.1, capTilt: -25  })
+    ).toProductionSolid().translate([-20,0,0]),
+
+    createKeyCap(
+      createKey({ f: {r:76}, y:  -2, label: {text:'&', scale: .15}, swLabel: '7', color: GRAY, capHeight: 8, capTilt: 45, seLabel: 'F7' })
+    ).toProductionSolid(),
+
+    createKeyCap(
       createKey({ f: {r:76}, y:  -2, label: {text: '*', scale:.25}, swLabel: '8', color: GRAY, seLabel: {text:'F8', scale:0.16, w:5} })
-    ).toProductionSolid();
-    */
+    ).toProductionSolid().translate([20,0,0]),
+
+    createKeyCap(
+      createKey({ f: {r:76}, y:  -2, label: {text: '*', scale:.25}, swLabel: '8', color: GRAY, seLabel: {text:'F8', scale:0.16, w:5} })
+    ).toProductionSolid().translate([40,0,0]),
+
+    createKeyCap(
+      createKey({ f: {r:76}, y:  -2, label: {text: '*', scale:.25}, swLabel: '8', color: GRAY, seLabel: {text:'F8', scale:0.16, w:5} })
+    ).toProductionSolid().translate([60,0,0])
+);*/
 
 //return SWITCH.createHolder();
  //return SWITCH.createHolder().subtract(SWITCH.toSolid());
   //  return SWITCH.toSolid();
-   return right().rotateZ(-25);
+
+  right();
+
+  var i = 0;
+  return union.apply(null,
+    caps.map((c) => {
+      return c.toProductionSolid().translate([20*i++, 0, 0]);
+    })
+  );
+
+   return right().rotateZ(-15.5).subtract(holes);
     return left().rotateZ(-30).translate([-100,0,0]).union(right().rotateZ(30).translate([100,0,0]));
 }
