@@ -93,23 +93,24 @@ var poly = polygon([
   f = f.subtract(bezel(7,0,12,5,5));
   f = f.subtract(bezel(7,0,12,5,5).mirroredX());
 
+  const DEPTH = 5.5;
 
   var year = createText({text: '2019', justify: 'C', depth:1, scale: 0.07});
-  f = f.subtract(year.toSolid().translate([0,22,5.8]));
+  f = f.subtract(year.toSolid().translate([0,22,DEPTH]));
 
-  var title1 = createText({text: 'Blockchain', justify: 'C', depth:1, scale: 0.075});
-  f = f.subtract(title1.toSolid().translate([0,15.2,5.5]));
+  var title1 = createText({text: 'Blockchain', w: 3, justify: 'C', depth:1, scale: 0.075});
+  f = f.subtract(title1.toSolid().translate([0,15.2,DEPTH]));
 
-  var title2 = createText({text: 'Company', justify: 'C', depth:1, scale: 0.075});
-  f = f.subtract(title2.toSolid().translate([0,12.3,5.5]));
+  var title2 = createText({text: 'Company', w: 3, justify: 'C', depth:1, scale: 0.075});
+  f = f.subtract(title2.toSolid().translate([0,12.3,DEPTH]));
 
-  var title3 = createText({text: 'of the Year', justify: 'C', depth:1, scale: 0.075});
-  f = f.subtract(title3.toSolid().translate([0,10.3,5.5]));
+  var title3 = createText({text: 'of the Year', w: 3, justify: 'C', depth:1, scale: 0.075});
+  f = f.subtract(title3.toSolid().translate([0,10.3,DEPTH]));
 
-  var np = createText({text: 'nanopay', justify: 'C', depth:1, scale: 0.1});
-  f = f.subtract(np.toSolid().translate([0,5,5.5]));
+  var np = createText({text: 'nanopay', w: 3.5, justify: 'C', depth:1, scale: 0.1});
+  f = f.subtract(np.toSolid().translate([0,5,DEPTH]));
 
-  f = f.union(logo().scale([0.2,0.2,1]).translate([0,2.8,3.3]));
+  f = f.union(logo().scale([0.2,0.2,1]).translate([0,2.8,3.4]));
 
   return f.union(base()).rotateX(-7).intersect(cube({size:[100,100,100],center:[true,true,false]})).scale(3);
 }
