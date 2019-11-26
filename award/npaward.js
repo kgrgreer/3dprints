@@ -62,14 +62,15 @@ function logo() {
 function base() {
   var W = 27;
   var D = 7;
-  var b = cube({size:[W,D,2], center:[true,true,false]});
+  var H = 2.3;
+  var b = cube({size:[W,D,H], center:[true,true,false]});
 
   b = b.subtract(bezel(W/2,-D/2,W/2,D/2));
   b = b.subtract(bezel(W/2,-D/2,W/2,D/2).mirroredX());
   b = b.subtract(bezel(-W/2,-D/2,W/2,-D/2));
   b = b.subtract(bezel(-W/2,-D/2,W/2,-D/2).mirroredY());
 
-  return b.rotateX(-90).translate([0,-2,1.5]);
+  return b.rotateX(-86).translate([0,-2,1.5]);
 }
 
 function main() {
@@ -93,24 +94,29 @@ var poly = polygon([
   f = f.subtract(bezel(7,0,12,5,5));
   f = f.subtract(bezel(7,0,12,5,5).mirroredX());
 
-  const DEPTH = 5.5;
+  const DEPTH = 6;
 
   var year = createText({text: '2019', justify: 'C', depth:1, scale: 0.07});
-  f = f.subtract(year.toSolid().translate([0,22,DEPTH]));
+  f = f.subtract(year.toSolid().translate([0,22,DEPTH+0.25]));
 
-  var title1 = createText({text: 'Blockchain', w: 3, justify: 'C', depth:1, scale: 0.075});
-  f = f.subtract(title1.toSolid().translate([0,15.2,DEPTH]));
+  var title1 = createText({text: 'Blockchain', w: 2.5, justify: 'C', depth:1, scale: 0.075});
+  f = f.subtract(title1.toSolid().translate([0,15.3+.4,DEPTH]));
 
-  var title2 = createText({text: 'Company', w: 3, justify: 'C', depth:1, scale: 0.075});
-  f = f.subtract(title2.toSolid().translate([0,12.3,DEPTH]));
+  var title2 = createText({text: 'Company', w: 2.5, justify: 'C', depth:1, scale: 0.075});
+  f = f.subtract(title2.toSolid().translate([0,12.3+.4,DEPTH]));
 
-  var title3 = createText({text: 'of the Year', w: 3, justify: 'C', depth:1, scale: 0.075});
-  f = f.subtract(title3.toSolid().translate([0,10.3,DEPTH]));
+  var title3 = createText({text: 'of the Year', w: 2.5, justify: 'C', depth:1, scale: 0.075});
+  f = f.subtract(title3.toSolid().translate([0,10.3+.4,DEPTH]));
 
   var np = createText({text: 'nanopay', w: 3.5, justify: 'C', depth:1, scale: 0.1});
   f = f.subtract(np.toSolid().translate([0,5,DEPTH]));
 
-  f = f.union(logo().scale([0.2,0.2,1]).translate([0,2.8,3.4]));
+  f = f.subtract(logo().scale([0.2,0.2,1]).translate([0,2.8,3.7]));
 
-  return f.union(base()).rotateX(-7).intersect(cube({size:[100,100,100],center:[true,true,false]})).scale(3);
+  f = f.union(base()).rotateX(-7).intersect(cube({size:[100,100,100],center:[true,true,false]}));
+
+  var name = createText({text: 'Mahimma J.', w: 2.5, justify: 'C', depth:1, scale: 0.075});
+  f = f.subtract(name.toSolid().translate([0,-1.4,DEPTH+0.6]));
+
+  return f.scale(3);
 }
