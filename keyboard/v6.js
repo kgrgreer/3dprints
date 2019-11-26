@@ -253,7 +253,7 @@ function createKeyCap(k) {
         var PAD_W = SWITCH.w+2.25; // was 2.5
         s = s.subtract(cube({radius:3.75, roundradius: 3.75, size:[PAD_W,PAD_W, D+5]}).translate([-PAD_W/2,-PAD_W/2,-5]));
 //        var stem = cylinder({r:5.4/2, h: D});
-        var stem = cube({radius:0.9, roundradius: 0.9,size:[/*make smaller to reduce friction Was: 5.4+1.5*/5.4+1.4,5.5, D+2]}).intersect(cube({size:[5.4+1.5,5.5, D]})).translate([-5.4/2-1.5/2,-5.5/2,0]).setColor(WHITE);
+        var stem = cube({radius:0.9, roundradius: 0.9,size:[/*make smaller to reduce friction Was: 5.4+1.5*/5.4+1,5.5, D+2]}).intersect(cube({size:[5.4+1.5,5.5, D]})).translate([-5.4/2-1.5/2,-5.5/2,0]).setColor(WHITE);
         var hollow = cube({size:[W,H,3.8]}).translate([-W/2,-H/2,0]).union(cube({size:[H,W,3.8]}).translate([-H/2,-W/2,0]));
         return s.union(stem.subtract(hollow));
       },
@@ -283,7 +283,7 @@ function createKeyCap(k) {
       }
   });
 
-  if ( cap.color == GRAY ) caps.push(cap);
+  if ( cap.color == WHITE ) caps.push(cap);
 
   return cap;
 }
@@ -487,7 +487,7 @@ function createHand(d, k1, k2, k3, k4, k5, k6, kt) {
     });
 
     var h = createComposite([
-      f1, f2, f3, f4, f5, f6, t1
+     /* f1, f2, f3,*/ f4, f5, f6, t1
     ]);
 
 return h.toSolid();
