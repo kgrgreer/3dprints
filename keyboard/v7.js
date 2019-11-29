@@ -10,13 +10,13 @@
 - raise "O" key 2mm
 - raise "9" key 3mm
 - raise "0" key 5mm
-- roll all keys down half a key arc
-- roll Space key up half key arc
 - check size of holes
 - add holes to left side
 - elongate first-row thumb keys
 
 Done:
+- roll all keys down half a key arc
+- roll Space key up half key arc
 - move 5th row up 9mm and down by 1mm
 - change angle of thumb section by 10deg
 - increase radius of thumb from 77mm to 80mm
@@ -316,7 +316,7 @@ function createKeyCap(k) {
 function createKey(m) {
     m = m || {};
     if ( m.x ) m.a = 16*m.x;
-    if ( m.y ) { m.b = 16*m.y-8 } else m.b = -8;
+    if ( m.y ) { m.b = 16*m.y }
 
     var keyAngleRadius = 8;
 
@@ -502,7 +502,7 @@ function createHand(d, k1, k2, k3, k4, k5, k6, kt) {
         a: 12,
         keys: kt,
         transform: function(o) {
-          return o.translate([d*-15,0,0]).rotateZ(d*-55).translate([d*-64,-82,8]);
+          return o.translate([d*-15,0,0]).rotateZ(d*-55).translate([d*-64,-90,8]);
         }
     });
 
@@ -570,12 +570,12 @@ function right() {
             { label: 'Shift', color: GRAY, concave: false, capHeight: 5 }
         ],
         [
-            { y: -1, label: 'Cmd', color: GRAY, concave: false, capHeight: 8 },
-            { y:  0, label: 'Opt', color: GRAY, concave: false, capHeight: 8  },
-            { y:  1, label: 'Ctrl', color: GRAY, concave: false, capHeight: 8 },
-            {  x: -1.1, y: -1, label: '' },
-            {  x: -1.1, y:  0, label: 'Enter', color: RED },
-            {  x: -1.1, y:  1, seLabel: 'Func', color: WHITE }
+            { y: -1-0.5, label: 'Cmd', color: GRAY, concave: false, capHeight: 8 },
+            { y:  0-0.5, label: 'Opt', color: GRAY, concave: false, capHeight: 8  },
+            { y:  1-0.5, label: 'Ctrl', color: GRAY, concave: false, capHeight: 8 },
+            {  x: -1.1, y: -1-0.5, label: '' },
+            {  x: -1.1, y:  0-0.5, label: 'Enter', color: RED },
+            {  x: -1.1, y:  1-0.5, seLabel: 'Func', color: WHITE }
         ]
     );
 
