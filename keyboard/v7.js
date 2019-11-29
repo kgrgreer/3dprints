@@ -1,6 +1,5 @@
 /* TODO:
 - move 5th row up 9mm
-- move 1st row down 1mm
 - move ring finger row up 1mm
 - increase height of key well by 6mm
 - don't bevel outside cap edges
@@ -27,6 +26,7 @@
 - elongate first-row thumb keys
 
 Done:
+- move 1st row down 1mm
 - finalize key layout for left hand
 - move pinky row up 3mm, left 2mm
 */
@@ -452,7 +452,7 @@ function createHand(d, k1, k2, k3, k4, k5, k6, kt) {
     // index finger
     var f1 = createFinger({
         direction: d,
-        translate: [d*-26,-10,3],
+        translate: [d*-26,-11,3],
         r: 77,
         a: 14,
         keys: k1
