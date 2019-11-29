@@ -11,6 +11,8 @@
 - increase holder size by 1mm
 - lower all keys by 1mm
 - increase cap infill
+- increase size of . and ,
+- increase size of ' and "
 - decrease size of "Space"
 - increase size of "Func"
 - add wire trenches
@@ -24,11 +26,9 @@
 - check size of holes
 - add holes to left side
 - elongate first-row thumb keys
+
+Done:
 - finalize key layout for left hand
-- put _/- where +/= is
-- move +/= key to where ~ is
-- move ~ to below Z
--
 */
 
 const PREVIEW  = true;
@@ -541,22 +541,22 @@ function right() {
         [
             { y:  -2, swLabel: '7', color: GRAY, capHeight: 7.5, capTilt: 40, label: '&', seLabel: 'F7' },
             { y:  -1, label: 'U', seLabel: 'PgUp' },
-            { label: 'J', seLabel:  { text: '^', a: 90 }, color: BLUE },
-            { y:  1, label: 'M', seLabel: 'PgDn', capHeight: 7.1, capTilt: -25 },
+            { label: 'J', seLabel:  'PgDn', color: BLUE },
+            { y:  1, label: 'M', seLabel: { text: '^', a: 90 }, capHeight: 7.1, capTilt: -25, color: GRAY },
         ],
         [
             { y:  -2, label: '*', swLabel: '8', color: GRAY, capHeight: 8, capTilt: 40, seLabel: 'F8' },
             { y:  -1, label: 'I' },
-            { label: 'K', seLabel: '^', color: BLUE },
-            { y:  1, label: '<', swLabel: ',', seLabel: { text: '^', a: 180 }  },
-            { y:  2, label: '{', swLabel: '[', capHeight: 7.1, capTilt: -25 }
+            { label: 'K', color: BLUE },
+            { y:  1, label: '<', swLabel: ',', seLabel: '^', color: GRAY },
+            { y:  2, label: '{', swLabel: '[', seLabel: { text: '^', a: 180 }, capHeight: 7.1, capTilt: -25, color: GRAY }
         ],
         [
             { y:  -2, label: {text: '(', scale: 0.12}, swLabel: '9', color: GRAY, capHeight: 8, capTilt: 40, seLabel: 'F9' },
             { y:  -1, label: 'O', seLabel: 'Home' },
-            { label: 'L', seLabel:  { text: '^', a: -90 }, color: BLUE },
-            { y:  1, label: '>', swLabel: '.', seLabel: 'End' },
-            { y:  2, label: '}', swLabel: ']', capHeight: 7.1, capTilt: -25 }
+            { label: 'L', seLabel: 'End', color: BLUE },
+            { y:  1, label: '>', swLabel: '.' },
+            { y:  2, label: '}', swLabel: ']', seLabel:  { text: '^', a: -90 }, capHeight: 7.1, capTilt: -25, color: GRAY }
         ],
         [
             { y:  -2, label: {text: ')', scale: 0.12}, swLabel: '0', color: GRAY, capHeight: 8, capTilt: 40, seLabel: 'F10' },
@@ -565,16 +565,15 @@ function right() {
             { y:  1, label: '?', swLabel: '/', capHeight: 7.1, capTilt: -25 },
         ],
         [
-            { y:  -2, label: '_', swLabel: '-', color: GRAY, capHeight: 8, capTilt: 40 },
-            { y:  -1, label: '|', swLabel: '\\' },
-            { label: '"', swLabel: "'" },
-            { y:  1, label: 'Shift', seLabel: 'Caps', color: GRAY, concave: false, capHeight: 5 }
+            { y:  -2, label: '|', swLabel: '\\', color: GRAY, capHeight: 8, capTilt: 40 },
+            { y:  -1, label: '"', swLabel: "'", seLabel: "`" },
+            { label: 'Shift', color: GRAY, concave: false, capHeight: 5 }
         ],
         [
             { y: -1, label: 'Cmd', color: GRAY, concave: false, capHeight: 8 },
             { y:  0, label: 'Opt', color: GRAY, concave: false, capHeight: 8  },
             { y:  1, label: 'Ctrl', color: GRAY, concave: false, capHeight: 8 },
-            {  x: -1.1, y: -1, label: {text: 'Space'} },
+            {  x: -1.1, y: -1, label: '' },
             {  x: -1.1, y:  0, label: 'Enter', color: RED },
             {  x: -1.1, y:  1, seLabel: 'Func', color: WHITE }
         ]
@@ -602,14 +601,15 @@ function left() {
             { y:  -2, label: '#', swLabel: '3', color: GRAY, seLabel: 'F3' },
             { y:  -1, label: 'E' },
             { label: 'D', color: BLUE },
-            { y:  1, label: 'C', seLabel: 'Copy' }
+            { y:  1, label: 'C', seLabel: 'Copy' },
+            { y:  2, label: '_', swLabel: '-', capHeight: 7.1, capTilt: -25 }
         ],
         [
             { y:  -2, label: '@', swLabel: '2', color: GRAY, seLabel: 'F2' },
             { y:  -1, label: 'W' },
             { label: 'S', color: BLUE },
-            { y:  1, label: 'X', seLabel: 'Cut'  },
-            { y:  2, label: '~', swLabel: '`'  },
+            { y:  1, label: 'X', seLabel: 'Cut' },
+            { y:  2, label: '+', swLabel: '=', seLabel: '~' }
         ],
         [
             { y:  -2, label: '!', swLabel: '1', color: GRAY, seLabel: 'F1' },
@@ -618,10 +618,9 @@ function left() {
             { y:  1, label: 'Z' }
         ],
         [
-            { y:  -2, label: '+', swLabel: '=', color: GRAY },
-            { y:  -1, label: 'Tab' },
-            { label: 'Esc', color: RED },
-            { y:  1, label: 'Shift', seLabel: 'Caps', color: GRAY, concave: false, capHeight: 7 }
+            { y: -2, label: 'Esc', color: RED },
+            { y: -1, label: 'Tab' },
+            { label: 'Shift', seLabel: 'Caps', color: GRAY, concave: false, capHeight: 7 }
         ],
         [
             { x: 0, y: -1, label: 'Cmd', color: GRAY, concave: false, capHeight: 8 },
@@ -681,5 +680,5 @@ return union(
 
    return right().rotateZ(-15.5).subtract(holes);
    */
-    return left().rotateZ(-30).translate([-100,0,0]).union(right().rotateZ(30).translate([100,0,0]));
+    return left().rotateZ(-30).translate([-85,0,0]).union(right().rotateZ(30).translate([85,0,0]));
 }
