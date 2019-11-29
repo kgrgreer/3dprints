@@ -1,5 +1,4 @@
 /* TODO:
-- move pinky row up 3mm, left 2mm
 - move 5th row up 9mm
 - move 1st row down 1mm
 - move ring finger row up 1mm
@@ -29,10 +28,11 @@
 
 Done:
 - finalize key layout for left hand
+- move pinky row up 3mm, left 2mm
 */
 
-const PREVIEW  = true;
-const LABELS   = true;
+const PREVIEW  = false;
+const LABELS   = false;
 
 const BLUE  = [100/255, 149/255, 237/255]; //corn blue
 const RED   = [0.8,0.1,0.1];
@@ -483,14 +483,14 @@ function createHand(d, k1, k2, k3, k4, k5, k6, kt) {
     // pinky
     var f5 = createFinger({
         direction: d,
-        translate: [d*41,-24,12],
+        translate: [d*39,-21,12],
         r: 77,
         a: 0,
         keys: k5
     });
     var f6 = createFinger({
         direction: d,
-        translate: [d*52,-32,13],
+        translate: [d*50,-32,13],
         r: 77,
         a: -8,
         keys: k6
