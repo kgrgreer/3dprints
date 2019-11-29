@@ -26,6 +26,7 @@
 - elongate first-row thumb keys
 
 Done:
+- move ring finger row up 1mm
 - move 1st row down 1mm
 - finalize key layout for left hand
 - move pinky row up 3mm, left 2mm
@@ -475,7 +476,7 @@ function createHand(d, k1, k2, k3, k4, k5, k6, kt) {
     // ring finger
     var f4 = createFinger({
         direction: d,
-        translate: [d*19,-3.5,4],
+        translate: [d*19,-2.5,4],
         r: 77,
         a: 0,
         keys: k4
