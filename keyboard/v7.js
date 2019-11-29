@@ -6,8 +6,6 @@
 - move arrow keys down one row
 - increase radius of thumb
 - change angle of thumb section
-- increase holder size by 1mm
-- lower all keys by 1mm
 - increase cap infill
 - increase size of . and ,
 - increase size of ' and "
@@ -19,13 +17,15 @@
 - raise "9" key 3mm
 - raise "0" key 5mm
 - roll all keys down half a key arc
-- make arrow keys red
 - roll Space key up half key arc
 - check size of holes
 - add holes to left side
 - elongate first-row thumb keys
 
 Done:
+- increase holder size by 1mm
+- lower all keys by 1mm
+- make arrow keys gray
 - move ring finger row up 1mm
 - move 1st row down 1mm
 - finalize key layout for left hand
@@ -211,7 +211,7 @@ var SWITCH = {
   latchWidth: 3.7,
   latchHeight: 1,
   holderThickness: 1,
-  holderHeight: 6,
+  holderHeight: 7,
   createHolderOutline: memoize(function() {
     var h = this.holderHeight;
     var t = this.holderThickness;
@@ -360,7 +360,7 @@ function createFinger(m) {
         a: 0, b: 0,
         a1: 1000, a2: -1000,
         b1: 1000, b2: -1000,
-        height: 79,
+        height: 78,
         x: 0,
         y: 0,
         translate: [1,1,1],
