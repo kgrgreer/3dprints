@@ -1,5 +1,4 @@
 /* TODO:
-- move 5th row up 9mm
 - increase height of key well by 6mm
 - don't bevel outside cap edges
 - increase cap infill
@@ -18,6 +17,7 @@
 - elongate first-row thumb keys
 
 Done:
+- move 5th row up 9mm and down by 1mm
 - change angle of thumb section by 10deg
 - increase radius of thumb from 77mm to 80mm
 - make Space key blank
@@ -31,7 +31,7 @@ Done:
 - move pinky row up 3mm, left 2mm
 */
 
-const PREVIEW  = false;
+const PREVIEW  = true;
 const LABELS   = false;
 
 const BLUE  = [100/255, 149/255, 237/255]; //corn blue
@@ -490,7 +490,7 @@ function createHand(d, k1, k2, k3, k4, k5, k6, kt) {
     });
     var f6 = createFinger({
         direction: d,
-        translate: [d*50,-32,13],
+        translate: [d*50,-23,12],
         r: 77,
         a: -8,
         keys: k6
