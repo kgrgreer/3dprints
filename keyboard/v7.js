@@ -2,7 +2,6 @@
 - move 5th row up 9mm
 - increase height of key well by 6mm
 - don't bevel outside cap edges
-- change angle of thumb section
 - increase cap infill
 - increase size of . and ,
 - increase size of ' and "
@@ -19,6 +18,7 @@
 - elongate first-row thumb keys
 
 Done:
+- change angle of thumb section by 10deg
 - increase radius of thumb from 77mm to 80mm
 - make Space key blank
 - move arrow keys down one row
@@ -502,7 +502,7 @@ function createHand(d, k1, k2, k3, k4, k5, k6, kt) {
         a: 12,
         keys: kt,
         transform: function(o) {
-          return o.translate([d*-15,0,0]).rotateZ(d*-45).translate([d*-57,-76,8]);
+          return o.translate([d*-15,0,0]).rotateZ(d*-55).translate([d*-64,-82,8]);
         }
     });
 
