@@ -1,15 +1,11 @@
 /* TODO:
 - move 5th row up 9mm
-- move ring finger row up 1mm
 - increase height of key well by 6mm
 - don't bevel outside cap edges
-- move arrow keys down one row
-- increase radius of thumb
 - change angle of thumb section
 - increase cap infill
 - increase size of . and ,
 - increase size of ' and "
-- decrease size of "Space"
 - increase size of "Func"
 - add wire trenches
 - add home index finger indicator
@@ -23,6 +19,9 @@
 - elongate first-row thumb keys
 
 Done:
+- increase radius of thumb from 77mm to 80mm
+- make Space key blank
+- move arrow keys down one row
 - increase holder size by 1mm
 - lower all keys by 1mm
 - make arrow keys gray
@@ -499,7 +498,7 @@ function createHand(d, k1, k2, k3, k4, k5, k6, kt) {
 
     var t1 = createFinger({
         direction: d,
-        r: 77,
+        r: 80,
         a: 12,
         keys: kt,
         transform: function(o) {
@@ -678,8 +677,8 @@ return union(
       return c.toProductionSolid().translate([20*i++, 0, 0]);
     })
   );
-
+*/
    return right().rotateZ(-15.5).subtract(holes);
-   */
+
     return left().rotateZ(-30).translate([-85,0,0]).union(right().rotateZ(30).translate([85,0,0]));
 }
