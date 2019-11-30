@@ -1,20 +1,19 @@
 /* TODO:
-- increase height of key well by 6mm
-- don't bevel outside cap edges
+- increase height of thumb key well by 6mm?
 - increase cap infill
 - increase size of . and ,
 - increase size of ' and "
 - increase size of "Func"
 - add wire trenches
 - add home index finger indicator
-- raise "O" key 2mm
-- raise "9" key 3mm
-- raise "0" key 5mm
 - check size of holes
 - add holes to left side
 - elongate first-row thumb keys
+- test if Func-` is viable, or if ` should be moved to N
 
 Done:
+- don't bevel outside cap edges
+- fix position of left thumb
 - roll all keys down half a key arc
 - roll Space key up half key arc
 - move 5th row up 9mm and down by 1mm
@@ -175,20 +174,21 @@ function flatWedge(r, a1, a2, b1, b2) {
 }
 
 
-function wedge(r, w, a1, a2, b1, b2) {
+function wedge(r, w, a1, a2, b1, b2, flags) {
   var s = sphere({r:r});
   var d = 2*r;
+  flags = flags || {};
 
   //s = s.intersect(cube({size:[1000,1000,1000]}).translate([-500,-500,0]));
 
   // left
-  s = s.subtract(cube({size:[d, d, d]}).translate([0,r,-d]).rotateY(b1).translate([w,-d,r]));
+  if ( ! flags.left ) s = s.subtract(cube({size:[-d, d, d]}).translate([0,r,-d]).rotateY(b2).translate([-w,-d,r]));
 
   // right
-  s = s.subtract(cube({size:[-d, d, d]}).translate([0,r,-d]).rotateY(b2).translate([-w,-d,r]));
+  if ( ! flags.right ) s = s.subtract(cube({size:[d, d, d]}).translate([0,r,-d]).rotateY(b1).translate([w,-d,r]));
 
   // top
- s = s.subtract(cube({size:[d, d, d]}).translate([-r,0,-d]).rotateX(-a1).translate([0,w,r]));
+  if ( ! flags.top ) s = s.subtract(cube({size:[d, d, d]}).translate([-r,0,-d]).rotateX(-a1).translate([0,w,r]));
 
   // bottom
   s = s.subtract(cube({size:[d, -d, d]}).translate([-r,0,-d]).rotateX(-a2).translate([0,-w,r]));
@@ -251,7 +251,7 @@ function createKeyCap(k) {
       toSolid: memoize(function() {
          const KEYW = 17;
          const WW   = 7.5;
-         var w   = wedge(this.f.r-13, 0, -WW, WW, -WW, WW);
+         var w   = wedge(this.f.r-13, 0, -WW, WW, -WW, WW, k.flags);
          var key = w.intersect(cube({radius:0, size:[KEYW,KEYW,3.6+this.capHeight+11]}).translate([-KEYW/2,-KEYW/2,-4-11]).intersect(cube({size:[100,100,100]}).translate([-50,-50,-4])));
 
          key = key.intersect(cylinder({r2:5,r1:12.8,h:32}).translate([0,0,-10]));
@@ -325,6 +325,7 @@ function createKey(m) {
        color: WHITE,
        capHeight: 7,
        capTilt: 0,
+       flags: {},
        a: 0, a1: -keyAngleRadius, a2: keyAngleRadius,
        b: 0, b1: -keyAngleRadius, b2: keyAngleRadius,
        createCap: function() {
@@ -449,6 +450,16 @@ function island() {
 
 
 function createHand(d, k1, k2, k3, k4, k5, k6, kt) {
+
+    k1.forEach((k)=>k.flags = {left: true});
+    k6.forEach((k)=>k.flags = {right: true});
+    k1[0].flags.top = true;
+    k2[0].flags = { top:true };
+    k3[0].flags = { top:true };
+    k4[0].flags = { top:true };
+    k5[0].flags = { top:true };
+    k6[0].flags.top = true;
+
     // index finger
     var f1 = createFinger({
         direction: d,
@@ -490,7 +501,7 @@ function createHand(d, k1, k2, k3, k4, k5, k6, kt) {
     });
     var f6 = createFinger({
         direction: d,
-        translate: [d*50,-23,12],
+        translate: [d*50,-24,12],
         r: 77,
         a: -8,
         keys: k6
@@ -507,7 +518,7 @@ function createHand(d, k1, k2, k3, k4, k5, k6, kt) {
     });
 
     var h = createComposite([
-     f1, f2, f3, f4, f5, f6, t1
+     f1, f2, f3, f4, f5, f6// , t1
     ]);
 
 return h.toSolid();
@@ -623,12 +634,12 @@ function left() {
             { label: 'Shift', seLabel: 'Caps', color: GRAY, concave: false, capHeight: 7 }
         ],
         [
-            { x: 0, y: -1, label: 'Cmd', color: GRAY, concave: false, capHeight: 8 },
-            { x: 0, y:  0, label: 'Opt', color: GRAY, concave: false, capHeight: 8  },
-            { x: 0, y:  1, label: 'Ctrl', color: GRAY, concave: false, capHeight: 8 },
-            { x: 1.1, y: -1, label: 'Bksp', color: RED },
-            { x: 1.1, y:  0, label: 'Del', color: RED },
-            { x: 1.1, y:  1, seLabel: 'Func', color: WHITE }
+            { y: -1-0.5, label: 'Cmd', color: GRAY, concave: false, capHeight: 8 },
+            { y:  0-0.5, label: 'Opt', color: GRAY, concave: false, capHeight: 8  },
+            { y:  1-0.5, label: 'Ctrl', color: GRAY, concave: false, capHeight: 8 },
+            {  x: -1.1, y: -1-0.5, label: 'Bksp' },
+            {  x: -1.1, y:  0-0.5, label: 'Del', color: RED },
+            {  x: -1.1, y:  1-0.5, seLabel: 'Func', color: WHITE }
         ]
     );
 
