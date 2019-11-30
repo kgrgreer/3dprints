@@ -8,6 +8,7 @@
 - test if Func-` is viable, or if ` should be moved to N
 
 Done:
+- improve label positions
 - lower Home and End keys one row
 - increase size of "Func"
 - increase size of . and ,
@@ -123,8 +124,9 @@ function createText(m) {
         } else if ( this.justify === 'C' ) {
           txt = txt.translate([-bounds[1].x/2, -bounds[0].y, -2.5]);
         } else {
-          txt = txt.translate([-bounds[0].x, -bounds[0].y, -2.5]);
-        }
+//          txt = txt.translate([-bounds[0].x, -bounds[0].y, -2.5]);
+          txt = txt.translate([0, -bounds[0].y, -2.5]);
+          }
 
         return txt;
       }
@@ -260,8 +262,8 @@ function createKeyCap(k) {
 
          key = key.setColor(this.color);
 
-         key = this.addLabel(key, -6.2,  1.7, this.label,   { color: BLACK });
-         key = this.addLabel(key, -6.2, -5.4, this.swLabel, { color: BLACK });
+         key = this.addLabel(key, -5,  1.5, this.label,   { color: BLACK });
+         key = this.addLabel(key, -5, -5.4, this.swLabel, { color: BLACK });
          key = this.addLabel(key,  6,   -5.4, this.seLabel, { color: RED, justify: 'R', scale: 0.12});
 
          return key.translate([0,0,SWITCH.stem]);
