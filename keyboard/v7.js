@@ -3,13 +3,13 @@
 - increase cap infill
 - add wire trenches
 - check size of holes
-- add holes to left side
 - elongate first-row thumb keys
 - test if Func-` is viable, or if ` should be moved to N
 - maybe remove | \ key and move as function keys on Y H N?
 - test how easy it is to press shift-"
 
 Done:
+- add holes to left side
 - make all keys concave
 - improve label positions
 - lower Home and End keys one row
@@ -651,7 +651,10 @@ function main() {
     var holes = union(
         cylinder({r:2, h:100}).translate([0,-60,0]),
         cylinder({r:2, h:100}).translate([-20,-60,0]),
-        cylinder({r:2, h:100}).translate([-40,-60,0])
+        cylinder({r:2, h:100}).translate([-40,-60,0]),
+        cylinder({r:2, h:100}).translate([-70,10,0]),
+        cylinder({r:2, h:100}).translate([-80,0,0]),
+        cylinder({r:2, h:100}).translate([-60,20,0])
     );
     /*
 return union(
