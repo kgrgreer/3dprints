@@ -6,6 +6,8 @@
 - add holes to left side
 - elongate first-row thumb keys
 - test if Func-` is viable, or if ` should be moved to N
+- maybe remove | \ key and move as function keys on Y H N?
+- test how easy it is to press shift-"
 
 Done:
 - make all keys concave
@@ -214,7 +216,7 @@ var SWITCH = {
   latchWidth: 3.7,
   latchHeight: 1,
   holderThickness: 1,
-  holderHeight: 7,
+  holderHeight: 8,
   createHolderOutline: memoize(function() {
     var h = this.holderHeight;
     var t = this.holderThickness;
