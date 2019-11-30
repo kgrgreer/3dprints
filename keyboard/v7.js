@@ -35,9 +35,9 @@ Done:
 - move pinky row up 3mm, left 2mm
 */
 
-const PREVIEW  = false;
+const PREVIEW  = true;
 const LABELS   = false;
-const BASE     = true;
+const BASE     = false;
 
 const BLUE  = [100/255, 149/255, 237/255]; //corn blue
 const RED   = [0.8,0.1,0.1];
@@ -261,7 +261,7 @@ function createKeyCap(k) {
          var w   = wedge(this.f.r-13, 0, -WW, WW, -WW, WW, k.flags);
          var key = w.intersect(cube({radius:0, size:[KEYW,KEYW,3.6+this.capHeight+11]}).translate([-KEYW/2,-KEYW/2,-4-11]).intersect(cube({size:[100,100,100]}).translate([-50,-50,-4])));
 
-         key = key.intersect(cylinder({r2:5,r1:12.8,h:32}).translate([0,0,-10]));
+         key = key.intersect(cylinder({r2:0,r1:11.5,h:100}).translate([0,0,-10]));
          key = this.concaveKey(key);
 
          key = key.setColor(this.color);
