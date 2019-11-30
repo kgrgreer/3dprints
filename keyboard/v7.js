@@ -1,7 +1,6 @@
 /* TODO:
 - increase height of thumb key well by 6mm?
 - increase cap infill
-- increase size of "Func"
 - add wire trenches
 - check size of holes
 - add holes to left side
@@ -9,6 +8,7 @@
 - test if Func-` is viable, or if ` should be moved to N
 
 Done:
+- increase size of "Func"
 - increase size of . and ,
 - increase size of ' and "
 - change shape of home keys
@@ -519,7 +519,7 @@ function createHand(d, k1, k2, k3, k4, k5, k6, kt) {
     });
 
     var h = createComposite([
-     f1, f2, f3, f4, f5, f6// , t1
+     f1, f2, f3, f4, f5, f6, t1
     ]);
 
 return h.toSolid();
@@ -587,7 +587,7 @@ function right() {
             { y:  1-0.5, label: 'Ctrl', color: GRAY, concave: false, capHeight: 8 },
             {  x: -1.1, y: -1-0.5, label: '' },
             {  x: -1.1, y:  0-0.5, label: 'Enter', color: RED },
-            {  x: -1.1, y:  1-0.5, seLabel: 'Func', color: WHITE }
+            {  x: -1.1, y:  1-0.5, seLabel: {text: 'Func', scale: 0.15}, color: WHITE }
         ]
     );
 
@@ -640,7 +640,7 @@ function left() {
             { y:  1-0.5, label: 'Ctrl', color: GRAY, concave: false, capHeight: 8 },
             {  x: -1.1, y: -1-0.5, label: 'Bksp' },
             {  x: -1.1, y:  0-0.5, label: 'Del', color: RED },
-            {  x: -1.1, y:  1-0.5, seLabel: 'Func', color: WHITE }
+            {  x: -1.1, y:  1-0.5, seLabel: {text: 'Func', scale: 0.15}, color: WHITE }
         ]
     );
 
