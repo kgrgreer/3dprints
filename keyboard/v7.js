@@ -8,6 +8,7 @@
 - test if Func-` is viable, or if ` should be moved to N
 
 Done:
+- lower Home and End keys one row
 - increase size of "Func"
 - increase size of . and ,
 - increase size of ' and "
@@ -565,9 +566,9 @@ function right() {
         ],
         [
             { y:  -2, label: {text: '(', scale: 0.12}, swLabel: '9', color: GRAY, capHeight: 8, capTilt: 40, seLabel: 'F9' },
-            { y:  -1, label: 'O', seLabel: 'Home' },
-            { label: 'L', seLabel: 'End', color: BLUE, isHome: true },
-            { y:  1, label: '>', swLabel: {text:'.', scale: 0.2} },
+            { y:  -1, label: 'O' },
+            { label: 'L', seLabel: 'Home', color: BLUE, isHome: true },
+            { y:  1, label: '>', seLabel: 'End', swLabel: {text:'.', scale: 0.2} },
             { y:  2, label: '}', swLabel: ']', seLabel:  { text: '^', a: -90 }, capHeight: 7.1, capTilt: -25, color: GRAY }
         ],
         [
