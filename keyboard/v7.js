@@ -35,8 +35,9 @@ Done:
 - move pinky row up 3mm, left 2mm
 */
 
-const PREVIEW  = true;
-const LABELS   = true;
+const PREVIEW  = false;
+const LABELS   = false;
+const BASE     = true;
 
 const BLUE  = [100/255, 149/255, 237/255]; //corn blue
 const RED   = [0.8,0.1,0.1];
@@ -138,7 +139,7 @@ function createText(m) {
 
 
 function baseShadow(o) {
-  return shadow(o.intersect(cube({size:[1000,1000,1], center: true})));
+  return shadow(o.intersect(cube({size:[2000,2000,1], center: true})));
 }
 
 
@@ -528,22 +529,14 @@ function createHand(d, k1, k2, k3, k4, k5, k6, kt) {
      f1, f2, f3, f4, f5, f6, t1
     ]);
 
-return h.toSolid();
-    //if ( ! PREVIEW ) return h.toSolid();
+    if ( ! BASE ) return h.toSolid();
 
     h.toSolid();
-    var sh = hull(baseShadow(h.toNegative()));
+    var sh = hull(baseShadow(h.toSolid()));
     var base = linear_extrude({height:2}, sh);
     base = base.subtract(h.toNegative());
     base = base.setColor(GRAY);
     var o = h.toSolid().union(base);
-    return o;
-
-    var c = cube({size:[70,22,14]}).translate([-46,33,0]);
-    o = o.union(c);
-    c = c.scale([0.98,0.98,0.98]);
-    o = o.subtract(c);
-    o = o.subtract(h.toNegative());
     return o;
 }
 
@@ -696,7 +689,7 @@ return union(
     })
   );
 */
-   return right().rotateZ(-15.5).subtract(holes);
+   return right().rotateZ(-22).subtract(holes);
 
     return left().rotateZ(-30).translate([-85,0,0]).union(right().rotateZ(30).translate([85,0,0]));
 }
