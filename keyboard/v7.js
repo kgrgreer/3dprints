@@ -5,13 +5,13 @@
 - increase size of ' and "
 - increase size of "Func"
 - add wire trenches
-- add home index finger indicator
 - check size of holes
 - add holes to left side
 - elongate first-row thumb keys
 - test if Func-` is viable, or if ` should be moved to N
 
 Done:
+- change shape of home keys
 - don't bevel outside cap edges
 - fix position of left thumb
 - roll all keys down half a key arc
@@ -280,7 +280,7 @@ function createKeyCap(k) {
       concaveKey: function(o) {
         var tiltY = Math.cos(degToRad(this.capTilt))*30;
         var tiltZ = Math.sin(degToRad(this.capTilt))*30;
-        o = o.subtract(sphere({r:30}).scale([1,1.5,1.3]).rotateX(this.capTilt/2.5).translate([0,-tiltZ,41-7+this.capHeight]));
+        o = o.subtract(sphere({r:30}).scale([1,k.isHome ? 1 : 1.7,1.3]).rotateX(this.capTilt/2.5).translate([0,-tiltZ,41-7+this.capHeight]));
         return o;
       },
       markAsHomeKey: function(o) {
@@ -325,7 +325,8 @@ function createKey(m) {
        color: WHITE,
        capHeight: 7,
        capTilt: 0,
-       flags: {},
+       flags: {}, // top, left, right flags
+       isHome: false,
        a: 0, a1: -keyAngleRadius, a2: keyAngleRadius,
        b: 0, b1: -keyAngleRadius, b2: keyAngleRadius,
        createCap: function() {
@@ -552,27 +553,27 @@ function right() {
         [
             { y:  -2, swLabel: '7', color: GRAY, capHeight: 7.5, capTilt: 40, label: '&', seLabel: 'F7' },
             { y:  -1, label: 'U', seLabel: 'PgUp' },
-            { label: 'J', seLabel:  'PgDn', color: BLUE },
+            { label: 'J', seLabel:  'PgDn', color: BLUE, isHome: true },
             { y:  1, label: 'M', seLabel: { text: '^', a: 90 }, capHeight: 7.1, capTilt: -25, color: GRAY },
         ],
         [
             { y:  -2, label: '*', swLabel: '8', color: GRAY, capHeight: 8, capTilt: 40, seLabel: 'F8' },
             { y:  -1, label: 'I' },
-            { label: 'K', color: BLUE },
+            { label: 'K', color: BLUE, isHome: true },
             { y:  1, label: '<', swLabel: ',', seLabel: '^', color: GRAY },
             { y:  2, label: '{', swLabel: '[', seLabel: { text: '^', a: 180 }, capHeight: 7.1, capTilt: -25, color: GRAY }
         ],
         [
             { y:  -2, label: {text: '(', scale: 0.12}, swLabel: '9', color: GRAY, capHeight: 8, capTilt: 40, seLabel: 'F9' },
             { y:  -1, label: 'O', seLabel: 'Home' },
-            { label: 'L', seLabel: 'End', color: BLUE },
+            { label: 'L', seLabel: 'End', color: BLUE, isHome: true },
             { y:  1, label: '>', swLabel: '.' },
             { y:  2, label: '}', swLabel: ']', seLabel:  { text: '^', a: -90 }, capHeight: 7.1, capTilt: -25, color: GRAY }
         ],
         [
             { y:  -2, label: {text: ')', scale: 0.12}, swLabel: '0', color: GRAY, capHeight: 8, capTilt: 40, seLabel: 'F10' },
             { y:  -1, label: 'P' },
-            { color: BLUE, label: ':', swLabel: ';' },
+            { color: BLUE, isHome: true, label: ':', swLabel: ';' },
             { y:  1, label: '?', swLabel: '/', capHeight: 7.1, capTilt: -25 },
         ],
         [
@@ -605,27 +606,27 @@ function left() {
         [
             { y:  -2, label: '$', swLabel: '4', color: GRAY, seLabel: 'F4' },
             { y:  -1, label: 'R' },
-            { color: BLUE, label: 'F' },
+            { color: BLUE, isHome: true, label: 'F' },
             { y:  1, label: 'V', seLabel: 'Paste' }
         ],
         [
             { y:  -2, label: '#', swLabel: '3', color: GRAY, seLabel: 'F3' },
             { y:  -1, label: 'E' },
-            { label: 'D', color: BLUE },
+            { label: 'D', color: BLUE, isHome: true },
             { y:  1, label: 'C', seLabel: 'Copy' },
             { y:  2, label: '_', swLabel: '-', capHeight: 7.1, capTilt: -25 }
         ],
         [
             { y:  -2, label: '@', swLabel: '2', color: GRAY, seLabel: 'F2' },
             { y:  -1, label: 'W' },
-            { label: 'S', color: BLUE },
+            { label: 'S', color: BLUE, isHome: true },
             { y:  1, label: 'X', seLabel: 'Cut' },
             { y:  2, label: '+', swLabel: '=', seLabel: '~' }
         ],
         [
             { y:  -2, label: '!', swLabel: '1', color: GRAY, seLabel: 'F1' },
             { y:  -1, label: 'Q' },
-            { label: 'A', color: BLUE, seLabel: 'All' },
+            { label: 'A', color: BLUE, isHome: true, seLabel: 'All' },
             { y:  1, label: 'Z' }
         ],
         [
