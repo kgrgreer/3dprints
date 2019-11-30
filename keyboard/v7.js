@@ -1,8 +1,6 @@
 /* TODO:
 - increase height of thumb key well by 6mm?
 - increase cap infill
-- increase size of . and ,
-- increase size of ' and "
 - increase size of "Func"
 - add wire trenches
 - check size of holes
@@ -11,6 +9,8 @@
 - test if Func-` is viable, or if ` should be moved to N
 
 Done:
+- increase size of . and ,
+- increase size of ' and "
 - change shape of home keys
 - don't bevel outside cap edges
 - fix position of left thumb
@@ -31,7 +31,7 @@ Done:
 */
 
 const PREVIEW  = true;
-const LABELS   = false;
+const LABELS   = true;
 
 const BLUE  = [100/255, 149/255, 237/255]; //corn blue
 const RED   = [0.8,0.1,0.1];
@@ -560,14 +560,14 @@ function right() {
             { y:  -2, label: '*', swLabel: '8', color: GRAY, capHeight: 8, capTilt: 40, seLabel: 'F8' },
             { y:  -1, label: 'I' },
             { label: 'K', color: BLUE, isHome: true },
-            { y:  1, label: '<', swLabel: ',', seLabel: '^', color: GRAY },
+            { y:  1, label: '<', swLabel: {text:',', scale: 0.2}, seLabel: '^', color: GRAY },
             { y:  2, label: '{', swLabel: '[', seLabel: { text: '^', a: 180 }, capHeight: 7.1, capTilt: -25, color: GRAY }
         ],
         [
             { y:  -2, label: {text: '(', scale: 0.12}, swLabel: '9', color: GRAY, capHeight: 8, capTilt: 40, seLabel: 'F9' },
             { y:  -1, label: 'O', seLabel: 'Home' },
             { label: 'L', seLabel: 'End', color: BLUE, isHome: true },
-            { y:  1, label: '>', swLabel: '.' },
+            { y:  1, label: '>', swLabel: {text:'.', scale: 0.2} },
             { y:  2, label: '}', swLabel: ']', seLabel:  { text: '^', a: -90 }, capHeight: 7.1, capTilt: -25, color: GRAY }
         ],
         [
@@ -578,7 +578,7 @@ function right() {
         ],
         [
             { y:  -2, label: '|', swLabel: '\\', color: GRAY, capHeight: 8, capTilt: 40 },
-            { y:  -1, label: '"', swLabel: "'", seLabel: "`" },
+            { y:  -1, label: {text:'"', scale: 0.2}, swLabel: {text:"'", scale: 0.2}, seLabel: {text:"`", scale: 0.2} },
             { label: 'Shift', color: GRAY, concave: false, capHeight: 5 }
         ],
         [
