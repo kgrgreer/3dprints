@@ -8,6 +8,7 @@
 - test if Func-` is viable, or if ` should be moved to N
 
 Done:
+- make all keys concave
 - improve label positions
 - lower Home and End keys one row
 - increase size of "Func"
@@ -258,7 +259,7 @@ function createKeyCap(k) {
          var key = w.intersect(cube({radius:0, size:[KEYW,KEYW,3.6+this.capHeight+11]}).translate([-KEYW/2,-KEYW/2,-4-11]).intersect(cube({size:[100,100,100]}).translate([-50,-50,-4])));
 
          key = key.intersect(cylinder({r2:5,r1:12.8,h:32}).translate([0,0,-10]));
-         if ( this.concave ) key = this.concaveKey(key);
+         key = this.concaveKey(key);
 
          key = key.setColor(this.color);
 
@@ -582,12 +583,12 @@ function right() {
         [
             { y:  -2, label: '|', swLabel: '\\', color: GRAY, capHeight: 8, capTilt: 40 },
             { y:  -1, label: {text:'"', scale: 0.2}, swLabel: {text:"'", scale: 0.2}, seLabel: {text:"`", scale: 0.2} },
-            { label: 'Shift', color: GRAY, concave: false, capHeight: 5 }
+            { label: 'Shift', color: GRAY}
         ],
         [
-            { y: -1-0.5, label: 'Cmd', color: GRAY, concave: false, capHeight: 8 },
-            { y:  0-0.5, label: 'Opt', color: GRAY, concave: false, capHeight: 8  },
-            { y:  1-0.5, label: 'Ctrl', color: GRAY, concave: false, capHeight: 8 },
+            { y: -1-0.5, label: 'Cmd', color: GRAY, capHeight: 11 },
+            { y:  0-0.5, label: 'Opt', color: GRAY, capHeight: 11  },
+            { y:  1-0.5, label: 'Ctrl', color: GRAY, capHeight:11 },
             {  x: -1.1, y: -1-0.5, label: '' },
             {  x: -1.1, y:  0-0.5, label: 'Enter', color: RED },
             {  x: -1.1, y:  1-0.5, seLabel: {text: 'Func', scale: 0.15}, color: WHITE }
@@ -635,12 +636,12 @@ function left() {
         [
             { y: -2, label: 'Esc', color: RED },
             { y: -1, label: 'Tab' },
-            { label: 'Shift', seLabel: 'Caps', color: GRAY, concave: false, capHeight: 7 }
+            { label: 'Shift', seLabel: 'Caps', color: GRAY }
         ],
         [
-            { y: -1-0.5, label: 'Cmd', color: GRAY, concave: false, capHeight: 8 },
-            { y:  0-0.5, label: 'Opt', color: GRAY, concave: false, capHeight: 8  },
-            { y:  1-0.5, label: 'Ctrl', color: GRAY, concave: false, capHeight: 8 },
+            { y: -1-0.5, label: 'Cmd', color: GRAY, capHeight: 11 },
+            { y:  0-0.5, label: 'Opt', color: GRAY, capHeight: 11  },
+            { y:  1-0.5, label: 'Ctrl', color: GRAY, capHeight: 11 },
             {  x: -1.1, y: -1-0.5, label: 'Bksp' },
             {  x: -1.1, y:  0-0.5, label: 'Del', color: RED },
             {  x: -1.1, y:  1-0.5, seLabel: {text: 'Func', scale: 0.15}, color: WHITE }
