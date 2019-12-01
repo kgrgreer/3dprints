@@ -47,7 +47,7 @@ Done:
 */
 
 const PREVIEW  = true;
-const LABELS   = true;
+const LABELS   = false;
 const BASE     = false;
 
 const BLUE  = [100/255, 149/255, 237/255]; //corn blue
@@ -334,7 +334,7 @@ function createKeyCap(k) {
 function createKey(m) {
     m = m || {};
     if ( m.x ) m.a = 16*m.x;
-    if ( m.y ) { m.b = 16*m.y }
+    if ( m.y ) { m.b = 16.5*m.y }
 
     var keyAngleRadius = 8;
 
@@ -704,7 +704,7 @@ return union(
     })
   );
 */
-//   return right().rotateZ(-22).subtract(holes);
+   return right().rotateZ(-22).subtract(holes);
 
     return left().rotateZ(-30).translate([-85,0,0]).union(right().rotateZ(30).translate([85,0,0]));
 }
