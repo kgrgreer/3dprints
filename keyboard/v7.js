@@ -7,6 +7,9 @@
 - test if Func-` is viable, or if ` should be moved to N
 - maybe remove | \ key and move as function keys on Y H N?
 - test how easy it is to press shift-"
+- maybe round top edge of keys more (with a cone?)
+- maybe raise thumb well?
+
 
 Done:
 - add holes to left side
@@ -46,9 +49,9 @@ Done:
   30% infill
 */
 
-const PREVIEW  = true;
+const PREVIEW  = false;
 const LABELS   = false;
-const BASE     = false;
+const BASE     = true;
 
 const BLUE  = [100/255, 149/255, 237/255]; //corn blue
 const RED   = [0.8,0.1,0.1];
@@ -79,7 +82,7 @@ function axis() {
 
 
 function trimZ(o) {
-  return o.subtract(cube({size:[600,600,200]}).translate([-300,-300,-200]));
+  return o.intersect(cube({size:[2000,2000,200], center:[true,true,false]}));
 }
 
 
@@ -150,7 +153,7 @@ function createText(m) {
 
 
 function baseShadow(o) {
-  return shadow(o.intersect(cube({size:[2000,2000,1], center: true})));
+  return shadow(o.intersect(cube({size:[3000,3000,1], center: true})));
 }
 
 
@@ -532,7 +535,7 @@ function createHand(d, k1, k2, k3, k4, k5, k6, kt) {
         a: 12,
         keys: kt,
         transform: function(o) {
-          return o.translate([d*-15,0,0]).rotateZ(d*-55).translate([d*-64,-90,8]);
+          return o.translate([d*-15,0,0]).rotateZ(d*-55).translate([d*-64,-92,8]);
         }
     });
 
@@ -704,7 +707,7 @@ return union(
     })
   );
 */
-   return right().rotateZ(-22).subtract(holes);
+   return right().rotateZ(-23).subtract(holes);
 
     return left().rotateZ(-30).translate([-85,0,0]).union(right().rotateZ(30).translate([85,0,0]));
 }
