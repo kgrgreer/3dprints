@@ -35,8 +35,19 @@ Done:
 - move pinky row up 3mm, left 2mm
 */
 
+/*
+  PRINT INSTRUCTIONS
+
+  Base:
+  PLA
+
+  Key Caps:
+  ABS
+  30% infill
+*/
+
 const PREVIEW  = true;
-const LABELS   = false;
+const LABELS   = true;
 const BASE     = false;
 
 const BLUE  = [100/255, 149/255, 237/255]; //corn blue
@@ -577,7 +588,7 @@ function right() {
         ],
         [
             { y:  -2, label: '|', swLabel: '\\', color: GRAY, capHeight: 8, capTilt: 40 },
-            { y:  -1, label: {text:'"', scale: 0.2}, swLabel: {text:"'", scale: 0.2}, seLabel: {text:"`", scale: 0.2} },
+            { y:  -1, label: {text:'"', scale: 0.2}, swLabel: {text:"'", scale: 0.2} },
             { label: 'Shift', color: GRAY}
         ],
         [
@@ -606,26 +617,26 @@ function left() {
             { y:  -2, label: '$', swLabel: '4', color: GRAY, seLabel: 'F4' },
             { y:  -1, label: 'R' },
             { color: BLUE, isHome: true, label: 'F' },
-            { y:  1, label: 'V', seLabel: 'Paste' }
+            { y:  1, label: 'V' }
         ],
         [
             { y:  -2, label: '#', swLabel: '3', color: GRAY, seLabel: 'F3' },
             { y:  -1, label: 'E' },
             { label: 'D', color: BLUE, isHome: true },
-            { y:  1, label: 'C', seLabel: 'Copy' },
-            { y:  2, label: '_', swLabel: '-', capHeight: 7.1, capTilt: -25 }
+            { y:  1, label: 'C' },
+            { y:  2, label: '_', swLabel: '-', seLabel: {text:"`", scale: 0.2}, capHeight: 7.1, capTilt: -25 }
         ],
         [
             { y:  -2, label: '@', swLabel: '2', color: GRAY, seLabel: 'F2' },
             { y:  -1, label: 'W' },
             { label: 'S', color: BLUE, isHome: true },
-            { y:  1, label: 'X', seLabel: 'Cut' },
+            { y:  1, label: 'X' },
             { y:  2, label: '+', swLabel: '=', seLabel: '~' }
         ],
         [
             { y:  -2, label: '!', swLabel: '1', color: GRAY, seLabel: 'F1' },
             { y:  -1, label: 'Q' },
-            { label: 'A', color: BLUE, isHome: true, seLabel: 'All' },
+            { label: 'A', color: BLUE, isHome: true},
             { y:  1, label: 'Z' }
         ],
         [
@@ -677,7 +688,8 @@ return union(
     createKeyCap(
       createKey({ f: {r:76}, y:  -2, label: {text: '*', scale:.25}, swLabel: '8', color: GRAY, seLabel: {text:'F8', scale:0.16, w:5} })
     ).toProductionSolid().translate([60,0,0])
-);*/
+);
+*/
 
 //return SWITCH.createHolder();
  //return SWITCH.createHolder().subtract(SWITCH.toSolid());
@@ -692,7 +704,7 @@ return union(
     })
   );
 */
-   return right().rotateZ(-22).subtract(holes);
+//   return right().rotateZ(-22).subtract(holes);
 
     return left().rotateZ(-30).translate([-85,0,0]).union(right().rotateZ(30).translate([85,0,0]));
 }
