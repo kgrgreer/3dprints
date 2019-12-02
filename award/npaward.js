@@ -1,3 +1,10 @@
+/*
+ PRINT SETTINGS:
+ - ABS
+ - 102% FLOW
+ - 210 degrees
+ - layer height: 0.08mm
+*/
 
 function createText(m) {
     if ( typeof m === 'string' ) m = { text: m };
@@ -100,13 +107,13 @@ var poly = polygon([
   f = f.subtract(year.toSolid().translate([0,22,DEPTH+0.25]));
 
   var title1 = createText({text: 'Blockchain', w: 2.5, justify: 'C', depth:1, scale: 0.075});
-  f = f.subtract(title1.toSolid().translate([0,15.3+.4,DEPTH]));
+  f = f.subtract(title1.toSolid().translate([0,15.3+.4,DEPTH+0.1]));
 
   var title2 = createText({text: 'Company', w: 2.5, justify: 'C', depth:1, scale: 0.075});
-  f = f.subtract(title2.toSolid().translate([0,12.3+.4,DEPTH]));
+  f = f.subtract(title2.toSolid().translate([0,12.3+.4,DEPTH+0.1]));
 
   var title3 = createText({text: 'of the Year', w: 2.5, justify: 'C', depth:1, scale: 0.075});
-  f = f.subtract(title3.toSolid().translate([0,10.3+.4,DEPTH]));
+  f = f.subtract(title3.toSolid().translate([0,10.3+.4,DEPTH+0.1]));
 
   var np = createText({text: 'nanopay', w: 3.5, justify: 'C', depth:1, scale: 0.1});
   f = f.subtract(np.toSolid().translate([0,5,DEPTH]));
@@ -115,8 +122,11 @@ var poly = polygon([
 
   f = f.union(base()).rotateX(-7).intersect(cube({size:[100,100,100],center:[true,true,false]}));
 
-  var name = createText({text: 'Mahimma J.', w: 2.5, justify: 'C', depth:1, scale: 0.075});
-  f = f.subtract(name.toSolid().translate([0,-1.4,DEPTH+0.6]));
+  var name = createText({text: 'Ivy', w: 2.5, justify: 'C', depth:1, scale: 0.0625});
+  f = f.subtract(name.toSolid().translate([0,-1.4,DEPTH+0.55]));
 
-  return f.scale(3);
+  var mf = createText({text: 'Mfg. by KGR, Dec. 2019', w: 2.5, justify: 'C', depth:1, scale: 0.04});
+  f = f.subtract(mf.toSolid().rotateX(90).translate([-5,-4.25,0.25]));
+
+  return f.scale(4).rotateZ(90);
 }
