@@ -547,7 +547,7 @@ function createHand(d, k1, k2, k3, k4, k5, k6, kt) {
 
     h.toSolid();
     var sh = hull(baseShadow(h.toSolid()));
-    var base = linear_extrude({height:2}, sh);
+    var base = linear_extrude({height:5}, sh);
     base = base.subtract(h.toNegative());
     base = base.setColor(GRAY);
     var o = h.toSolid().union(base);
