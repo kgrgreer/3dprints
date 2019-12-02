@@ -1,12 +1,9 @@
 /* TODO:
 - increase height of thumb key well by 6mm?
-- increase cap infill
 - add wire trenches
 - check size of holes
 - elongate first-row thumb keys
-- test if Func-` is viable, or if ` should be moved to N
-- maybe remove | \ key and move as function keys on Y H N?
-- test how easy it is to press shift-"
+- maybe remove two keys on each side and move more symbols to func keys
 - maybe round top edge of keys more (with a cone?)
 - maybe raise thumb well?
 
