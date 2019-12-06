@@ -2,7 +2,7 @@
  PRINT SETTINGS:
  - ABS
  - 102% FLOW
- - 210 degrees
+ - 195 degrees
  - layer height: 0.08mm
 */
 
@@ -122,7 +122,7 @@ var poly = polygon([
 
   f = f.union(base()).rotateX(-7).intersect(cube({size:[100,100,100],center:[true,true,false]}));
 
-  var name = createText({text: 'Ivy', w: 2.5, justify: 'C', depth:1, scale: 0.0625});
+  var name = createText({text: 'Michael J. Connor', w: 2.5, justify: 'C', depth:1, scale: 0.07});
   f = f.subtract(name.toSolid().translate([0,-1.4,DEPTH+0.55]));
 
   var mf = createText({text: 'Mfg. by KGR, Dec. 2019', w: 2.5, justify: 'C', depth:1, scale: 0.04});
