@@ -59,13 +59,14 @@ function negativePuckHolder() {
 }
 
 function puckHolder() {
-  var h = cylinder({r:PUCK_R+7, h: 60}).subtract(cylinder({r:PUCK_R+1, h: 15}));
+  var h = cylinder({r:PUCK_R+7, h: 60}).subtract(cylinder({r:PUCK_R+0.2, h: 15}));
   h = h.rotateX(-90-20);
   h = h.translate([50,26,56])
   return h;
 }
 
 function main() {
+//    return puckHolder().rotateX(-90+20)
     return base().union(puckHolder()).subtract(negativePuckHolder()).subtract(text().translate([0,1,0])).rotateX(-90).translate([0,0,54]).intersect(cube({size:[1000,1000,1000], center: [true,false,false]}));
 
 }
