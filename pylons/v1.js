@@ -1,7 +1,7 @@
-//const NAME = "Sebastian", W = 37;
-const NAME = "Kevin", W = 18;
+const NAME = "Sebastian", W = 39.5;
+//const NAME = "Kevin", W = 18;
 //const NAME = "Julia", W = 13;
-//const NAME = "David", W = 16;
+//const NAME = "David", W = 18;
 const R = 10;
 const ORANGE = [1, 165/256, 0];
 
@@ -67,17 +67,19 @@ function base() {
 
 
 function name() {
- return createText({text: NAME, justify: 'C', scale:0.3}).toSolid().translate([0,0,1.3]).rotateZ(90).rotateY(45).translate([10,-W/2,4]);
+ var n = createText({text: NAME, justify: 'C', scale:0.3}).toSolid().translate([0,-1,0]).rotateZ(90).rotateY(60).translate([10,-W/2,4.2]);
+ n = n.subtract(base()).translate([-0.25,0,-0.25]);
+ return n;
 }
 
 
 function main() {
     var o = base();
 
-    o = o.subtract(o.translate([0,0,-2]));
+    o = o.subtract(o.translate([0,0,-1.75]));
     o = o.subtract(name());
     o = o.subtract(cube({radius:1.9,size:[7,W+6,100]}).translate([-3.5,-W-3,0]));
     o = o.setColor(ORANGE);
 
-    return o.scale(1.5*1.5).scale([1,1,1]);
+    return o.scale(1.5*1.5).scale([1,1,1]).rotateZ(90);
 }
