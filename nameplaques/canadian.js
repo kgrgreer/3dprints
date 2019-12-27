@@ -6,10 +6,8 @@ function main1() {
 return text(NAME,0.65).scale(0.4*SCALE).scale([1,1,0.5]);
 }
 
-
-function leaf() {
-  // data from Vesna's program
-  var poly = polygon([
+function leafPoly() {
+  return polygon([
       [0,400],
       [78,275],
       [150,302],
@@ -37,12 +35,19 @@ function leaf() {
       [-150,302],
       [-78,275]
   ]);
+}
 
+function leaf() {
+  var poly = leafPoly();
   return linear_extrude({height: HEIGHT}, poly).setColor([1,0,0]).scale([0.011,0.011,1]).translate([-82,4,10]).rotateZ(90).rotateY(45);
 }
 
 
 function main() {
+    return linear_extrude({height: 1}, leafPoly().contract(12)).scale([0.011,0.011,1]);
+}
+
+function main2() {
   var m = base().setColor([1,1,1]);
 
   m = m.subtract(leaf());
@@ -65,7 +70,7 @@ function base() {
 
 
 function label() {
-    return text("Mfg. by: KGR, Dec. 2019\n\nMADE IN CANADA").rotateZ(-90).rotateX(-180).translate([38,-9.8*W,3.6]).scale([0.1,0.1,0.2]);
+    return text("Mfg. by: KGR, Dec. 2019\n\n\nMADE IN CANADA").rotateZ(-90).rotateX(-180).translate([38,-9.8*W,3.6]).scale([0.1,0.1,0.2]);
 }
 
 
