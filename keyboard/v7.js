@@ -7,8 +7,17 @@
 - maybe round top edge of keys more (with a cone?)
 - maybe raise thumb well?
 
+TODO:
+  - curve out top of: JKL:UIOP"NH{}? Shift
+  - raise 7 1mm, 8 1.5mm, 9 2mm, 0 1mm
+  - rotate pinky row out a couple degrees
+  - move pinky row left 1mm, up 1mm
+  - move first row right 1.5-2mm
+  - move right finger row down 0.5mm
+  - rotate first row in slightly
 
 Done:
+- curve out bogtom of: HJKL:<>
 - add holes to left side
 - make all keys concave
 - improve label positions
@@ -46,8 +55,8 @@ Done:
   30% infill
 */
 
-const PREVIEW  = false;
-const LABELS   = false;
+const PREVIEW  = true;
+const LABELS   = true;
 const BASE     = true;
 
 const BLUE  = [100/255, 149/255, 237/255]; //corn blue
@@ -274,6 +283,7 @@ function createKeyCap(k) {
 
          key = key.intersect(cylinder({r2:0,r1:11.5,h:100}).translate([0,0,-10]));
          key = this.concaveKey(key);
+         key = this.edgeKey(key);
 
          key = key.setColor(this.color);
 
@@ -298,7 +308,12 @@ function createKeyCap(k) {
       concaveKey: function(o) {
         var tiltY = Math.cos(degToRad(this.capTilt))*30;
         var tiltZ = Math.sin(degToRad(this.capTilt))*30;
-        o = o.subtract(sphere({r:30}).scale([1,k.isHome ? 1 : 1.7,1.3]).rotateX(this.capTilt/2.5).translate([0,-tiltZ,41-7+this.capHeight]));
+        o = o.subtract(sphere({r:30}).scale([1,k.isHome ? 1 : 3,1.3]).rotateX(this.capTilt/2.5).translate([0,-tiltZ,41-7+this.capHeight]));
+        return o;
+      },
+      edgeKey: function(o) {
+        if ( this.flags.edgeTop )    o = o.subtract(cylinder({r:9.5, h:20}).rotateX(40).translate([0,20,0]));
+        if ( this.flags.edgeBottom ) o = o.subtract(cylinder({r:9.5, h:20}).rotateX(-40).translate([0,-20,0]));
         return o;
       },
       markAsHomeKey: function(o) {
@@ -470,8 +485,8 @@ function island() {
 
 function createHand(d, k1, k2, k3, k4, k5, k6, kt) {
 
-    k1.forEach((k)=>k.flags = {left: true});
-    k6.forEach((k)=>k.flags = {right: true});
+    k1.forEach((k)=>{ if ( k.flags == undefined ) k.flags = {}; k.flags.left = true; });
+    k6.forEach((k)=>{ if ( k.flags == undefined ) k.flags = {}; k.flags.right = true; });
     k1[0].flags.top = true;
     k2[0].flags = { top:true };
     k3[0].flags = { top:true };
@@ -557,33 +572,33 @@ function right() {
       [
             { y:  -2, label: '^', swLabel: '6', color: GRAY, capHeight: 8, capTilt: 45, seLabel: 'F6' },
             { y:  -1, label: 'Y' },
-            { label: 'H' },
+            { label: 'H', flags: {edgeBottom: true} },
             { y:  1, label: 'N', capHeight: 7.1, capTilt: -25 },
         ],
         [
             { y:  -2, swLabel: '7', color: GRAY, capHeight: 7.5, capTilt: 40, label: '&', seLabel: 'F7' },
             { y:  -1, label: 'U', seLabel: 'PgUp' },
-            { label: 'J', seLabel:  'PgDn', color: BLUE, isHome: true },
+            { label: 'J', seLabel:  'PgDn', color: BLUE, isHome: true, flags: {edgeBottom: true}  },
             { y:  1, label: 'M', seLabel: { text: '^', a: 90 }, capHeight: 7.1, capTilt: -25, color: GRAY },
         ],
         [
             { y:  -2, label: '*', swLabel: '8', color: GRAY, capHeight: 8, capTilt: 40, seLabel: 'F8' },
             { y:  -1, label: 'I' },
-            { label: 'K', color: BLUE, isHome: true },
-            { y:  1, label: '<', swLabel: {text:',', scale: 0.2}, seLabel: '^', color: GRAY },
+            { label: 'K', color: BLUE, isHome: true, flags: {edgeBottom: true}  },
+            { y:  1, label: '<', swLabel: {text:',', scale: 0.2}, seLabel: '^', color: GRAY, flags: {edgeBottom: true}  },
             { y:  2, label: '{', swLabel: '[', seLabel: { text: '^', a: 180 }, capHeight: 7.1, capTilt: -25, color: GRAY }
         ],
         [
             { y:  -2, label: {text: '(', scale: 0.12}, swLabel: '9', color: GRAY, capHeight: 8, capTilt: 40, seLabel: 'F9' },
             { y:  -1, label: 'O' },
-            { label: 'L', seLabel: 'Home', color: BLUE, isHome: true },
-            { y:  1, label: '>', seLabel: 'End', swLabel: {text:'.', scale: 0.2} },
+            { label: 'L', seLabel: 'Home', color: BLUE, isHome: true, flags: {edgeBottom: true}  },
+            { y:  1, label: '>', seLabel: 'End', swLabel: {text:'.', scale: 0.2}, flags: {edgeBottom: true} },
             { y:  2, label: '}', swLabel: ']', seLabel:  { text: '^', a: -90 }, capHeight: 7.1, capTilt: -25, color: GRAY }
         ],
         [
             { y:  -2, label: {text: ')', scale: 0.12}, swLabel: '0', color: GRAY, capHeight: 8, capTilt: 40, seLabel: 'F10' },
             { y:  -1, label: 'P' },
-            { color: BLUE, isHome: true, label: ':', swLabel: ';' },
+            { color: BLUE, isHome: true, label: ':', swLabel: ';', flags: {edgeBottom: true}  },
             { y:  1, label: '?', swLabel: '/', capHeight: 7.1, capTilt: -25 },
         ],
         [
@@ -694,7 +709,7 @@ return union(
 //return SWITCH.createHolder();
  //return SWITCH.createHolder().subtract(SWITCH.toSolid());
   //  return SWITCH.toSolid();
-/*
+  /*
   right();
 
   var i = 0;
@@ -703,7 +718,8 @@ return union(
       return c.toProductionSolid().translate([20*i++, 0, 0]);
     })
   );
-*/
+  */
+
    return right().rotateZ(-23).subtract(holes);
 
     return left().rotateZ(-30).translate([-85,0,0]).union(right().rotateZ(30).translate([85,0,0]));
