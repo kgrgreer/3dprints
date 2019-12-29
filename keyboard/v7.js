@@ -8,7 +8,6 @@
 - maybe raise thumb well?
 
 TODO:
-  - curve out top of: JKL:UIOP"NH{}? Shift
   - raise 7 1mm, 8 1.5mm, 9 2mm, 0 1mm
   - rotate pinky row out a couple degrees
   - move pinky row left 1mm, up 1mm
@@ -17,6 +16,7 @@ TODO:
   - rotate first row in slightly
 
 Done:
+- curve out top of: HJKL:UIOP"N{}: Shift
 - curve out bogtom of: HJKL:<>
 - add holes to left side
 - make all keys concave
@@ -572,39 +572,39 @@ function right() {
       [
             { y:  -2, label: '^', swLabel: '6', color: GRAY, capHeight: 8, capTilt: 45, seLabel: 'F6' },
             { y:  -1, label: 'Y' },
-            { label: 'H', flags: {edgeBottom: true} },
-            { y:  1, label: 'N', capHeight: 7.1, capTilt: -25 },
+            { label: 'H', flags: {edgeBottom: true, edgeTop: true} },
+            { y:  1, label: 'N', capHeight: 7.1, capTilt: -25, flags: {edgeTop: true} },
         ],
         [
             { y:  -2, swLabel: '7', color: GRAY, capHeight: 7.5, capTilt: 40, label: '&', seLabel: 'F7' },
-            { y:  -1, label: 'U', seLabel: 'PgUp' },
-            { label: 'J', seLabel:  'PgDn', color: BLUE, isHome: true, flags: {edgeBottom: true}  },
+            { y:  -1, label: 'U', seLabel: 'PgUp', flags: {edgeTop: true} },
+            { label: 'J', seLabel:  'PgDn', color: BLUE, isHome: true, flags: {edgeBottom: true, edgeTop: true}  },
             { y:  1, label: 'M', seLabel: { text: '^', a: 90 }, capHeight: 7.1, capTilt: -25, color: GRAY },
         ],
         [
             { y:  -2, label: '*', swLabel: '8', color: GRAY, capHeight: 8, capTilt: 40, seLabel: 'F8' },
-            { y:  -1, label: 'I' },
-            { label: 'K', color: BLUE, isHome: true, flags: {edgeBottom: true}  },
-            { y:  1, label: '<', swLabel: {text:',', scale: 0.2}, seLabel: '^', color: GRAY, flags: {edgeBottom: true}  },
-            { y:  2, label: '{', swLabel: '[', seLabel: { text: '^', a: 180 }, capHeight: 7.1, capTilt: -25, color: GRAY }
+            { y:  -1, label: 'I', flags: {edgeTop: true} },
+            { label: 'K', color: BLUE, isHome: true, flags: {edgeBottom: true, edgeTop: true}  },
+            { y:  1, label: '<', swLabel: {text:',', scale: 0.2}, seLabel: '^', color: GRAY, flags: {edgeBottom: true, edgeTop: true}  },
+            { y:  2, label: '{', swLabel: '[', seLabel: { text: '^', a: 180 }, capHeight: 7.1, capTilt: -25, color: GRAY, flags: {edgeTop: true} }
         ],
         [
             { y:  -2, label: {text: '(', scale: 0.12}, swLabel: '9', color: GRAY, capHeight: 8, capTilt: 40, seLabel: 'F9' },
-            { y:  -1, label: 'O' },
-            { label: 'L', seLabel: 'Home', color: BLUE, isHome: true, flags: {edgeBottom: true}  },
+            { y:  -1, label: 'O', flags: {edgeTop: true} },
+            { label: 'L', seLabel: 'Home', color: BLUE, isHome: true, flags: {edgeBottom: true, edgeTop: true}  },
             { y:  1, label: '>', seLabel: 'End', swLabel: {text:'.', scale: 0.2}, flags: {edgeBottom: true} },
-            { y:  2, label: '}', swLabel: ']', seLabel:  { text: '^', a: -90 }, capHeight: 7.1, capTilt: -25, color: GRAY }
+            { y:  2, label: '}', swLabel: ']', seLabel:  { text: '^', a: -90 }, capHeight: 7.1, capTilt: -25, color: GRAY, flags: {edgeTop: true} }
         ],
         [
             { y:  -2, label: {text: ')', scale: 0.12}, swLabel: '0', color: GRAY, capHeight: 8, capTilt: 40, seLabel: 'F10' },
-            { y:  -1, label: 'P' },
-            { color: BLUE, isHome: true, label: ':', swLabel: ';', flags: {edgeBottom: true}  },
+            { y:  -1, label: 'P', flags: {edgeTop: true} },
+            { color: BLUE, isHome: true, label: ':', swLabel: ';', flags: {edgeBottom: true, edgeTop: true}  },
             { y:  1, label: '?', swLabel: '/', capHeight: 7.1, capTilt: -25 },
         ],
         [
             { y:  -2, label: '|', swLabel: '\\', color: GRAY, capHeight: 8, capTilt: 40 },
-            { y:  -1, label: {text:'"', scale: 0.2}, swLabel: {text:"'", scale: 0.2} },
-            { label: 'Shift', color: GRAY}
+            { y:  -1, label: {text:'"', scale: 0.2}, swLabel: {text:"'", scale: 0.2}, flags: {edgeTop: true} },
+            { label: 'Shift', color: GRAY, flags: {edgeTop: true} }
         ],
         [
             { y: -1-0.5, label: 'Cmd', color: GRAY, capHeight: 11 },
