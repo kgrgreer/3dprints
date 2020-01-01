@@ -9,9 +9,6 @@
 
 TODO:
   - raise 7 1mm, 8 1.5mm, 9 2mm, 0 1mm, + 1mm
-  - rotate pinky row out a couple degrees
-  - move right finger row down 0.5mm
-  - rotate first row in slightly
 
 Done:
 - move pinky row left 1mm
@@ -56,13 +53,13 @@ Done:
 */
 
 // Show with keys
-const PREVIEW   = false;
+const PREVIEW   = true;
 
 // Show labels on keys
 const LABELS    = true;
 
 // Generate base
-const BASE      = true;
+const BASE      = false;
 
 // Generate a prototype with looser tolerances for easier (re-)assembly
 const PROTOTYPE = true;
@@ -561,7 +558,7 @@ function createHand(d, k1, k2, k3, k4, k5, k6, kt) {
     });
 
     var h = createComposite([
-    f1, f2, f3, f4, f5, f6, t1
+     f1, f2, f3, f4, f5, f6, t1
     ]);
 
     if ( ! BASE ) return h.toSolid();
@@ -585,34 +582,34 @@ function right() {
             { y:  1, label: 'N', capHeight: 7.1, capTilt: -25, flags: {edgeTop: true} },
         ],
         [
-            { y:  -2, swLabel: '7', color: GRAY, capHeight: 7.5, capTilt: 40, label: '&', seLabel: 'F7' },
-            { y:  -1, label: 'U', seLabel: 'PgUp', flags: {edgeTop: true} },
+            { y:  -2, swLabel: '7', color: GRAY, capHeight: 8.5, capTilt: 40, label: '&', seLabel: 'F7' },
+            { y:  -1, label: 'U', seLabel: 'PgUp', flags: {edgeTop: true}, capTilt: 20 },
             { label: 'J', seLabel:  'PgDn', color: BLUE, isHome: true, flags: {edgeBottom: true, edgeTop: true}  },
             { y:  1, label: 'M', seLabel: { text: '^', a: 90 }, capHeight: 7.1, capTilt: -25, color: GRAY },
         ],
         [
-            { y:  -2, label: '*', swLabel: '8', color: GRAY, capHeight: 8, capTilt: 40, seLabel: 'F8' },
-            { y:  -1, label: 'I', flags: {edgeTop: true} },
+            { y:  -2, label: '*', swLabel: '8', color: GRAY, capHeight: 9, capTilt: 40, seLabel: 'F8' },
+            { y:  -1, label: 'I', flags: {edgeTop: true}, capTilt: 20 },
             { label: 'K', color: BLUE, isHome: true, flags: {edgeBottom: true, edgeTop: true}  },
             { y:  1, label: '<', swLabel: {text:',', scale: 0.2}, seLabel: '^', color: GRAY, flags: {edgeBottom: true, edgeTop: true}  },
             { y:  2, label: '{', swLabel: '[', seLabel: { text: '^', a: 180 }, capHeight: 7.1, capTilt: -25, color: GRAY, flags: {edgeTop: true} }
         ],
         [
-            { y:  -2, label: {text: '(', scale: 0.12}, swLabel: '9', color: GRAY, capHeight: 8, capTilt: 40, seLabel: 'F9' },
-            { y:  -1, label: 'O', flags: {edgeTop: true} },
+            { y:  -2, label: {text: '(', scale: 0.12}, swLabel: '9', color: GRAY, capHeight: 8.5, capTilt: 40, seLabel: 'F9' },
+            { y:  -1, label: 'O', flags: {edgeTop: true}, capTilt: 20 },
             { label: 'L', seLabel: 'Home', color: BLUE, isHome: true, flags: {edgeBottom: true, edgeTop: true}  },
             { y:  1, label: '>', seLabel: 'End', swLabel: {text:'.', scale: 0.2}, flags: {edgeBottom: true} },
             { y:  2, label: '}', swLabel: ']', seLabel:  { text: '^', a: -90 }, capHeight: 7.1, capTilt: -25, color: GRAY, flags: {edgeTop: true} }
         ],
         [
-            { y:  -2, label: {text: ')', scale: 0.12}, swLabel: '0', color: GRAY, capHeight: 8, capTilt: 40, seLabel: 'F10' },
-            { y:  -1, label: 'P', flags: {edgeTop: true} },
+            { y:  -2, label: {text: ')', scale: 0.12}, swLabel: '0', color: GRAY, capHeight: 8.5, capTilt: 40, seLabel: 'F10' },
+            { y:  -1, label: 'P', flags: {edgeTop: true}, capTilt: 20 },
             { color: BLUE, isHome: true, label: ':', swLabel: ';', flags: {edgeBottom: true, edgeTop: true}  },
             { y:  1, label: '?', swLabel: '/', capHeight: 7.1, capTilt: -25 },
         ],
         [
-            { y:  -2, label: '|', swLabel: '\\', color: GRAY, capHeight: 8, capTilt: 40 },
-            { y:  -1, label: {text:'"', scale: 0.2}, swLabel: {text:"'", scale: 0.2}, flags: {edgeTop: true} },
+            { y:  -2, label: '|', swLabel: '\\', color: GRAY, capHeight: 8.7, capTilt: 40 },
+            { y:  -1, label: {text:'"', scale: 0.2}, swLabel: {text:"'", scale: 0.2}, flags: {edgeTop: true}, capTilt: 20 },
             { label: 'Shift', color: GRAY, flags: {edgeTop: true} }
         ],
         [
