@@ -8,9 +8,9 @@
 - maybe raise thumb well?
 
 TODO:
-  - raise 7 1mm, 8 1.5mm, 9 2mm, 0 1mm, + 1mm
 
 Done:
+- raise top keys and set tilt angle of keys second from to 20deg
 - move pinky row left 1mm
 - move first row right 1.25mm
 - curve out top of: HJKL:UIOP"N{}: Shift
@@ -613,11 +613,11 @@ function right() {
             { label: 'Shift', color: GRAY, flags: {edgeTop: true} }
         ],
         [
-            { y: -1-0.6, x: 1.2, label: 'Opt', capHeight: 12 },
-            { y:  0-0.6, label: 'Enter', color: RED, capHeight: 10  },
+            { y: -1-0.6, x: 1.2, label: {text: 'Opt', scale: 0.12}, capHeight: 12 },
+            { y:  0-0.6, label: {text: 'Enter', scale: 0.12}, color: RED, capHeight: 10  },
             { y: -1-0.6, label: '', color: GRAY, capHeight: 10 },
-            {  x: -1.2, y: -2-0.6, label: {text: 'Cmd', scale: 0.15}, color: WHITE },
-            {  x: -1.2, y: -1-0.6, label: 'Ctrl' },
+            {  x: -1.2, y: -2-0.6, label: {text: 'Cmd', scale: 0.12}, color: WHITE },
+            {  x: -1.2, y: -1-0.6, label: {text: 'Ctrl', scale: 0.12} },
             {  x: -1.2, y:  0-0.6, seLabel: 'Func' }
         ]
     );
