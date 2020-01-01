@@ -55,9 +55,17 @@ Done:
   30% infill
 */
 
-const PREVIEW  = true;
-const LABELS   = true;
-const BASE     = false;
+// Show with keys
+const PREVIEW   = false;
+
+// Show labels on keys
+const LABELS    = true;
+
+// Generate base
+const BASE      = true;
+
+// Generate a prototype with looser tolerances for easier (re-)assembly
+const PROTOTYPE = true;
 
 const BLUE  = [100/255, 149/255, 237/255]; //corn blue
 const RED   = [0.8,0.1,0.1];
@@ -73,6 +81,7 @@ const HOME_KEY_COLOR         = BLUE;
 const DEST_KEY_COLOR         = RED;
 
 var caps = [];
+
 /*********************************************************************
  *                                                             UTIL
  *********************************************************************/
@@ -607,12 +616,12 @@ function right() {
             { label: 'Shift', color: GRAY, flags: {edgeTop: true} }
         ],
         [
-            { y: -1-0.5, x: 1.2, label: 'Opt', capHeight: 12 },
-            { y:  0-0.5, label: 'Enter', color: RED, capHeight: 10  },
-            { y: -1-0.5, label: '', color: GRAY, capHeight: 10 },
-            {  x: -1.2, y: -2-0.5, label: {text: 'Cmd', scale: 0.15}, color: WHITE },
-            {  x: -1.2, y: -1-0.5, seLabel: 'Func' },
-            {  x: -1.2, y:  0-0.5, label: 'Ctrl' }
+            { y: -1-0.6, x: 1.2, label: 'Opt', capHeight: 12 },
+            { y:  0-0.6, label: 'Enter', color: RED, capHeight: 10  },
+            { y: -1-0.6, label: '', color: GRAY, capHeight: 10 },
+            {  x: -1.2, y: -2-0.6, label: {text: 'Cmd', scale: 0.15}, color: WHITE },
+            {  x: -1.2, y: -1-0.6, label: 'Ctrl' },
+            {  x: -1.2, y:  0-0.6, seLabel: 'Func' }
         ]
     );
 
@@ -679,7 +688,7 @@ function main() {
         cylinder({r:2, h:100}).translate([-30,-60,0]),
         cylinder({r:2, h:100}).translate([-50,-60,0]),
         cylinder({r:2, h:100}).translate([-70+2,10-2,0]),
-        cylinder({r:2, h:100}).translate([-80+2,0-2,0]),
+        cylinder({r:2, h:100}).translate([-50+2,30-2,0]),
         cylinder({r:2, h:100}).translate([-60+2,20-2,0])
     );
     /*
@@ -720,7 +729,7 @@ return union(
   );
   */
 
-   return right().rotateZ(-23).subtract(holes);
+   return right().rotateZ(-22.5).subtract(holes);
 
     return left().rotateZ(-30).translate([-85,0,0]).union(right().rotateZ(30).translate([85,0,0]));
 }
