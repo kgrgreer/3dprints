@@ -53,13 +53,13 @@ Done:
 */
 
 // Show with keys
-const PREVIEW   = true;
+const PREVIEW   = false;
 
 // Show labels on keys
-const LABELS    = true;
+const LABELS    = false;
 
 // Generate base
-const BASE      = false;
+const BASE      = true;
 
 // Generate a prototype with looser tolerances for easier (re-)assembly
 const PROTOTYPE = true;
@@ -681,9 +681,9 @@ function left() {
 
 function main() {
     var holes = union(
-        cylinder({r:2, h:100}).translate([-10,-60,0]),
-        cylinder({r:2, h:100}).translate([-30,-60,0]),
-        cylinder({r:2, h:100}).translate([-50,-60,0]),
+        cylinder({r:2, h:100}).translate([-10,-59,0]),
+        cylinder({r:2, h:100}).translate([-30,-59,0]),
+        cylinder({r:2, h:100}).translate([-50,-59,0]),
         cylinder({r:2, h:100}).translate([-70+2,10-2,0]),
         cylinder({r:2, h:100}).translate([-50+2,30-2,0]),
         cylinder({r:2, h:100}).translate([-60+2,20-2,0])
@@ -728,5 +728,5 @@ return union(
 
    return right().rotateZ(-22.5).subtract(holes);
 
-    return left().rotateZ(-30).translate([-85,0,0]).union(right().rotateZ(30).translate([85,0,0]));
+//    return left().rotateZ(-30).translate([-85,0,0]).union(right().rotateZ(30).translate([85,0,0]));
 }
