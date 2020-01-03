@@ -8,6 +8,8 @@
 - maybe raise thumb well?
 
 TODO:
+- make stems thicker
+- make labels deeper
 
 Done:
 - raise top keys and set tilt angle of keys second from to 20deg
@@ -46,17 +48,22 @@ Done:
 
   Base:
   PLA
+  30% infill
 
   Key Caps:
   ABS
-  30% infill
+  50% infill
+  0.05mm layer thickness
+  layer thickness: bottom: 4, wall: 5, top: 7
+  print temp: 240
+  bed temp: 100, 80
 */
 
 // Show with keys
-const PREVIEW   = false;
+const PREVIEW   = true;
 
 // Show labels on keys
-const LABELS    = false;
+const LABELS    = true;
 
 // Generate base
 const BASE      = true;
@@ -133,7 +140,7 @@ function createText(m) {
     return Object.assign({
       text: 'A',
       w: 4,
-      h: 7,          // depth
+      h: 8,          // depth
       scale: 0.15,
       justify: 'L',  // justification: R, C or defaults to Left
       a: 0,          // angle of rotation
@@ -335,14 +342,15 @@ function createKeyCap(k) {
           if ( opt_args ) label = Object.assign(opt_args, label);
 
           var txt = createText(label);
-          o = o.subtract(txt.toSolid().translate([x, y, 4]));
+          txt = txt.toSolid().translate([x, y, 4]).subtract(o).translate([0,0,-1]);
+          o = o.subtract(txt);
         }
 
         return o;
       }
   });
 
-  if ( cap.color == WHITE ) caps.push(cap);
+  if ( cap.color == WHITE || true ) caps.push(cap);
 
   return cap;
 }
@@ -716,6 +724,7 @@ return union(
  //return SWITCH.createHolder().subtract(SWITCH.toSolid());
   //  return SWITCH.toSolid();
   /*
+
   right();
 
   var i = 0;
@@ -724,8 +733,7 @@ return union(
       return c.toProductionSolid().translate([20*i++, 0, 0]);
     })
   );
-  */
-
+*/
    return right().rotateZ(-22.5).subtract(holes);
 
 //    return left().rotateZ(-30).translate([-85,0,0]).union(right().rotateZ(30).translate([85,0,0]));
