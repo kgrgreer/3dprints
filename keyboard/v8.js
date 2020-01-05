@@ -314,7 +314,9 @@ function createKeyCap(k) {
         var PAD_W = SWITCH.w+2.25; // was 2.5
         s = s.subtract(cube({radius:3.75, roundradius: 3.75, size:[PAD_W,PAD_W, D+5]}).translate([-PAD_W/2,-PAD_W/2,-5]));
 //        var stem = cylinder({r:5.4/2, h: D});
-        var stem = cube({radius:0.9, roundradius: 0.9,size:[/*make smaller to reduce friction Was: 5.4+1.5*/5.4+1,5.5, D+2]}).intersect(cube({size:[5.4+1.5,5.5, D]})).translate([-5.4/2-1.5/2,-5.5/2,0]).setColor(WHITE);
+        var sw = 5.4; /*make smaller to reduce friction Was: 5.4+1.5*/
+        var sh = 5.4;
+        var stem = cube({radius:0.9, roundradius: 0.9,size:[sw,sh, D+2]}).intersect(cube({size:[sw,sh, D]})).translate([-sw/2,-sh/2,0]).setColor(WHITE);
         var hollow = cube({size:[W,H,3.8]}).translate([-W/2,-H/2,0]).union(cube({size:[H,W,3.8]}).translate([-H/2,-W/2,0]));
         return s.union(stem.subtract(hollow));
       },
@@ -342,7 +344,7 @@ function createKeyCap(k) {
           if ( opt_args ) label = Object.assign(opt_args, label);
 
           var txt = createText(label);
-          txt = txt.toSolid().translate([x, y, 4]).subtract(o).translate([0,0,-1]);
+          txt = txt.toSolid().translate([x, y, 4]).subtract(o).translate([0,0,-0.75]);
           o = o.subtract(txt);
         }
 
@@ -350,7 +352,7 @@ function createKeyCap(k) {
       }
   });
 
-  if ( cap.color == WHITE || true ) caps.push(cap);
+  if ( "YUIOP".indexOf(k.label)  != -1 ) caps.push(cap);
 
   return cap;
 }
@@ -566,7 +568,7 @@ function createHand(d, k1, k2, k3, k4, k5, k6, kt) {
     });
 
     var h = createComposite([
-     f1, f2, f3, f4, f5, f6, t1
+     f1, f2, f3, f4, f5, f6//, t1
     ]);
 
     if ( ! BASE ) return h.toSolid();
@@ -723,7 +725,6 @@ return union(
 //return SWITCH.createHolder();
  //return SWITCH.createHolder().subtract(SWITCH.toSolid());
   //  return SWITCH.toSolid();
-  /*
 
   right();
 
@@ -733,7 +734,7 @@ return union(
       return c.toProductionSolid().translate([20*i++, 0, 0]);
     })
   );
-*/
+
    return right().rotateZ(-22.5).subtract(holes);
 
 //    return left().rotateZ(-30).translate([-85,0,0]).union(right().rotateZ(30).translate([85,0,0]));
