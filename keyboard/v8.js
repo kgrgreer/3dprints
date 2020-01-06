@@ -292,7 +292,7 @@ function createKeyCap(k) {
          const KEYW = 17;
          const WW   = 7.5;
          var w   = wedge(this.f.r-13, 0, -WW, WW, -WW, WW, k.flags);
-         var key = w.intersect(cube({radius:0, size:[KEYW,KEYW,3.6+this.capHeight+11]}).translate([-KEYW/2,-KEYW/2,-4-11]).intersect(cube({size:[100,100,100]}).translate([-50,-50,-4])));
+         var key = w.intersect(cube({radius:0, size:[KEYW,KEYW,3.6+this.capHeight+14]}).translate([-KEYW/2,-KEYW/2,-4-11]).intersect(cube({size:[100,100,100]}).translate([-50,-50,-4])));
 
          key = key.intersect(cylinder({r2:0,r1:11.5,h:100}).translate([0,0,-10]));
          key = this.concaveKey(key);
@@ -323,12 +323,16 @@ function createKeyCap(k) {
       concaveKey: function(o) {
         var tiltY = Math.cos(degToRad(this.capTilt))*30;
         var tiltZ = Math.sin(degToRad(this.capTilt))*30;
-        o = o.subtract(sphere({r:30}).scale([1,k.isHome ? 1 : 3,1.3]).rotateX(this.capTilt/2.5).translate([0,-tiltZ,41-7+this.capHeight]));
+        if ( k.isHome ) {
+          o = o.subtract(sphere({r:45}).scale([1,1,1.3]).rotateX(this.capTilt/2.5).translate([0,-tiltZ,41-7+20+this.capHeight]));
+        } else {
+          o = o.subtract(sphere({r:45}).scale([1,3,1.3]).rotateX(this.capTilt/2.5).translate([0,-tiltZ,41-7+20+this.capHeight]));
+        }
         return o;
       },
       edgeKey: function(o) {
-        if ( this.flags.edgeTop )    o = o.subtract(cylinder({r:9.5, h:20}).rotateX(40).translate([0,20,0]));
-        if ( this.flags.edgeBottom ) o = o.subtract(cylinder({r:9.5, h:20}).rotateX(-40).translate([0,-20,0]));
+        if ( this.flags.edgeTop )    o = o.subtract(cylinder({r:20, h:40}).rotateX(40).translate([0,34,0]));
+        if ( this.flags.edgeBottom ) o = o.subtract(cylinder({r:20, h:40}).rotateX(-40).translate([0,-34,0]));
         return o;
       },
       markAsHomeKey: function(o) {
@@ -568,7 +572,7 @@ function createHand(d, k1, k2, k3, k4, k5, k6, kt) {
     });
 
     var h = createComposite([
-     f1, f2, f3, f4, f5, f6//, t1
+     f1, f2//, f3, f4, f5, f6//, t1
     ]);
 
     if ( ! BASE ) return h.toSolid();
@@ -725,7 +729,7 @@ return union(
 //return SWITCH.createHolder();
  //return SWITCH.createHolder().subtract(SWITCH.toSolid());
   //  return SWITCH.toSolid();
-
+/*
   right();
 
   var i = 0;
@@ -734,6 +738,7 @@ return union(
       return c.toProductionSolid().translate([20*i++, 0, 0]);
     })
   );
+  */
 
    return right().rotateZ(-22.5).subtract(holes);
 
