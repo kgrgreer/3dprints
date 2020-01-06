@@ -300,9 +300,9 @@ function createKeyCap(k) {
 
          key = key.setColor(this.color);
 
-         key = this.addLabel(key, -5,  1.5, this.label,   { color: BLACK });
+         key = this.addLabel(key, -5,  1,   this.label,   { color: BLACK });
          key = this.addLabel(key, -5, -5.4, this.swLabel, { color: BLACK });
-         key = this.addLabel(key,  6,   -5.4, this.seLabel, { color: RED, justify: 'R', scale: 0.12});
+         key = this.addLabel(key,  6, -5.4, this.seLabel, { color: RED, justify: 'R', scale: 0.12});
 
          return key.translate([0,0,SWITCH.stem]);
       }),
