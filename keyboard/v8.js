@@ -40,7 +40,7 @@ Done:
 - move ring finger row up 1mm
 - move 1st row down 1mm
 - finalize key layout for left hand
-- move pinky row up 3mm, left 2mm
+- move pinky row basup 3mm, left 2mm
 */
 
 /*
@@ -60,13 +60,13 @@ Done:
 */
 
 // Show with keys
-const PREVIEW   = false;
+const PREVIEW   = true;
 
 // Show labels on keys
-const LABELS    = false;
+const LABELS    = true;
 
 // Generate base
-const BASE      = true;
+const BASE      = false;
 
 // Generate a prototype with looser tolerances for easier (re-)assembly
 const PROTOTYPE = true;
@@ -139,7 +139,7 @@ function createText(m) {
 
     return Object.assign({
       text: 'A',
-      w: 4,
+      w: 5,
       h: 8,          // depth
       scale: 0.15,
       justify: 'L',  // justification: R, C or defaults to Left
@@ -300,9 +300,9 @@ function createKeyCap(k) {
 
          key = key.setColor(this.color);
 
-         key = this.addLabel(key, -5,  1,   this.label,   { color: BLACK });
-         key = this.addLabel(key, -5, -5.4, this.swLabel, { color: BLACK });
-         key = this.addLabel(key,  6, -5.4, this.seLabel, { color: RED, justify: 'R', scale: 0.12});
+         key = this.addLabel(key, -6,  1,   this.label,   { color: BLACK });
+         key = this.addLabel(key, -6, -6, this.swLabel, { color: BLACK });
+         key = this.addLabel(key,  6, -6, this.seLabel, { color: RED, justify: 'R', scale: 0.12});
 
          return key.translate([0,0,SWITCH.stem]);
       }),
@@ -331,8 +331,8 @@ function createKeyCap(k) {
         return o;
       },
       edgeKey: function(o) {
-        if ( this.flags.edgeTop )    o = o.subtract(cylinder({r:20, h:40}).rotateX(39).translate([0,34,0]));
-        if ( this.flags.edgeBottom ) o = o.subtract(cylinder({r:20, h:40}).rotateX(-39).translate([0,-34,0]));
+        if ( this.flags.edgeTop )    o = o.subtract(cylinder({r:20, h:40}).rotateX(39).translate([0,33,0]));
+        if ( this.flags.edgeBottom ) o = o.subtract(cylinder({r:20, h:40}).rotateX(-39).translate([0,-33,0]));
         return o;
       },
       markAsHomeKey: function(o) {
@@ -383,6 +383,8 @@ function createKey(m) {
        a: 0, a1: -keyAngleRadius, a2: keyAngleRadius,
        b: 0, b1: -keyAngleRadius, b2: keyAngleRadius,
        createCap: function() {
+           // disable capTilt
+           this.capTilt = 0;
          return createKeyCap(this).toSolid();
        },
        createSwitchAndCap: function () {
@@ -516,10 +518,10 @@ function createHand(d, k1, k2, k3, k4, k5, k6, kt) {
     k1.forEach((k)=>{ if ( k.flags == undefined ) k.flags = {}; k.flags.left = true; });
     k6.forEach((k)=>{ if ( k.flags == undefined ) k.flags = {}; k.flags.right = true; });
     k1[0].flags.top = true;
-    k2[0].flags = { top:true };
-    k3[0].flags = { top:true };
-    k4[0].flags = { top:true };
-    k5[0].flags = { top:true };
+    k2[0].flags = { top:true, edgeBottom: true };
+    k3[0].flags = { top:true, edgeBottom: true };
+    k4[0].flags = { top:true, edgeBottom: true };
+    k5[0].flags = { top:true, edgeBottom: true };
     k6[0].flags.top = true;
 
     // index finger
@@ -580,7 +582,7 @@ function createHand(d, k1, k2, k3, k4, k5, k6, kt) {
     });
 
     var h = createComposite([
-    f1, f2, f3//, f4, f5, f6, t1
+      f1, f2, f3, f4, f5, f6, t1
     ]);
 
     if ( ! BASE ) return h.toSolid();
@@ -598,39 +600,39 @@ function createHand(d, k1, k2, k3, k4, k5, k6, kt) {
 function right() {
   var h = createHand(1,
       [
-            { y:  -2, label: '^', swLabel: '6', color: GRAY, capHeight: 8, capTilt: 45, seLabel: 'F6' },
+            { y:  -2, label: '^', swLabel: '6', color: GRAY, capHeight: 8, capTilt: 45, seLabel: 'F6', flags: {edgeBottom: true} },
             { y:  -1, label: 'Y' },
             { label: 'H', flags: {edgeBottom: true, edgeTop: true} },
             { y:  1, label: 'N', capHeight: 7.1, capTilt: -25, flags: {edgeTop: true} },
         ],
         [
-            { y:  -2, swLabel: '7', color: GRAY, capHeight: 10.5, capTilt: 40, label: '&', seLabel: 'F7' },
+            { y:  -2, swLabel: '7', color: GRAY, capHeight: 10.5, capTilt: 40, label: '&', seLabel: 'F7', flags: {edgeBottom: true} },
             { y:  -1, label: 'U', seLabel: 'PgUp', flags: {edgeTop: true}, capHeight: 8, capTilt: 20 },
             { label: 'J', seLabel:  'PgDn', color: BLUE, isHome: true, flags: {edgeBottom: true, edgeTop: true}  },
             { y:  1, label: 'M', seLabel: { text: '^', a: 90 }, capHeight: 7.1, capTilt: -25, color: GRAY },
         ],
         [
-            { y:  -2, label: '*', swLabel: '8', color: GRAY, capHeight: 9, capTilt: 40, seLabel: 'F8' },
+            { y:  -2, label: '*', swLabel: '8', color: GRAY, capHeight: 9, capTilt: 40, seLabel: 'F8', flags: {edgeBottom: true} },
             { y:  -1, label: 'I', flags: {edgeTop: true}, capTilt: 20 },
             { label: 'K', color: BLUE, isHome: true, flags: {edgeBottom: true, edgeTop: true}  },
             { y:  1, label: '<', swLabel: {text:',', scale: 0.2}, seLabel: '^', color: GRAY, flags: {edgeBottom: true, edgeTop: true}  },
             { y:  2, label: '{', swLabel: '[', seLabel: { text: '^', a: 180 }, capHeight: 7.1, capTilt: -25, color: GRAY, flags: {edgeTop: true} }
         ],
         [
-            { y:  -2, label: {text: '(', scale: 0.12}, swLabel: '9', color: GRAY, capHeight: 8.5, capTilt: 40, seLabel: 'F9' },
+            { y:  -2, label: {text: '(', scale: 0.12}, swLabel: '9', color: GRAY, capHeight: 8.5, capTilt: 40, seLabel: 'F9', flags: {edgeBottom: true} },
             { y:  -1, label: 'O', flags: {edgeTop: true}, capTilt: 20 },
             { label: 'L', seLabel: 'Home', color: BLUE, isHome: true, flags: {edgeBottom: true, edgeTop: true}  },
             { y:  1, label: '>', seLabel: 'End', swLabel: {text:'.', scale: 0.2}, flags: {edgeBottom: true} },
             { y:  2, label: '}', swLabel: ']', seLabel:  { text: '^', a: -90 }, capHeight: 7.1, capTilt: -25, color: GRAY, flags: {edgeTop: true} }
         ],
         [
-            { y:  -2, label: {text: ')', scale: 0.12}, swLabel: '0', color: GRAY, capHeight: 8.5, capTilt: 40, seLabel: 'F10' },
+            { y:  -2, label: {text: ')', scale: 0.12}, swLabel: '0', color: GRAY, capHeight: 8.5, capTilt: 40, seLabel: 'F10', flags: {edgeBottom: true} },
             { y:  -1, label: 'P', flags: {edgeTop: true}, capTilt: 20 },
             { color: BLUE, isHome: true, label: ':', swLabel: ';', flags: {edgeBottom: true, edgeTop: true}  },
             { y:  1, label: '?', swLabel: '/', capHeight: 7.1, capTilt: -25 },
         ],
         [
-            { y:  -2, label: '|', swLabel: '\\', color: GRAY, capHeight: 8.7, capTilt: 40 },
+            { y:  -2, label: '|', swLabel: '\\', color: GRAY, capHeight: 8.7, capTilt: 40, flags: {edgeBottom: true} },
             { y:  -1, label: {text:'"', scale: 0.2}, swLabel: {text:"'", scale: 0.2}, flags: {edgeTop: true}, capTilt: 20 },
             { label: 'Shift', color: GRAY, flags: {edgeTop: true} }
         ],
