@@ -9,9 +9,9 @@
 
 TODO:
 - make stems thicker
-- make labels deeper
 
 Done:
+- make labels deeper
 - raise top keys and set tilt angle of keys second from to 20deg
 - move pinky row left 1mm
 - move first row right 1.25mm
@@ -60,10 +60,10 @@ Done:
 */
 
 // Show with keys
-const PREVIEW   = true;
+const PREVIEW   = false;
 
 // Show labels on keys
-const LABELS    = true;
+const LABELS    = false;
 
 // Generate base
 const BASE      = true;
@@ -331,8 +331,8 @@ function createKeyCap(k) {
         return o;
       },
       edgeKey: function(o) {
-        if ( this.flags.edgeTop )    o = o.subtract(cylinder({r:20, h:40}).rotateX(40).translate([0,34,0]));
-        if ( this.flags.edgeBottom ) o = o.subtract(cylinder({r:20, h:40}).rotateX(-40).translate([0,-34,0]));
+        if ( this.flags.edgeTop )    o = o.subtract(cylinder({r:20, h:40}).rotateX(39).translate([0,34,0]));
+        if ( this.flags.edgeBottom ) o = o.subtract(cylinder({r:20, h:40}).rotateX(-39).translate([0,-34,0]));
         return o;
       },
       markAsHomeKey: function(o) {
@@ -356,7 +356,7 @@ function createKeyCap(k) {
       }
   });
 
-  if ( "YUIOP".indexOf(k.label)  != -1 ) caps.push(cap);
+  if ( "YUIOP".indexOf(k.label)  != -1 || true ) caps.push(cap);
 
   return cap;
 }
@@ -471,7 +471,15 @@ function createFinger(m) {
           this.neg = this.neg.translate(this.translate);
           this.neg = this.transform(this.neg);
           base = this.transform(base);
-          return trimZ(base);
+          base = trimZ(base);
+          if ( BASE ) {
+            var sh = hull(baseShadow(base)).contract(2);
+            var base2 = linear_extrude({height:15}, sh);
+            base2 = base2.subtract(sphere({r:this.r+5}).translate([0,0,this.height]).translate(this.translate));
+            base2 = base2.subtract(this.neg);
+            base = base.union(base2);
+          }
+          return base;
         })
     }, m);
 
@@ -572,7 +580,7 @@ function createHand(d, k1, k2, k3, k4, k5, k6, kt) {
     });
 
     var h = createComposite([
-     f1, f2//, f3, f4, f5, f6//, t1
+    f1, f2, f3//, f4, f5, f6, t1
     ]);
 
     if ( ! BASE ) return h.toSolid();
@@ -596,8 +604,8 @@ function right() {
             { y:  1, label: 'N', capHeight: 7.1, capTilt: -25, flags: {edgeTop: true} },
         ],
         [
-            { y:  -2, swLabel: '7', color: GRAY, capHeight: 8.5, capTilt: 40, label: '&', seLabel: 'F7' },
-            { y:  -1, label: 'U', seLabel: 'PgUp', flags: {edgeTop: true}, capTilt: 20 },
+            { y:  -2, swLabel: '7', color: GRAY, capHeight: 10.5, capTilt: 40, label: '&', seLabel: 'F7' },
+            { y:  -1, label: 'U', seLabel: 'PgUp', flags: {edgeTop: true}, capHeight: 8, capTilt: 20 },
             { label: 'J', seLabel:  'PgDn', color: BLUE, isHome: true, flags: {edgeBottom: true, edgeTop: true}  },
             { y:  1, label: 'M', seLabel: { text: '^', a: 90 }, capHeight: 7.1, capTilt: -25, color: GRAY },
         ],
