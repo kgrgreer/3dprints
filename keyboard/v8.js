@@ -331,8 +331,8 @@ function createKeyCap(k) {
         return o;
       },
       edgeKey: function(o) {
-        if ( this.flags.edgeTop )    o = o.subtract(cylinder({r:20, h:40}).rotateX(39).translate([0,33,0]));
-        if ( this.flags.edgeBottom ) o = o.subtract(cylinder({r:20, h:40}).rotateX(-39).translate([0,-33,0]));
+        if ( this.flags.edgeTop )    o = o.subtract(cylinder({r:20, h:40}).rotateX(40).translate([0,33,0]));
+        if ( this.flags.edgeBottom ) o = o.subtract(cylinder({r:20, h:40}).rotateX(-40).translate([0,-33,0]));
         return o;
       },
       markAsHomeKey: function(o) {
@@ -582,7 +582,13 @@ function createHand(d, k1, k2, k3, k4, k5, k6, kt) {
     });
 
     var h = createComposite([
-      f1, f2, f3, f4, f5, f6, t1
+      //f1,
+      //f2,
+      f3,
+      //f4,
+      //f5,
+      //f6,
+      //t1
     ]);
 
     if ( ! BASE ) return h.toSolid();
@@ -613,7 +619,7 @@ function right() {
         ],
         [
             { y:  -2, label: '*', swLabel: '8', color: GRAY, capHeight: 9, capTilt: 40, seLabel: 'F8', flags: {edgeBottom: true} },
-            { y:  -1, label: 'I', flags: {edgeTop: true}, capTilt: 20 },
+            { y:  -1, label: 'I', flags: {edgeTop: false}, capTilt: 20 },
             { label: 'K', color: BLUE, isHome: true, flags: {edgeBottom: true, edgeTop: true}  },
             { y:  1, label: '<', swLabel: {text:',', scale: 0.2}, seLabel: '^', color: GRAY, flags: {edgeBottom: true, edgeTop: true}  },
             { y:  2, label: '{', swLabel: '[', seLabel: { text: '^', a: 180 }, capHeight: 7.1, capTilt: -25, color: GRAY, flags: {edgeTop: true} }
@@ -739,7 +745,7 @@ return union(
 //return SWITCH.createHolder();
  //return SWITCH.createHolder().subtract(SWITCH.toSolid());
   //  return SWITCH.toSolid();
-/*
+
   right();
 
   var i = 0;
@@ -748,7 +754,7 @@ return union(
       return c.toProductionSolid().translate([20*i++, 0, 0]);
     })
   );
-  */
+
 
    return right().rotateZ(-22.5).subtract(holes);
 
