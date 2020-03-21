@@ -5,8 +5,9 @@ function ring(h, r1, r2) {
 
 function bowl(h, r) {
   var b = sphere({r:h});
-  b = b.intersect()
-  return b.translate([0,0,h-1]);
+  b = b.subtract(sphere({r:h-1}));
+  b = b.intersect(cube({size:[2*h,2*h,h+5],center:true}).translate([0,0,-h+1]));
+  return b.translate([0,0,h-1.5]);
 }
 
 function trophy(p) {
@@ -32,7 +33,8 @@ function main() {
     [null, 1, 10.5],
     [null, 10, 10],
     [null, 5, 8],
+    [null, 3.5, 6.5],
     [null, 2.5, 5],
-    [bowl, 8, 8]
+    [bowl, 10, 10]
   ]);
 }
