@@ -1,6 +1,6 @@
 // Print instructions: PLA, wall side bottom count: 2 3 3, 8% infill gyroid, 0.2mm
 
-const W = 2/3*4/5;
+const W = 2/3*4/5*.8;
 
 function createText(m) {
     if ( typeof m === 'string' ) m = { text: m };
@@ -43,7 +43,7 @@ function text(trophy, a, r, h, txt, scale, justify) {
   t = t.subtract(trophy);
   t = t.setColor([1,1,1]);
   t = t.rotateZ(-a)
-  t = t.translate([0,0.25,0]);
+  t = t.translate([0,0.35,0]);
   t = t.rotateZ(a)
   return trophy.subtract(t);
 }
@@ -131,31 +131,34 @@ function main() {
   var t = trophy([
     [null, 1, 11, 10],
     [null, 10, 10],
-    [null, 0.5, 10.25, 10],
+    [null, 0.5, 10.15, 10],
     [cap, 10, 10, 8],
     [cap, 4.5, 8, 6.5],
     [cap, 3.5, 6.5, 1.4],
-    [null, 2.5, 5, 5],
+    [ring, 2.5, 5, 1],
     [bowl, 10, 10]
   ]);
 
-  t = text(t, 0, 4.5, 27.2, "MHL",          0.06, 'C');
-  t = text(t, 0, 10, 23.2, "2019-2020",          0.055, 'C');
+  var b = sphere({r:10});
+  b = b.subtract(sphere({r:10-0.5}));
+  b = b.intersect(cube({size:[2*10,2*10,10+5],center:true}).translate([0,0,-10+1]));
+  b = b.translate([0,0,40.5]);
 
+  t = t.subtract(sphere({r:10}).translate([0,0,40.5]));
+  t = t.union(b);
+
+  t = text(t, 0, 4.5, 27, "MHL",          0.075, 'C');
+  t = text(t, 0, 10, 23.2, "2019-2020",          0.065, 'C');
   t = text(t, 0, 10, 8.5, "Applewood Coyotes",  0.057, 'C');
-  t = text(t, 0, 10, 6,   "Minor Midget A", 0.055, 'C');
-  t = text(t, 0, 10, 3.7, "Season Champions",   0.055, 'C');
-
+  t = text(t, 0, 10, 6,   "Minor Midget A", 0.056, 'C');
+  t = text(t, 0, 10, 3.7, "Season Champions",   0.056, 'C');
   t = text(t, 180, 10, 9,   "CHAMPIONSHIPS",        0.055, 'C');
   t = text(t, 180, 10, 6.5, "West Mall Early Bird", 0.048, 'C');
   t = text(t, 180, 10, 4.3, "Ottawa River Cup",     0.048, 'C');
   t = text(t, 180, 10, 2,   "North York Knights",   0.048, 'C');
+  t = names(t, PLAYERS, 4, 360/4, 19.9, 0.051);  t = names(t, COACHES, 5, 360/5, 12.23, 0.045);
 
-  t = names(t, PLAYERS, 4, 360/4, 19.9, 0.046);
-  t = names(t, COACHES, 5, 360/5, 12.25, 0.045);
-
-  t = text(t, 180, 4.5, 27.2, "28-6-2", 0.055, 'C');
-  t = text(t, 180, 10,  23.2, "3-0-1",  0.055, 'C');
-
+  t = text(t, 180, 4.5, 27.2, "28-6-2", 0.06, 'C');
+  t = text(t, 180, 10,  23.2, "3-0-1",  0.06, 'C');
   return t.scale(3);
 }
