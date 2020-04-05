@@ -1,3 +1,5 @@
+// Print instructions: PLA, wall side bottom count: 2 3 3, 8% infill gyroid, 0.2mm
+
 function createText(m) {
     if ( typeof m === 'string' ) m = { text: m };
 
@@ -12,7 +14,7 @@ function createText(m) {
         var o = [];
         var l = vector_text(0, 0, this.text);
 
-        l.forEach(s => o.push(rectangular_extrude(s, {w: this.w, h:15})));
+        l.forEach(s => o.push(rectangular_extrude(s, {w: this.w, h:7.5})));
 
         var txt = union(o).setColor(this.color).scale([this.scale, this.scale, 1]);
 
@@ -34,11 +36,13 @@ function createText(m) {
 
 function text(trophy, a, r, h, txt, scale, justify) {
   var t = createText({text: txt, scale: scale, justify: justify}).toSolid();
-  t = t.rotateY(0).rotateX(90).translate([0,-r+7,0]).translate([0,0,h]);
+  t = t.rotateY(0).rotateX(90).translate([0,-r+5,h]);
+  t = t.rotateZ(a)
   t = t.subtract(trophy);
-  t = t.translate([0,0.25,0]);
-  t = t.rotateZ(a);
   t = t.setColor([1,1,1]);
+  t = t.rotateZ(-a)
+  t = t.translate([0,0.25,0]);
+  t = t.rotateZ(a)
   return trophy.subtract(t);
 }
 
@@ -71,10 +75,11 @@ function trophy(p) {
   return union.apply(null, parts);
 }
 
+//  'Alexander Kambourov',
+
 const PLAYERS = [
   'Alec Huyghebaert',
   'Alessio Di Cintio',
-//  'Alexander Kambourov',
   'Alex Kambourov',
   'Carter Wong',
   'Chayse Fielding',
@@ -92,17 +97,17 @@ const PLAYERS = [
 ];
 
 const COACHES = [
-  'Andrew Farrugia',
-  'Ken Webb',
   'Chris Stamopoulos',
+  'Yann Jadis',
   'Tony Andrade',
-  'Yann Jadis'
+  'Andrew Farrugia',
+  'Ken Webb'
 ];
 
-function names(trophy, names, cols, a, h) {
+function names(trophy, names, cols, a, h, w) {
   for ( var i = 0 ; i < names.length ; i++ ) {
     var p = names[i];
-    trophy = text(trophy, (i % cols) * 2 * a - a - cols/2*a, 10, h - Math.floor(i/cols) * 1.5, p, 0.03, 'C');
+    trophy = text(trophy, (i % cols) * a, 10, h - Math.floor(i/cols) * 1.8, p, w, 'C');
   }
 
   return trophy;
@@ -120,13 +125,31 @@ function main() {
     [bowl, 10, 10]
   ]);
 
-  t = text(t, 0, 10, 8.5, "Applewood Coyotes",  0.055, 'C');
-  t = text(t, 0, 10, 6,   "MHL Minor Midget A", 0.055, 'C');
-  t = text(t, 0, 10, 3.5, "Season Champions",   0.055, 'C');
-  t = text(t, 0, 10, 1.5, "2019-2020",          0.055, 'C');
+  t = text(t, 0, 4.5, 27.2, "MHL",          0.055, 'C');
+  t = text(t, 0, 10, 23.2, "2019-2020",          0.055, 'C');
 
-  t = names(t, PLAYERS, 4, 26, 20);
-  t = names(t, COACHES, 5, 26, 12.5);
+  t = text(t, 0, 10, 8.5, "Applewood Coyotes",  0.057, 'C');
+
+  t = text(t, 0, 10, 6,   "Minor Midget A", 0.055, 'C');
+  t = text(t, 0, 10, 3.7, "Season Champions",   0.055, 'C');
+//  t = text(t, 0, 10, 1.5, "2019-2020",          0.055, 'C');
+
+  t = text(t, 150, 10, 9,   "CHAMPIONSHIPS",        0.055, 'C');
+  t = text(t, 150, 10, 6.5, "West Mall Early Bird", 0.048, 'C');
+  t = text(t, 150, 10, 4.3, "Ottawa River Cup",     0.048, 'C');
+  t = text(t, 150, 10, 2,   "North York Knights",   0.048, 'C');
+
+  t = names(t, PLAYERS, 4, 360/4, 19.9, 0.046);
+  t = names(t, COACHES, 5, 360/5, 12.25, 0.045);
+
+  t = text(t, -110, 10, 9,   "STATS",  0.055, 'C');
+  t = text(t, -110, 10, 6.5, "28-6-2", 0.054, 'C');
+  t = text(t, -110, 10, 4.3, "3-0-1",  0.054, 'C');
+
+  var mf = createText({text: 'Made in Canada', w: 5, justify: 'C', depth:1, scale: 0.06});
+  t = t.subtract(mf.toSolid().rotateX(180).translate([0,0,0.2]));
+  // var mf = createText({text: 'Hat Tricks\nDec. 11 6-0 vs PC\nFeb. 1  7-1 vs LPC', w: 5, justify: 'C', depth:1, scale: 0.06});
+  // t = t.subtract(mf.toSolid().rotateX(180).translate([0,-1,0.2]));
 
   return t;
 }
