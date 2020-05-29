@@ -1,5 +1,5 @@
 const FN = 130; // 130 for production
-const H = 40;
+const H = 30;
 const R = 100;
 
 // 0.6mm bottom, so 3 layers at 0.2mm
@@ -54,21 +54,36 @@ function base() {
 
 function top() {
   var t = union(
-    cylinder({fn: FN, r: (R+3)/2, h: 0.6}),
-    tube(28.5,27.5,10),
-    tube(R+3,R+1,10)
+    cylinder({fn: FN, r: (R+3)/2, h: 0.8}),
+    tube(29,27,12),
+    tube(R+3,R+0.75,12)
     );
 
-  t = t.subtract(cylinder({fn: FN, r: 28/2, h: 2}))
-
+  for ( var i = 0 ; i < 1 ; i++ ) {
+    var hole = cylinder({fn: FN, r: 52/4, h: H}).translate([27.5,0,0]);
+    hole = hole.scale([1.2,0.9,1]);
+    t = t.subtract(hole.rotateZ(360/8*i));
+  }
+  /*
   var hole = cylinder({fn: FN, r: 52/4, h: H}).translate([27.5,0,0]);
   hole = hole.scale([1.2,0.9,1]);
+  */
+  for ( var i = 0 ; i < 8 ; i++ ) {
+    var notch = sphere({r: 2}).scale([0.4,1,0.5]).translate([(R-2)/2+1,0,5+0.65]);
+    t = t.union(notch.rotateZ(360/8*(i+0.5)))
 
-  t = t.subtract(hole);
+    if ( ! ( i == 0 || i == 5 || i == 3 ) ) continue
+    var notch = sphere({r: 2}).scale([0.4,1,0.5]).translate([30/2-0.6,0,5+0.65]);
+    t = t.union(notch.rotateZ(360/8*(i+0.5)))
+  }
+
+  t = t.subtract(cylinder({fn: FN, r: 27/2, h: 10}))
+
+//  t = t.subtract(hole);
   return t;
 }
 
 function main() {
-  return top();
+  return top().scale([1.3,1.3,1]);
   return base();
 }
