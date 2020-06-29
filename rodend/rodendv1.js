@@ -10,7 +10,9 @@ const IL = 15;
 
 function main() {
 var o = cube({size:[OW, OW, OL], center:[true,true,false]});
-var i = cube({size:[IW, IW, 2*IL], center:[true,true,false]}).translate([0,0,OL-IL]);
+var i = cube({size:[IW, IW, 2*IL+10], center:[true,true,false]}).translate([0,0,OL-IL]);
+
+return union(o,i);
 var iLatch = cube({size:[2, 10,10],center:[true,false,false]}).translate([0,-IW,OL-15])
 var oLatch = cube({size:[2.3, 10,40],center:[true,false,false]}).translate([0,-IW,OL-30])
 
