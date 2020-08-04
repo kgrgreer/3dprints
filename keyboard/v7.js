@@ -8,14 +8,14 @@
 - maybe raise thumb well?
 
 TODO:
-  - raise 7 1mm, 8 1.5mm, 9 2mm, 0 1mm
+  - raise 7 1mm, 8 1.5mm, 9 2mm, 0 1mm, + 1mm
   - rotate pinky row out a couple degrees
-  - move pinky row left 1mm, up 1mm
-  - move first row right 1.5-2mm
   - move right finger row down 0.5mm
   - rotate first row in slightly
 
 Done:
+- move pinky row left 1mm
+- move first row right 1.25mm
 - curve out top of: HJKL:UIOP"N{}: Shift
 - curve out bogtom of: HJKL:<>
 - add holes to left side
@@ -56,7 +56,7 @@ Done:
 */
 
 const PREVIEW  = true;
-const LABELS   = true;
+const LABELS   = false;
 const BASE     = true;
 
 const BLUE  = [100/255, 149/255, 237/255]; //corn blue
@@ -497,7 +497,7 @@ function createHand(d, k1, k2, k3, k4, k5, k6, kt) {
     // index finger
     var f1 = createFinger({
         direction: d,
-        translate: [d*-26,-11,3],
+        translate: [d*-24.75,-11,3],
         r: 77,
         a: 14,
         keys: k1
@@ -528,14 +528,14 @@ function createHand(d, k1, k2, k3, k4, k5, k6, kt) {
     // pinky
     var f5 = createFinger({
         direction: d,
-        translate: [d*39,-21,12],
+        translate: [d*37,-21,12],
         r: 77,
         a: 0,
         keys: k5
     });
     var f6 = createFinger({
         direction: d,
-        translate: [d*50,-24,12],
+        translate: [d*48,-24,12],
         r: 77,
         a: -8,
         keys: k6
