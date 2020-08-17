@@ -8,11 +8,13 @@
     var s = main2();
     s = s.rotateX(90);
     s = s.translate([0,0,-0.5])
+    s = s.scale(1.2)
     s = s.intersect(cube({size:[500,500,500],center:[true,true,false]}));
     s = s.scale(1.5*10/8);
-    s = s.union(cylinder({r:5,h:25}));
+    s = s.union(cylinder({r:8,h:25}));
    s = s.subtract(cylinder({r:6.2/2,h:22,fi:36}));
    s = s.subtract(cylinder({r:6.5/2,h:4.1,fi:36}));
+s = s.scale([1,1,-1]).rotateX(180);
     return s;
   }
 
