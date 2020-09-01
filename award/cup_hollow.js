@@ -1,6 +1,7 @@
 // Print instructions: PLA, wall side bottom count: 2 3 3, 8% infill gyroid, 0.2mm
 
-const W = 2/3*4/5*.8;
+const W = 2/3*4/5/* *0.8 */;
+const FN = 120;
 
 function createText(m) {
     if ( typeof m === 'string' ) m = { text: m };
@@ -51,14 +52,14 @@ function text(trophy, a, r, h, txt, scale, justify) {
 
 function ring(h, r1, r2) {
   r2 = r2 || r1;
-  return cylinder({r: r1, h: h}).subtract(cylinder({r: r2-W, h: h}));
+  return cylinder({r: r1, h: h, fn:FN}).subtract(cylinder({r: r2-W, h: h, fn:FN}));
 }
 
 function cap(h, r1, r2) {
     r2 -= W;
   var s = Math.max(1, h-(r1-r2));
-  var cone = cylinder({r1: r1-W, r2: r2-W, h:h-s}).translate([0,0,s]);
-  return cylinder({r: r1, h: h}).
+  var cone = cylinder({r1: r1-W, r2: r2-W, h:h-s, fn:FN}).translate([0,0,s]);
+  return cylinder({r: r1, h: h, fn:FN}).
     subtract(cylinder({r: r1-W, h: s})).
     subtract(cone).
     subtract(cylinder({r: r2, h: h}));
@@ -66,8 +67,8 @@ function cap(h, r1, r2) {
 
 
 function bowl(h, r) {
-  var b = sphere({r:h});
-  b = b.subtract(sphere({r:h-0.5}));
+  var b = sphere({r:h, fn:FN});
+  b = b.subtract(sphere({r:h-0.5, fn:FN}));
   b = b.intersect(cube({size:[2*h,2*h,h+5],center:true}).translate([0,0,-h+1]));
   return b.translate([0,0,h-1.5]);
 }
@@ -139,8 +140,8 @@ function main() {
     [bowl, 10, 10]
   ]);
 
-  var b = sphere({r:10});
-  b = b.subtract(sphere({r:10-0.5}));
+  var b = sphere({r:10, fn:FN});
+  b = b.subtract(sphere({r:10-0.5, fn:FN}));
   b = b.intersect(cube({size:[2*10,2*10,10+5],center:true}).translate([0,0,-10+1]));
   b = b.translate([0,0,40.5]);
 
