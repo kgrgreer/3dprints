@@ -1,5 +1,5 @@
 const N = 20;
-const H = 3;
+const H = 60;
 const TWO_PI = Math.PI * 2;
 
 function coord(a, r) {
@@ -18,13 +18,16 @@ function ring(r) {
     var tris = [];
     for ( var ring = 0 ; ring < H ; ring++ ) {
       for ( var i = 0 ; i < N ; i++ ) {
+        var r2 = r * (H-1-ring)/(H-1);
         points.push([
-            r*Math.cos(i*TWO_PI/N),
-            r*Math.sin(i*TWO_PI/N),
-            ring*10
+            r2*Math.cos(i*TWO_PI/N),
+            r2*Math.sin(i*TWO_PI/N),
+            ring
             ]);
         if ( ring < H-1 ) {
           tris.push([coord(i, ring), coord(i+1, ring), coord(i, ring+1)]);
+          tris.push([coord(i, ring+1), coord(i+1, ring), coord(i, ring)]);
+          tris.push([coord(i, ring+1), coord(i+1, ring+1), coord(i+1, ring)]);
           tris.push([coord(i+1, ring+1), coord(i, ring+1), coord(i+1, ring)]);
         }
       }
@@ -38,5 +41,5 @@ function ring(r) {
 
 
 function main() {
-    return ring(10);
+    return ring(5);
 }
