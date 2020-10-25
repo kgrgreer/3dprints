@@ -8,6 +8,9 @@ function main() {
     .union(cylinder({r: D/2-T, h:L, fn: FN}));
   s = s.subtract(cube({size:[50,25,L-20]}).translate([-15,-12.5,10]));
   s = s.union(cylinder({r: D/2+5, h:5, fn: FN}));
+  var p = cylinder({r: 5, h:L, fn: FN}).translate([D/2+8,0,0])
+  for ( var i = 0 ; i < 10 ; i ++ )
+    s = s.subtract(p.rotateZ(36*i));
   return s;
 
 }
