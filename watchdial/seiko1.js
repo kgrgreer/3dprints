@@ -1,8 +1,8 @@
 const D = 139.5;
-const T = 1;
+const T = 1 + 2;
 const INDEX_R = 5;
 const INDEX_H = 6;
-const FN = 200;
+const FN = 20;
 const B = 21; // border, measures 16
 
 function shape(x,y,z) {
@@ -28,7 +28,7 @@ function shape2(x,y,z) {
 
 function addIndex(dial, i, opt_degrees) {
   if ( opt_degrees ) i = i.rotateZ(opt_degrees);
-  //return dial.subtract(i);
+  return dial.subtract(i);
  return dial.union(i);
 }
 
@@ -45,11 +45,11 @@ function i3() {
 }
 
 function makeIndex(s) {
-    return s.scale([1.2,1.2,0.2]).union(s.scale([0.98,0.98,1.2]));
+    return s.scale([1.2,1.2,0.5]).union(s.scale([0.98,0.98,1.2]));
 }
 
 function main() {
-    return makeIndex(i3());
+   // return makeIndex(i3());
   var dial = cylinder({r: D/2, h:T, fn: FN});
   dial = dial.setColor([0,0,0]);
 
@@ -71,6 +71,7 @@ function main() {
   var index3 = i3().translate([D/2-INDEX_R*3-B+10,0,0]);
   dial = addIndex(dial, index3, 90);
 
+  dial = dial.subtract(cylinder({r:25,h:100,fn:FN}).translate([0,0,1]))
   return dial;
 
 }
