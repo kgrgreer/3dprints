@@ -16,17 +16,18 @@ function hive(x,y,r, h) {
 
 function main() {
     var hv = hive(6,7,6,H);
-    hv = hv.intersect(cube({size:[D-0.3*8,W-0.3*8,H-0.3*6], center:[true,true,false]}));
-    var s = cube({size:[D,W,H], center:[true,true,false]});
-    var c = cylinder({r: CR, h: CH, fn:120});
-    var b = cylinder({r: 9, h: 10, fn:6});
+    hv = hv.intersect(cube({size:[D-0.3*8,W-0.3*8,H-0.3*6], round: true, radius: 2, center:[true,true,false]}));
+    var s = cube({size:[D,W,H], round: true, radius: 2, center:[true,true,false]});
+    var c = cylinder({r: CR-0.15, h: CH, fn:120});
+    var b = cylinder({r: 8.5, h: 20, fn:6});
 
     s = s.subtract(hv);
     s = s.subtract(c);
     s = s.union(cylinder({r: 11, h: 100, fn:6}));
     s = s.subtract(c);
-    s = s.subtract(b.translate([0,0,H-10]));
-    s = s.subtract(b);
+    s = s.union(cylinder({r: 12, h: 12, fn:120}).translate([0,0,H-12]));
+    s = s.subtract(cylinder({r: 10, h: 20, fn:120}).translate([0,0,H-10]));
+    s = s.subtract(b.translate([0,0,H-20]));
 
     s = s.rotateX(180);
     return s;
