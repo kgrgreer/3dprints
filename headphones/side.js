@@ -6,7 +6,7 @@ const H2 = 2-e;
 const H3 = 1.5+2*e;
 const FN = 60;
 const RS = 4.5+e;
-const HR = 3.35/2;
+const HR = 3.5/2;
 
 const BLACK = [0,0,0];
 // 7.5 exposed band
