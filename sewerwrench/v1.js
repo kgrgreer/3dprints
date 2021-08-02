@@ -9,6 +9,8 @@ function main() {
     s = s.union(cube({size:[20,160,H], radius: 2}).translate([-10,0,0]))
     s = s.union(cylinder({r:10, h:H}).intersect(sphere({r:10.7}).translate([0,0,5])).translate([0,R2+90,0]))
     s = s.subtract(cylinder({r:2.5, h:H}).translate([0,R2+90,0]))
+    s = s.subtract(sphere({r:3}).translate([0,R2+90,H]))
+    s = s.subtract(sphere({r:3}).translate([0,R2+90,0]))
     s = s.union(cube({size:[30,R2+5,H]}).translate([-15,0,0]))
 
     s = s.subtract(cylinder({h:2*H, r: 10, fn: 100}).translate([19.8,R2+7,0]))
