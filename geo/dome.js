@@ -15,6 +15,6 @@ function ring(n, r, a) {
 function main() {
     var s1 = ring(8,1.2,1);
     var s2 = ring(8,0.95,1.5).translate([0,0,0.85]).rotateZ(360/16);
-    var s3 = ring(4,0.47,2.4).translate([0,0,0.9+0.8]);
+    var s3 = ring(4,0.47,1.5).translate([0,0,0.9+0.8]);
     return union(s1, s2, s3);
 }
