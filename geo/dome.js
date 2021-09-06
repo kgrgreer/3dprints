@@ -10,11 +10,11 @@ function ring(n, r, a) {
     for ( var i = 0 ; i < n ; i++ ) {
       s.push(t.translate([r,0,0]).rotateZ(360/n*i));
     }
+
     return union.apply(null, s);
 }
 function main() {
-    var s1 = ring(8,1.2,1);
-    var s2 = ring(8,0.95,1.5).translate([0,0,0.85]).rotateZ(360/16);
-    var s3 = ring(4,0.47,1.5).translate([0,0,0.9+0.8]);
-    return union(s1, s2, s3);
+    var s1 = ring(5,0.68,-0.55);
+    var s2 = ring(5,0.68,2.8).translate([0,0,0.85]).rotateZ(360/10);
+    return union(s1, s2).scale(10);
 }
