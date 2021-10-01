@@ -1,5 +1,5 @@
-var H = 20;
-var R = 11.2/2;
+var H = 25;
+var R = 12.2/2;
 var R2 = 9/2;
 
 function main() {
