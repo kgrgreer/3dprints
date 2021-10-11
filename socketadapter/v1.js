@@ -1,6 +1,6 @@
 var H = 25;
 var R = 12.2/2;
-var R2 = 9.5/2;
+var R2 = 9.8/2;
 
 function main() {
     var s = cylinder({r:R+3, h: H+3, fn: 6});
