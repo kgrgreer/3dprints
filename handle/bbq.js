@@ -1,11 +1,11 @@
-const R1 = 5;
-const R2 = 20;
-const R3 = 22;
+const R1 = 6;
+const R2 = 17;
+const R3 = 20;
 
-const L = 60;
-const T = 5;
+const L = 127;
+const T = 10;
 
-const FN = 60;
+const FN = 80;
 
 function main() {
   var s = cylinder({h: L, r:R2, fn: FN});
