@@ -2,8 +2,8 @@ const R1 = 6;
 const R2 = 17;
 const R3 = 20;
 
-const L = 127;
-const T = 10;
+const L = 125;
+const T = 6;
 
 const FN = 80;
 
