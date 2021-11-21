@@ -8,6 +8,7 @@ var RW = 18.25;  // Row Width
 var RS = 8.6;     // Row Start
 var SW = 14;      // Switch Width 14
 var KW = 17;      // Key Width
+var SR = 2;       // screw radius
 
 function key(s, x, y) {
     var c = cube({size:[15,15,100]}).rotateZ(-A).translate([x,y,0]);
@@ -60,9 +61,16 @@ if ( ! keys ) {
 }
 
 function main() {
-  var s= base(false).setColor([1,1,1]);
+  var bottom = base(false).setColor([1,1,1]);
+  var lid    = base(true).translate([0,0,H-FT]);
 
-  s = s.union(base(true).translate([0,0,H]));
-  s = s.rotateZ(10)
+  bottom = bottom.union(cylinder({r:5,h: H-FT}).subtract(cylinder({r:SR,h: 10}).translate([0,0,H-10])).translate([0,-5,0]));
+
+  lid = lid.subtract(cylinder({r:SR,h: 100}).translate([0,-5,0]));
+  lid = lid.subtract(bottom);
+  var s = bottom;
+
+  s = s.union(lid);
+  s = s.rotateZ(10);
   return s;
 }
