@@ -74,8 +74,8 @@ function main() {
     lid = lid.subtract(cylinder({r:SR,h: 100}).translate([0,10+10*i,H-0.4]));
 
   for ( var i = 0 ; i < 11 ; i++ ) {
-    bottom = bottom.subtract(cylinder({r:3, h:100}).rotateX(90).translate([-90+i*17.75,100,H]));
-    bottom = bottom.subtract(cylinder({r:3, h:100}).rotateX(90).translate([-90+i*17.75,100,H-FT]));
+    bottom = bottom.subtract(cylinder({r:3, h:100}).rotateX(90).translate([-90+i*18,100,H]));
+    bottom = bottom.subtract(cylinder({r:3, h:100}).rotateX(90).translate([-90+i*18,100,H-FT]));
   }
   var s = bottom;
   s = s.union(lid);
