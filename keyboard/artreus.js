@@ -5,7 +5,7 @@ var A  = 10;  // Key row slant angle
 var FT = 1.5; // Faceplate thickness
 var H  = 15;
 var RW = 18.25;  // Row Width
-var RS = 8.6;     // Row Start
+var RS = 9.5;     // Row Start
 var SW = 14;      // Switch Width 14
 var KW = 17;      // Key Width
 var SR = 2;       // screw radius
@@ -30,7 +30,7 @@ function row(s, x, y, opt_rows) {
 }
 
 function base(keys) {
-var p = polygon({ points: [ [3,6],/*[15,82]*/,[16,78], [21, 82], [220,82],[233,0],[140,-10],[90,-10], [8,0] ] });
+var p = polygon({ points: [ [9,19],/*[15,82]*/,[19,78], [21, 82], [220,82],[233,0],[140,-10],[90,-10], [10,2], [8,5] ] });
 var base = p.extrude().scale([1,1,FT]).setColor([0.4,0.4,0.4])
 var s = base;
 
@@ -70,7 +70,12 @@ function main() {
   lid = lid.subtract(bottom);
   var s = bottom;
 
-  s = s.union(lid);
+  // s = s.union(lid);
+  s = bottom;
+
+  for ( var i = 0 ; i < 11 ; i++ )
+    s = s.subtract(cylinder({r:2.5, h:100}).rotateX(90).translate([-90+i*17.75,100,H]));
+
   s = s.rotateZ(10);
   return s;
 }
