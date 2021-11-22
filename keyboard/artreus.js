@@ -64,17 +64,22 @@ function main() {
   var bottom = base(false).setColor([1,1,1]);
   var lid    = base(true).translate([0,0,H-FT]);
 
+  // Add screw hold and post
   bottom = bottom.union(cylinder({r:5,h: H-FT}).subtract(cylinder({r:SR,h: 10}).translate([0,0,H-10])).translate([0,-5,0]));
-
   lid = lid.subtract(cylinder({r:SR,h: 100}).translate([0,-5,0]));
   lid = lid.subtract(bottom);
+
+  // Add LED cutouts
+  for ( var i = 0 ; i < 3 ; i++ )
+    lid = lid.subtract(cylinder({r:SR,h: 100}).translate([0,10+10*i,H-0.4]));
+
+  for ( var i = 0 ; i < 11 ; i++ ) {
+    bottom = bottom.subtract(cylinder({r:3, h:100}).rotateX(90).translate([-90+i*17.75,100,H]));
+    bottom = bottom.subtract(cylinder({r:3, h:100}).rotateX(90).translate([-90+i*17.75,100,H-FT]));
+  }
   var s = bottom;
-
-  // s = s.union(lid);
-  s = bottom;
-
-  for ( var i = 0 ; i < 11 ; i++ )
-    s = s.subtract(cylinder({r:2.5, h:100}).rotateX(90).translate([-90+i*17.75,100,H]));
+  s = s.union(lid);
+  // s = bottom;
 
   s = s.rotateZ(10);
   return s;
