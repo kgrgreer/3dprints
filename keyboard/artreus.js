@@ -29,7 +29,7 @@ function row(s, x, y, opt_rows) {
   return s;
 }
 
-function base(keys) {
+function base(keys, asBase) {
 var p = polygon({ points: [ [9,19],/*[15,82]*/,[19,78], [21, 82], [220,82],[233,0],[140,-10],[90,-10], [10,2], [8,5] ] });
 var base = p.extrude().scale([1,1,FT]).setColor([0.4,0.4,0.4])
 var s = base;
@@ -43,14 +43,14 @@ var s = base;
  s = row(s, RS+RW*5, -4, 2);
  }
 
+ // reflect halves
  s = s.intersect(cube({size:[122,500,100]}).translate([0,-250,0]));
-
  s = s.translate([-122,0,0]);
  s = s.union(s.scale([-1,1,1]));
 
-s = s.translate([0,-41,0]);
+ s = s.translate([0,-41,0]);
 
-if ( ! keys ) {
+if ( asBase ) {
  var base = s.scale([1,1,H/FT]);
  base = base.subtract(base.scale([0.98, 0.95, 1]));
  base = base.subtract(s.scale([1,1,H/FT]).translate([0,0,H-FT]).scale([0.99,0.975,1]));
@@ -61,8 +61,11 @@ if ( ! keys ) {
 }
 
 function main() {
-  var bottom = base(false).setColor([1,1,1]);
-  var lid    = base(true).translate([0,0,H-FT]);
+  var bottom = base(false, true).setColor([1,1,1]);
+  var lid    = base(true, false);
+
+  lid = lid.intersect(base(false,false).scale([0.9875,0.97,1]));
+  lid = lid.translate([0,0,H-FT]);
 
   // Add screw hold and post
   bottom = bottom.union(cylinder({r:5,h: H-FT}).subtract(cylinder({r:SR,h: 10}).translate([0,0,H-10])).translate([0,-5,0]));
