@@ -8,7 +8,7 @@ var RW = 18.25;  // Row Width
 var RS = 9.5-122;     // Row Start
 var SW = 14;      // Switch Width 14
 var KW = 17;      // Key Width
-var SR = 2;       // screw radius
+var SR = 1.5;       // screw radius
 
 function key(s, x, y) {
     var c = cube({size:[15,15,100]}).rotateZ(-A).translate([x,y,0]);
@@ -74,7 +74,8 @@ if ( asBase ) {
  var base = s.scale([1,1,H/FT]);
  base = base.subtract(base.scale([0.98, 0.95, 1]));
  base = base.subtract(s.scale([1,1,H/FT]).translate([0,0,H-FT]).scale([0.99,0.975,1]));
- return base.union(s);
+ // add bottom to base
+ return base.union(s.scale([1,1,1/1.5]));
 }
 
  return s;
@@ -100,8 +101,8 @@ function main() {
     bottom = bottom.subtract(cylinder({r:3, h:100}).rotateX(90).translate([-90+i*18,100,H-FT]));
   }
   var s = bottom;
-  s = s.union(lid);
-  // s = bottom;
+  //s = s.union(lid);
+   s = bottom;
 
   s = s.rotateZ(10);
   return s;
