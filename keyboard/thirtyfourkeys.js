@@ -45,9 +45,9 @@ function base(keys, asBase) {
 var p = polygon({ points: [
     [13,19],[13,28],
     [30,80],[36,84],
-    [140,84],
-    [140,-34],
-    [100,-34]
+    [145,84],
+    [145,-40],
+    [104,-40]
 ] });
 var base = p.extrude().scale([1,1,FT]).setColor([0.4,0.4,0.4])
 var s = base;
@@ -80,8 +80,10 @@ var s = base;
    s = row(s, RS+RW*4, -12, 4, true);
 
    for ( var i = 0 ; i < 2 ; i++ ) {
-     s = key(s, -44, -2, i == 1, -15);
-     s = key(s, -24, -16, i == 1, -30);
+     var p = 0.5;
+     s = key(s, -34, -8, i == 1, -22.5);
+     p = 1.5;
+     s = key(s, -15, -25, i == 1, -37.5);
    }
  }
 
