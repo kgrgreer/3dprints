@@ -1,4 +1,4 @@
-// V6
+// V7
 // TODO:
 // Make ledge thicker
 // make faceplate thicker
@@ -31,15 +31,16 @@ var RS   = -117.5;    // Row Start
 */
 
 var A    = 24;        // Key row slant angle
+
 var SHAPE = [
-    [15,26],[14,32], // bottom left
-    [36,82],[60,90], // top left
+    [13,27],[13,32], // bottom left
+    [35,83],[60,90], // top left
     [100, 90], [145, 90],
-//    [145,84], // top center
-    [145,-34], // bottom center
-    [98+1,-34],    [98-1,-34+1],  //  [96,-41],
-    [68, 1]
+    [145,-32], // bottom center
+    [99+1,-32],    [99-1,-32+1],  //  [96,-41],
+    [62, 3]
 ];
+
 var LEDS = [
     [0,38],
     [20,38],
@@ -47,7 +48,7 @@ var LEDS = [
 ];
 
 var POSTS = [
-    [ 0, -65],
+    [ 0, -60],
     [ 0, 18],
     [64, -20],
     [-64, -20]
@@ -56,14 +57,14 @@ var RS   = -118.25;    // Row Start
 
 
 
-var FT   = 1.49;      // Faceplate thickness
+var FT   = 2;      // Faceplate thickness
 var H    = 15;        // Total height of keyboard
 var RW   = 19;        // Row Width
 var SW   = 14 + 0.6 ; // Switch Width 14, plus 0.6, for some reason
 var KW   = 17;        // Key Width
 var SR   = 1.5;       // screw radius
 var KH   = 6;         // key height above faceplate
-var TR   = 120;        // thumb radius
+var TR   = 119;        // thumb radius
 
 var KEYS = false;     // include key-caps
 
@@ -108,7 +109,7 @@ function key(s, x, y, reverse, r, color) {
     if ( reverse ) c = c.scale([-1,1,1]);
     s = s.subtract(c);
     if ( KEYS ) {
-        var key = cube({size:[KW, KW, 8], radius: 1, center: [true,true,false]}).rotateZ(r || 0).translate([x, y,0]).rotateZ(-A).translate([0,0,KH]);
+        var key = cube({size:[KW, KW, 8], xxxradius: 1, center: [true,true,false]}).rotateZ(r || 0).translate([x, y,0]).rotateZ(-A).translate([0,0,KH]);
         key = key.setColor(color)
         if ( reverse ) key = key.scale([-1,1,1]);
         s = s.union(key);
@@ -168,15 +169,15 @@ var s = base;
    s = row(s, RS+RW*4, 11, 4, true);
 
    // thumb key
-   function tkey(reverse, a, color) {
-      s = key(s, TR/2 * Math.cos(a/180*Math.PI)-52, TR/2 * Math.sin(a/180*Math.PI)-76, reverse, a, color);
+   function tkey(reverse, a, color, r, x, y, r2) {
+      s = key(s, r/2 * Math.cos(a/180*Math.PI)+x, r/2 * Math.sin(a/180*Math.PI)+y, reverse, a + (r2 || 0), color);
    }
 
    for ( var i = 0 ; i < 2 ; i++ ) {
      // inside keys
-     tkey(i == 1, 54, [0.3,0.9,0.3]);
+     tkey(i == 1, 56, [0.3,0.9,0.3], TR+3, -52, -76, 8);
      // outside keys
-     tkey(i == 1, 74, i == 0 ? [0.8,0,0] : [0.2,0.2,0.2]);
+     tkey(i == 1, 74, i == 0 ? [0.8,0,0] : [0.2,0.2,0.2], TR, -52, -76);
    }
  }
 
@@ -215,11 +216,9 @@ function main() {
     bottom = bottom.subtract(cylinder({r:3, h:100}).rotateX(90).translate([-78+i*16,100,H-FT]));
   }
 
-  lid = lid.subtract(createText({text: 'v6', justify: 'C', h: H+FT+.2}).toSolid().scale([-1,1,1]));
+  lid = lid.subtract(createText({text: 'V7', justify: 'C', h: H+FT+.2}).toSolid().scale([-1,1,1]));
   var s = bottom;
-  return lid;
   s = s.union(lid);
-  //s = bottom;
-  //s = lid;
+  return bottom;
   return s;
 }
