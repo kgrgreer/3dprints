@@ -1,13 +1,64 @@
-// V5
+// V6
 // TODO:
-// 1. horizontal and vertical spacing of keys is off because of slant angle
-// 2. experiment with 25 degree angle
+// Make ledge thicker
+// make faceplate thicker
 
+
+/*
 var A    = 20;        // Key row slant angle
+var SHAPE = [
+    [12.5,20],[12.5,25], // bottom left
+    [31,76],[55,84], // top left
+    [84, 82], [120, 64], [145, 64],
+//    [145,84], // top center
+    [145,-36], // bottom center
+    [98+1,-36],    [98-1,-36+1],  //  [96,-41],
+    [65, -1]
+];
+var LEDS = [
+    [0,15],
+    [81,33],
+    [-81,33]
+];
+
+var POSTS = [
+    [ 0, -65],
+    [ 0, 5],
+    [64, -20],
+    [-64, -20]
+];
+var RS   = -117.5;    // Row Start
+*/
+
+var A    = 24;        // Key row slant angle
+var SHAPE = [
+    [15,26],[14,32], // bottom left
+    [36,82],[60,90], // top left
+    [100, 90], [145, 90],
+//    [145,84], // top center
+    [145,-34], // bottom center
+    [98+1,-34],    [98-1,-34+1],  //  [96,-41],
+    [68, 1]
+];
+var LEDS = [
+    [0,38],
+    [20,38],
+    [-20,38]
+];
+
+var POSTS = [
+    [ 0, -65],
+    [ 0, 18],
+    [64, -20],
+    [-64, -20]
+];
+var RS   = -118.25;    // Row Start
+
+
+
 var FT   = 1.49;      // Faceplate thickness
 var H    = 15;        // Total height of keyboard
 var RW   = 19;        // Row Width
-var RS   = -117.5;    // Row Start
 var SW   = 14 + 0.6 ; // Switch Width 14, plus 0.6, for some reason
 var KW   = 17;        // Key Width
 var SR   = 1.5;       // screw radius
@@ -16,13 +67,48 @@ var TR   = 120;        // thumb radius
 
 var KEYS = false;     // include key-caps
 
+function createText(m) {
+    if ( typeof m === 'string' ) m = { text: m };
+
+    return Object.assign({
+      text: 'A',
+      w: 4,
+      h: 7,          // depth
+      scale: 0.14,
+      justify: 'L',  // justification: R, C or defaults to Left
+      a: 0,          // angle of rotation
+      color: [1,1,1],
+      toSolid: function() {
+        var o = [];
+        var l = vector_text(0, 0, this.text);
+
+        l.forEach(s => o.push(rectangular_extrude(s, {w: this.w, h: this.h})));
+
+        var txt = union(o).setColor(this.color).scale([this.scale, this.scale, 1]);
+
+        if ( this.a ) txt = txt.rotateZ(this.a);
+
+        var bounds = txt.getBounds();
+        if ( this.justify === 'R' ) {
+          txt = txt.translate([-bounds[1].x, -bounds[0].y*0, -2.5]);
+        } else if ( this.justify === 'C' ) {
+          txt = txt.translate([-bounds[1].x/2, -bounds[0].y*0, -2.5]);
+        } else {
+          txt = txt.translate([-bounds[0].x, -bounds[0].y*0, -2.5]);
+        }
+
+        return txt;
+      }
+    }, m);
+}
+
 
 function key(s, x, y, reverse, r, color) {
     var c = cube({size:[SW,SW,100], center: true}).rotateZ(r || 0).translate([x, y, 0]).rotateZ(-A).translate([0, 0, 0]);
     if ( reverse ) c = c.scale([-1,1,1]);
     s = s.subtract(c);
     if ( KEYS ) {
-        var key = cube({size:[KW, KW, 8], xxxradius: 1, center: [true,true,false]}).rotateZ(r || 0).translate([x, y,0]).rotateZ(-A).translate([0,0,KH]);
+        var key = cube({size:[KW, KW, 8], radius: 1, center: [true,true,false]}).rotateZ(r || 0).translate([x, y,0]).rotateZ(-A).translate([0,0,KH]);
         key = key.setColor(color)
         if ( reverse ) key = key.scale([-1,1,1]);
         s = s.union(key);
@@ -30,14 +116,16 @@ function key(s, x, y, reverse, r, color) {
     return s;
 }
 
+
 function row(s, x, y, rows, reverse, home) {
 
   for ( var i = 1 ; i < rows ; i++ ) {
-      s = key(s, x+12, RW*i+y-28, reverse, 0, i == 2 && home ? [0.8,0.8,0.8] : [0.2,0.2,0.2]);
+      s = key(s, x+12, RW*i+y-28, reverse, 0, i == 2 && home ? [0.2,0.2,0.2] : [0.8,0.8,0.8] );
   }
 
   return s;
 }
+
 
 function post(lid, bottom, x, y) {
   bottom = bottom.union(cylinder({r:5,h: H-FT}).subtract(cylinder({r:SR,h: 10}).translate([0,0,H-10])).translate([x,y,0]));
@@ -46,16 +134,9 @@ function post(lid, bottom, x, y) {
   return [lid, bottom];
 }
 
+
 function base(keys, asBase) {
-var p = polygon({ points: [
-    [12.5,20],[12.5,25], // bottom left
-    [31,76],[55,84], // top left
-    [84, 82], [120, 64], [145, 64],
-//    [145,84], // top center
-    [145,-36], // bottom center
-    [98+1,-36],    [98-1,-36+1],  //  [96,-41],
-    [65, -1]
-] });
+var p = polygon({ points: SHAPE });
 var base = p.extrude().scale([1,1,FT]).setColor([0.4,0.4,0.4])
 var s = base;
 
@@ -93,7 +174,7 @@ var s = base;
 
    for ( var i = 0 ; i < 2 ; i++ ) {
      // inside keys
-     tkey(i == 1, 54, [0.3,0.3,0.9]);
+     tkey(i == 1, 54, [0.3,0.9,0.3]);
      // outside keys
      tkey(i == 1, 74, i == 0 ? [0.8,0,0] : [0.2,0.2,0.2]);
    }
@@ -101,13 +182,13 @@ var s = base;
 
  s = s.translate([0,-41,0]);
 
-if ( asBase ) {
- var base = s.scale([1,1,H/FT]);
- base = base.subtract(base.scale([0.98, 0.95, 1]));
- base = base.subtract(s.scale([1,1,H/FT]).translate([0,0,H-FT]).scale([0.99,0.975,1]));
- // add bottom to base
- return base.union(s.scale([1,1,1/1.5]));
-}
+  if ( asBase ) {
+   var base = s.scale([1,1,H/FT]);
+   base = base.subtract(base.scale([0.98, 0.95, 1]));
+   base = base.subtract(s.scale([1,1,H/FT]).translate([0,0,H-FT]).scale([0.99,0.975,1]));
+   // add bottom to base
+   return base.union(s.scale([1,1,1/1.5]));
+  }
 
  return s;
 }
@@ -119,23 +200,26 @@ function main() {
   lid = lid.translate([0,0,H-FT]);
 
   // Add screw hold and post
-  [lid, bottom] = post(lid, bottom, 0, -65);
-  [lid, bottom] = post(lid, bottom, 0, 5);
-  [lid, bottom] = post(lid, bottom, 64, -20);
-  [lid, bottom] = post(lid, bottom, -64, -20);
+  POSTS.forEach(p => {
+    [lid, bottom] = post(lid, bottom, p[0], p[1]);
+  });
 
   // Add LED cutouts
-    lid = lid.subtract(cylinder({r:SR,h: 100}).translate([0,15,H-0.4]));
-    lid = lid.subtract(cylinder({r:SR,h: 100}).translate([81,33,H-0.4]));
-    lid = lid.subtract(cylinder({r:SR,h: 100}).translate([-81,33,H-0.4]));
+  LEDS.forEach(led  => {
+    lid = lid.subtract(cylinder({r:SR,h: 100}).translate([led[0],led[1],H-0.4]));
+  });
 
   for ( var i = 0 ; i < 11 ; i++ ) {
+      if ( i == 5 || i == 1 || i == 9 ) continue;
     bottom = bottom.subtract(cylinder({r:3, h:100}).rotateX(90).translate([-78+i*16,100,H]));
     bottom = bottom.subtract(cylinder({r:3, h:100}).rotateX(90).translate([-78+i*16,100,H-FT]));
   }
+
+  lid = lid.subtract(createText({text: 'v6', justify: 'C', h: H+FT+.2}).toSolid().scale([-1,1,1]));
   var s = bottom;
+  return lid;
   s = s.union(lid);
-  // s = bottom;
-  s = lid;
+  //s = bottom;
+  //s = lid;
   return s;
 }
