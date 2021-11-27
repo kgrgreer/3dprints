@@ -189,7 +189,7 @@ var SWITCH = {
   latchDepth: 1.45, // 1.5
   latchWidth: 3.7,
   latchHeight: 1,
-  holderThickness: 1,
+  holderThickness: 2,
   holderHeight: 3,
   createHolderOutline: memoize(function() {
     var h = this.holderHeight;
