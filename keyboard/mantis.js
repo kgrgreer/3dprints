@@ -1,7 +1,8 @@
 // V7
 // TODO:
-// Make ledge thicker
-// make faceplate thicker
+//   Make ledge thicker
+//   Test screw sizes
+//   tilt inside thumb keys
 
 
 /*
@@ -33,40 +34,206 @@ var RS   = -117.5;    // Row Start
 var A    = 24;        // Key row slant angle
 
 var SHAPE = [
-  [13,27],[13,32], // bottom left
-  [35,83],[60,90], // top left
-  [100, 90], [145, 90],
+  [11,27],[11,32], // bottom left
+  [35,88],[62,96], // top left
+  [145, 96],
   [145,-32], // bottom center
   [99+1,-32],    [99-1,-32+1],  //  [96,-41],
   [62, 3]
 ];
 
 var LEDS = [
-  [0,38],
-  [20,38],
-  [-20,38]
+  [  0, 42],
+  [ 20, 42],
+  [-20, 42]
 ];
 
 var POSTS = [
   [ 0, -60],
-  [ 0, 18],
+  [ 0, 24],
   [64, -20],
   [-64, -20]
 ];
-var RS   = -118.25;    // Row Start
+var RS   = -119;    // Row Start
 
 
 
-var FT   = 2;         // Faceplate thickness
+var FT   = 3;         // Faceplate thickness
 var H    = 13;        // Total height of keyboard
 var RW   = 19;        // Row Width
-var SW   = 14 + 0.6 ; // Switch Width 14, plus 0.6, for some reason
+var SW   = 14 + 0.55 ; // Switch Width 14, plus 0.6, for some reason
 var KW   = 17;        // Key Width
 var SR   = 1.5;       // screw radius
 var KH   = 6;         // key height above faceplate
 var TR   = 119;       // thumb radius
 
 var KEYS = false;     // include key-caps
+var PREVIEW = false;
+
+var HOME_COLOR        = [0,0,0];
+var DEFAULT_KEY_COLOR = [0.8,0.8,0.8];
+var MODIFIER_COLOR    = [0.8,0,0];
+
+
+function wedge(r, w, a1, a2, b1, b2, flags) {
+  var s = sphere({r:r});
+  var d = 2*r;
+  flags = flags || {};
+
+  //s = s.intersect(cube({size:[1000,1000,1000]}).translate([-500,-500,0]));
+
+  // left
+  if ( ! flags.left ) s = s.subtract(cube({size:[-d, d, d]}).translate([0,r,-d]).rotateY(b2).translate([-w,-d,r]));
+
+  // right
+  if ( ! flags.right ) s = s.subtract(cube({size:[d, d, d]}).translate([0,r,-d]).rotateY(b1).translate([w,-d,r]));
+
+  // top
+  if ( ! flags.top ) s = s.subtract(cube({size:[d, d, d]}).translate([-r,0,-d]).rotateX(-a1).translate([0,w,r]));
+
+  // bottom
+  s = s.subtract(cube({size:[d, -d, d]}).translate([-r,0,-d]).rotateX(-a2).translate([0,-w,r]));
+
+  return s;
+}
+
+function degToRad(d) {
+  return d/360*Math.PI;
+}
+
+
+/*********************************************************************
+ *                                                             CAP
+ *********************************************************************/
+
+function createKeyCap(k) {
+  var cap = Object.assign(k, {
+      toSolid: memoize(function() {
+         const KEYW = 17;
+         const WW   = 7.5;
+         var w   = wedge(/*this.f.r*/84-13, 0, -WW, WW, -WW, WW, k.flags);
+         var key = w.intersect(cube({radius:0, size:[KEYW,KEYW,3.6+this.capHeight+14]}).translate([-KEYW/2,-KEYW/2,-4-11]).intersect(cube({size:[100,100,100]}).translate([-50,-50,-4])));
+
+         key = key.intersect(cylinder({r2:0,r1:11.5,h:100}).translate([0,0,-10]));
+         key = this.concaveKey(key);
+  //       key = this.edgeKey(key);
+
+       key = key.setColor(this.color);
+
+//         key = this.addLabel(key, -6,  1,   this.label,   { color: BLACK });
+//         key = this.addLabel(key, -6, -6, this.swLabel, { color: BLACK });
+//         key = this.addLabel(key,  6, -6, this.seLabel, { color: RED, justify: 'R', scale: 0.12});
+
+         return key.translate([0,0,SWITCH.stem]);
+      }),
+      toProductionSolid: function() {
+        const W = 4.6 +0.1; // add 0.2 when testing to make easier to put on and remove
+        const H = 1.4 +0.1;
+        const D = 5;
+        var s = this.toSolid();
+        var PAD_W = SWITCH.w+2.25; // was 2.5
+        s = s.subtract(cube({radius:3.75, roundradius: 3.75, size:[PAD_W,PAD_W, D+5]}).translate([-PAD_W/2,-PAD_W/2,-5]));
+//        var stem = cylinder({r:5.4/2, h: D});
+        var sw = 5.4; /*make smaller to reduce friction Was: 5.4+1.5*/
+        var sh = 5.4;
+        var stem = cube({radius:0.9, roundradius: 0.9,size:[sw,sh, D+2]}).intersect(cube({size:[sw,sh, D]})).translate([-sw/2,-sh/2,0]).setColor(WHITE);
+        var hollow = cube({size:[W,H,3.8]}).translate([-W/2,-H/2,0]).union(cube({size:[H,W,3.8]}).translate([-H/2,-W/2,0]));
+        return s.union(stem.subtract(hollow));
+      },
+      concaveKey: function(o) {
+        var tiltY = Math.cos(degToRad(this.capTilt))*30;
+        var tiltZ = Math.sin(degToRad(this.capTilt))*30;
+        if ( k.isHome ) {
+          o = o.subtract(sphere({r:45}).scale([1,1,1.3]).rotateX(this.capTilt/2.5).translate([0,-tiltZ,41-7+20+this.capHeight]));
+        } else {
+          o = o.subtract(sphere({r:45}).scale([1,3,1.3]).rotateX(this.capTilt/2.5).translate([0,-tiltZ,41-7+20+this.capHeight]));
+        }
+        return o;
+      },
+      edgeKey: function(o) {
+        if ( this.flags.edgeTop )    o = o.subtract(cylinder({r:20, h:40}).rotateX(40).translate([0,33,0]));
+        if ( this.flags.edgeBottom ) o = o.subtract(cylinder({r:20, h:40}).rotateX(-40).translate([0,-33,0]));
+        return o;
+      },
+      markAsHomeKey: function(o) {
+          /*
+          var c = cylinder({r:0.6, h:5}).rotateY(90).translate([f.d/2-2.5, f.d/2+4, -5.6]);
+          key = key.union(c);
+     */
+         return o;
+      },
+      addLabel: function(o, x, y, label, opt_args) {
+        if ( LABELS && label ) {
+          if ( typeof label === 'string' ) label = { text: label };
+          if ( opt_args ) label = Object.assign(opt_args, label);
+
+          var txt = createText(label);
+          txt = txt.toSolid().translate([x, y, 4]).subtract(o).translate([0,0,-0.75]);
+          o = o.subtract(txt);
+        }
+
+        return o;
+      }
+  });
+
+  return cap;
+}
+
+
+
+/*********************************************************************
+ *                                                             SWITCH
+ *********************************************************************/
+
+var SWITCH = {
+  w:    13.7, // use 13.7 for testing, 13.6,    // width of sides of switch
+  d:    6, //8, // depth below surface
+  h:    6.6, // 6.6,     // height above surface
+  stem: 4, //3.6,     // height of stem, 4mm travel
+  latchDepth: 1.45, // 1.5
+  latchWidth: 3.7,
+  latchHeight: 1,
+  holderThickness: 1,
+  holderHeight: 3,
+  createHolderOutline: memoize(function() {
+    var h = this.holderHeight;
+    var t = this.holderThickness;
+    var holder = cube({size:[this.w+2*t, this.w+2*t, h]}).translate([-this.w/2-t,-this.w/2-t,-this.h-h]).setColor([1,1,1]);
+    return holder;
+  }),
+  createLatch: function() {
+     return cube({size:[this.latchWidth,17,this.latchHeight]}).translate([-this.latchWidth/2,-17/2,-this.latchDepth-this.h-this.latchHeight]);
+  },
+  createHolder: memoize(function() {
+    var h      = this.holderHeight;
+    var holder = this.createHolderOutline();
+    var top    = cube({size:[this.w, this.w, this.h+4]}).translate([-this.w/2,-this.w/2,-this.h-h]);
+
+    return holder.subtract(top);
+  }),
+  createSwitch: memoize(function() {
+    var top    = cube({size:[this.w, this.w, this.h]}).translate([-this.w/2,-this.w/2,-this.h]);
+    var bottom = cube({size:[this.w, this.w, this.d]}).translate([-this.w/2,-this.w/2, -this.h + -this.d]);
+    var latch  = this.createLatch();
+    return union(top, bottom, latch);
+  }),
+  toSolid: memoize(function() {
+    var sw   = this.createSwitch().setColor([0,0,0]);
+    var stem = cube({size:[4, 4, 4]}).translate([-2,-2,0]).setColor([165/256,42/256,42/256]);
+    return sw.union(stem);
+  })
+};
+
+
+function memoize(f) {
+  var val;
+
+  return function() {
+    if ( ! val ) val = f.call(this);
+    return val;
+  };
+}
+
 
 function createText(m) {
   if ( typeof m === 'string' ) m = { text: m };
@@ -104,24 +271,57 @@ function createText(m) {
 }
 
 
-function key(s, x, y, reverse, r, color) {
-  var c = cube({size:[SW,SW,100], center: true}).rotateZ(r || 0).translate([x, y, 0]).rotateZ(-A).translate([0, 0, 0]);
+function key(s, x, y, reverse, r, config) {
+    function transform(s) {
+      if ( config.tilt ) {
+          config.tilt = config.tilt * 1.1;
+        var t = config.tilt > 0 ? SW/2 : -SW/2;
+        s = s.translate([0,t,-8]).rotateX(config.tilt).translate([0,-t,8]);
+      }
+      s = s.rotateZ(r || 0).translate([x, y, 0]).rotateZ(-A).translate([0, 0, H-5/*-SWITCH.d*/]);
+      if ( reverse ) s = s.scale([-1,1,1]);
+      return s;
+    }
+    var sw = transform(SWITCH.toSolid());
+    var h  = transform(SWITCH.createHolder());
+    //
+    h = h.intersect(cube({size:[500,500,20], center: [true, true, false]}));
+
+    if ( PREVIEW ) {
+    var cc = createKeyCap({capTilt: 0, capHeight: 5, color: config.color || DEFAULT_KEY_COLOR})
+    var cap = transform(cc.toSolid());
+    sw = sw.union(cap);
+//    h = h.intersect(cap);
+//      var key = transform(cube({size:[KW, KW, 8], xxxradius: 1, center: [true,true,false]}));
+//      sw = sw.union(key);
+    }
+    if ( PREVIEW ) {
+      s = s.union(sw);
+    } else {
+      s = s.subtract(sw);
+    }
+    return s.union(h);
+  function tilt(s) {
+      var t = config.tilt > 0 ? SW/2 : -SW/2;
+      return config.tilt ? s.translate([0,t,-8]).rotateX(config.tilt).translate([0,-t,8]) : s;
+  }
+  var c = tilt(cube({size:[SW,SW,100], center: true})).rotateZ(r || 0).translate([x, y, 0]).rotateZ(-A).translate([0, 0, 0]);
   if ( reverse ) c = c.scale([-1,1,1]);
   s = s.subtract(c);
   if ( KEYS ) {
-    var key = cube({size:[KW, KW, 8], xxxradius: 1, center: [true,true,false]}).rotateZ(r || 0).translate([x, y,0]).rotateZ(-A).translate([0,0,KH]);
-    key = key.setColor(color)
+    var key = tilt(cube({size:[KW, KW, 8], xxxradius: 1, center: [true,true,false]})).rotateZ(r || 0).translate([x, y,0]).rotateZ(-A).translate([0,0,KH]);
+    key = key.setColor(config.color || DEFAULT_KEY_COLOR);
     if ( reverse ) key = key.scale([-1,1,1]);
     s = s.union(key);
   }
+
   return s;
 }
 
 
 function row(s, x, y, rows, reverse, home) {
-
-  for ( var i = 1 ; i < rows ; i++ ) {
-    s = key(s, x+12, RW*i+y-28, reverse, 0, i == 2 && home ? [0.2,0.2,0.2] : [0.8,0.8,0.8] );
+  for ( var i = 0 ; i < rows.length ; i++ ) {
+    s = key(s, x+12, RW*(i+1)+y-28, reverse, 0, rows[i]);
   }
 
   return s;
@@ -153,31 +353,31 @@ function base(keys, asBase) {
   }
 
   if ( keys ) {
-    s = row(s, RS, 0, 4, false, true);
-    s = row(s, RS, 0, 4, true, true);
+    s = row(s, RS, 0, [{tilt: -10},{color: HOME_COLOR},{tilt: 12}], false, true);
+    s = row(s, RS, 0, [{tilt: -10},{color: HOME_COLOR},{tilt: 12}], true, true);
 
-    s = row(s, RS+RW, 15, 4, false, true);
-    s = row(s, RS+RW, 15, 4, true, true);
+    s = row(s, RS+RW, 17, [{tilt: -10},{color: HOME_COLOR},{tilt: 12}], false, true);
+    s = row(s, RS+RW, 17, [{tilt: -10},{color: HOME_COLOR},{tilt: 12}], true, true);
 
-    s = row(s, RS+RW*2, 21, 4, false, true);
-    s = row(s, RS+RW*2, 21, 4, true, true);
+    s = row(s, RS+RW*2, 23, [{tilt: -10},{color: HOME_COLOR},{tilt: 12}], false, true);
+    s = row(s, RS+RW*2, 23, [{tilt: -10},{color: HOME_COLOR},{tilt: 12}], true, true);
 
-    s = row(s, RS+RW*3, 15, 4, false, true);
-    s = row(s, RS+RW*3, 15, 4, true, true);
+    s = row(s, RS+RW*3, 17, [{tilt: -10},{color: HOME_COLOR},{tilt: 12}], false, true);
+    s = row(s, RS+RW*3, 17, [{tilt: -10},{color: HOME_COLOR},{tilt: 12}], true, true);
 
-    s = row(s, RS+RW*4, 11, 4);
-    s = row(s, RS+RW*4, 11, 4, true);
+    s = row(s, RS+RW*4, 12, [{tilt: -10},{},{tilt: 12}]);
+    s = row(s, RS+RW*4, 12, [{tilt: -10},{},{tilt: 12}], true);
 
     // thumb key
-    function tkey(reverse, a, color, r, x, y, r2) {
-      s = key(s, r/2 * Math.cos(a/180*Math.PI)+x, r/2 * Math.sin(a/180*Math.PI)+y, reverse, a + (r2 || 0), color);
+    function tkey(reverse, a, color, r, x, y, r2, tilt) {
+      s = key(s, r/2 * Math.cos(a/180*Math.PI)+x, r/2 * Math.sin(a/180*Math.PI)+y, reverse, a + (r2 || 0), {tilt: tilt || 0, color: color});
     }
 
     for ( var i = 0 ; i < 2 ; i++ ) {
       // inside keys
-      tkey(i == 1, 56, [0.3,0.9,0.3], TR+3, -52, -76, 8);
+      tkey(i == 1, 58, [0.3,0.9,0.3], TR+3, -53, -77, 8, -10);
       // outside keys
-      tkey(i == 1, 74, i == 0 ? [0.8,0,0] : [0.2,0.2,0.2], TR, -52, -76);
+      tkey(i == 1, 75, i == 1 ? MODIFIER_COLOR : HOME_COLOR, TR, -53, -77, 0, 4);
     }
   }
 
@@ -194,7 +394,20 @@ function base(keys, asBase) {
   return s;
 }
 
+
 function main() {
+    const WW = 7.5;
+    // return wedge(/*this.f.r*/30-13, 0, -WW, WW, -WW, WW, {});
+
+    // createKeyCap({capHeight: 8, flags:{}, isHome: false}).toSolid();
+
+    /*
+    var s = cube({size:[100, 100, 2], center: true});
+    s = key(s, 0, 0, false, 0, {tilt: 10});
+    s = key(s, 0, -KW, false, 0, {});
+    return s;
+    */
+
   var bottom = base(false, true).setColor([1,1,1]);
   var lid    = base(true, false);
 
@@ -212,13 +425,13 @@ function main() {
 
   for ( var i = 0 ; i < 11 ; i++ ) {
     if ( i == 5 || i == 1 || i == 9 ) continue;
-    bottom = bottom.subtract(cylinder({r:3, h:100}).rotateX(90).translate([-78+i*16,100,H]));
-    bottom = bottom.subtract(cylinder({r:3, h:100}).rotateX(90).translate([-78+i*16,100,H-FT]));
+    bottom = bottom.subtract(cylinder({r:3, h:100}).rotateX(90).translate([-78+i*16,100,H/2]));
   }
 
-  lid = lid.subtract(createText({text: 'V7', justify: 'C', h: H+FT+.2}).toSolid().scale([-1,1,1]));
-  var s = bottom;
-  s = s.union(lid);
-  return lid;
-  return s;
+  lid = lid.subtract(createText({text: 'V7', justify: 'C', h: H+.8}).toSolid().scale([-1,1,1]));
+  //return bottom.union(lid);
+  //return bottom;
+
+//  lid = lid.subtract(bottom);
+  return lid.rotateZ(-15);
 }
