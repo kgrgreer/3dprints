@@ -1,7 +1,7 @@
-// V8
+const VERSION = "V8";
+
 // TODO:
 //   Make ledge thicker
-//   Test led sizes
 //   holder height might be too low
 
 var A    = 24;        // Key row slant angle
@@ -16,9 +16,9 @@ var SHAPE = [
 ];
 
 var LEDS = [
-  [  0, 42],
-  [ 20, 42],
-  [-20, 42]
+  [  0, 44],
+  [ 20, 44],
+  [-20, 44]
 ];
 
 var POSTS = [
@@ -37,6 +37,7 @@ var RW   = 19;        // Row Width
 var SW   = 14 + 0.55 ; // Switch Width 14, plus 0.6, for some reason
 var KW   = 17;        // Key Width
 var SR   = 1.7;       // screw radius
+var LR   = 3.3/2;     // LED radius
 var KH   = 6;         // key height above faceplate
 var TR   = 119;       // thumb radius
 
@@ -411,7 +412,7 @@ function main() {
 
   // Add LED cutouts
   LEDS.forEach(led  => {
-    lid = lid.subtract(cylinder({r:SR,h: 100}).translate([led[0],led[1],H-0.4]));
+    lid = lid.subtract(cylinder({r:LR,h: 100}).translate([led[0],led[1],0]));
   });
 
   for ( var i = 0 ; i < 11 ; i++ ) {
@@ -419,7 +420,8 @@ function main() {
     bottom = bottom.subtract(cylinder({r:3, h:100}).rotateX(90).translate([-78+i*16,100,H/2]));
   }
 
-  lid = lid.subtract(createText({text: 'V8', justify: 'C', h: H+.8}).toSolid().scale([-1,1,1]));
+  lid = lid.subtract(createText({text: VERSION, justify: 'C', h: H+.8}).toSolid().translate([0,-50,0]).scale([-1,1,1]));
+
   //return bottom.union(lid);
   //return bottom;
 
