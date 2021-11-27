@@ -2,34 +2,6 @@
 // TODO:
 //   Make ledge thicker
 //   Test screw sizes
-//   tilt inside thumb keys
-
-
-/*
-var A    = 20;        // Key row slant angle
-var SHAPE = [
-[12.5,20],[12.5,25], // bottom left
-[31,76],[55,84], // top left
-[84, 82], [120, 64], [145, 64],
-//    [145,84], // top center
-[145,-36], // bottom center
-[98+1,-36],    [98-1,-36+1],  //  [96,-41],
-[65, -1]
-];
-var LEDS = [
-[0,15],
-[81,33],
-[-81,33]
-];
-
-var POSTS = [
-[ 0, -65],
-[ 0, 5],
-[64, -20],
-[-64, -20]
-];
-var RS   = -117.5;    // Row Start
-*/
 
 var A    = 24;        // Key row slant angle
 
