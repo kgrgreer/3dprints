@@ -1,7 +1,8 @@
-// V7
+// V8
 // TODO:
 //   Make ledge thicker
-//   Test screw sizes
+//   Test led sizes
+//   holder height might be too low
 
 var A    = 24;        // Key row slant angle
 
@@ -49,8 +50,8 @@ var MODIFIER_COLOR    = [0.8,0,0];
  *                                                             CONFIG
  *********************************************************************/
 
-var KEYS    = true;     // include key-caps
-var PREVIEW = true;
+var KEYS    = false;     // include key-caps
+var PREVIEW = false;
 
 
 
@@ -365,7 +366,7 @@ function base(keys, asBase) {
 
     for ( var i = 0 ; i < 2 ; i++ ) {
       // inside keys
-      tkey(i == 1, 58, [0.3,0.9,0.3], TR+3, -53, -77, 8, -10);
+      tkey(i == 1, 59, [0.3,0.9,0.3], TR+3, -53, -77, 8, -10);
       // outside keys
       tkey(i == 1, 75, i == 1 ? MODIFIER_COLOR : HOME_COLOR, TR, -53, -77, 0, 4);
     }
@@ -418,7 +419,7 @@ function main() {
     bottom = bottom.subtract(cylinder({r:3, h:100}).rotateX(90).translate([-78+i*16,100,H/2]));
   }
 
-  lid = lid.subtract(createText({text: 'V7', justify: 'C', h: H+.8}).toSolid().scale([-1,1,1]));
+  lid = lid.subtract(createText({text: 'V8', justify: 'C', h: H+.8}).toSolid().scale([-1,1,1]));
   //return bottom.union(lid);
   //return bottom;
 
