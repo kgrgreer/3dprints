@@ -35,17 +35,28 @@ var H    = 13;        // Total height of keyboard
 var RW   = 19;        // Row Width
 var SW   = 14 + 0.55 ; // Switch Width 14, plus 0.6, for some reason
 var KW   = 17;        // Key Width
-var SR   = 1.5;       // screw radius
+var SR   = 1.7;       // screw radius
 var KH   = 6;         // key height above faceplate
 var TR   = 119;       // thumb radius
-
-var KEYS = false;     // include key-caps
-var PREVIEW = false;
 
 var HOME_COLOR        = [0,0,0];
 var DEFAULT_KEY_COLOR = [0.8,0.8,0.8];
 var MODIFIER_COLOR    = [0.8,0,0];
 
+
+
+/*********************************************************************
+ *                                                             CONFIG
+ *********************************************************************/
+
+var KEYS    = true;     // include key-caps
+var PREVIEW = true;
+
+
+
+/*********************************************************************
+ *                                                             LIB
+ *********************************************************************/
 
 function wedge(r, w, a1, a2, b1, b2, flags) {
   var s = sphere({r:r});
@@ -69,9 +80,22 @@ function wedge(r, w, a1, a2, b1, b2, flags) {
   return s;
 }
 
+
 function degToRad(d) {
   return d/360*Math.PI;
 }
+
+
+function memoize(f) {
+  var val;
+
+  return function() {
+    if ( ! val ) val = f.call(this);
+    return val;
+  };
+}
+
+
 
 
 /*********************************************************************
@@ -197,15 +221,9 @@ var SWITCH = {
 };
 
 
-function memoize(f) {
-  var val;
-
-  return function() {
-    if ( ! val ) val = f.call(this);
-    return val;
-  };
-}
-
+/*********************************************************************
+ *                                                             TEXT
+ *********************************************************************/
 
 function createText(m) {
   if ( typeof m === 'string' ) m = { text: m };
