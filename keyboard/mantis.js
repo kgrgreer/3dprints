@@ -10,8 +10,8 @@ const PREVIEW = false;
 
 
 // TODO:
-//   Make ledge thicker
-//   holder height might be too low
+// automate rounding of border
+
 
 var A    = 24;        // Key row slant angle
 
@@ -40,7 +40,7 @@ var RS   = -119;    // Row Start
 
 
 
-var FT   = 3;         // Faceplate thickness
+var FT   = 2;         // Faceplate thickness
 var H    = 13;        // Total height of keyboard
 var RW   = 19;        // Row Width
 var SW   = 14 + 0.55 ; // Switch Width 14, plus 0.6, for some reason
@@ -187,7 +187,7 @@ function createKeyCap(k) {
 var SWITCH = {
   w:           13.7, // use 13.7 for testing, 13.6,    // width of sides of switch
   d:           9,    // depth below surface
-  h:           6,    // height above surface
+  h:           5,    // height above surface
   stem:        4,    // height of stem, 4mm travel
 
   latchDepth:  1.5,  // from top of lip
@@ -195,15 +195,15 @@ var SWITCH = {
   latchHeight: 1.4,
 
   holderThickness: 2,
-  holderHeight:    3,
+  holderHeight:    4,
 
-  lipHeight: 1,
+  lipHeight: 1, //6,
   lipWidth: 15.5*1.03,
 
   createHolderOutline: memoize(function() {
     var h = this.holderHeight;
     var t = this.holderThickness;
-    var holder = cube({size:[this.w+2*t, this.w+2*t, h], center:[true,true,false]}).setColor([1,1,1]);
+    var holder = cube({size:[this.w+2*t, this.w+2*t, h], center:[true,true,false]}).translate([0,0,-h]).setColor([1,1,1]);
     return holder;
   }),
   createLatch: function() {
@@ -212,7 +212,8 @@ var SWITCH = {
   createHolder: memoize(function() {
     var h      = this.holderHeight;
     var holder = this.createHolderOutline();
-    var top    = cube({size:[this.w, this.w, this.h]}).translate([-this.w/2,-this.w/2,0]);
+    var top    = cube({size:[this.w, this.w, this.h]}).translate([-this.w/2,-this.w/2,-this.h
+]);
 
     return holder.subtract(top);
   }),
@@ -227,7 +228,7 @@ var SWITCH = {
   toSolid: memoize(function() {
     var sw   = this.createSwitch()/*.setColor([0,0,0])*/;
     var stem = cube({size:[4, 4, 4], center:[true,true,false]}).translate([0,0,this.h]).setColor([165/256,42/256,42/256]);
-    return sw.union(stem).translate([0,0,0]);
+    return sw.union(stem);
   })
 };
 
@@ -277,7 +278,7 @@ function key(s, x, y, reverse, r, config) {
       if ( config.tilt ) {
           config.tilt = config.tilt * 1.1;
         var t = config.tilt > 0 ? SW/2 : -SW/2;
-        s = s.translate([0,t,-8]).rotateX(config.tilt).translate([0,-t,8]);
+        s = s.translate([0,t,0]).rotateX(config.tilt).translate([0,-t,0]);
       }
       s = s.rotateZ(r || 0).translate([x, y, 0]).rotateZ(-A);
       if ( reverse ) s = s.scale([-1,1,1]);
@@ -290,7 +291,7 @@ function key(s, x, y, reverse, r, config) {
 
     if ( PREVIEW ) {
     var cc = createKeyCap({capTilt: 0, capHeight: 5, color: config.color || DEFAULT_KEY_COLOR})
-    var cap = transform(cc.toSolid());
+    var cap = transform(cc.toSolid().translate([0,0,SWITCH.h]));
     sw = sw.union(cap);
 //    h = h.intersect(cap);
 //      var key = transform(cube({size:[KW, KW, 8], xxxradius: 1, center: [true,true,false]}));
@@ -324,11 +325,11 @@ function post(lid, bottom, x, y) {
 
 function base(keys, asBase) {
   var p = polygon({ points: SHAPE });
-  var base = p.extrude().scale([1,1,FT]).setColor([0.4,0.4,0.4])
+  var base = p.extrude().scale([1,1,FT]).setColor([0.4,0.4,0.4]).translate([0,0,-FT])
   var s = base;
 
   // reflect halves
-  s = s.intersect(cube({size:[127,500,100]}).translate([0,-250,0]));
+  s = s.intersect(cube({size:[127,500,-FT]}).translate([0,-250,0]));
   s = s.translate([-127,0,0]);
   s = s.union(s.scale([-1,1,1]));
 
@@ -377,17 +378,14 @@ function base(keys, asBase) {
     return base.union(s.scale([1,1,1/1.5]));
   }
 
-  return s;
+  return s.translate([0,0,FT]);
 }
 
 
 function main() {
 
-//  return key(cube({size:[1,1,1]}), 0, 0, false, 0, {});
+// return key(cube({size:[1,1,1]}), 0, 0, false, 0, {});
   //return SWITCH.toSolid().union(SWITCH.createHolder());
-
-    const WW = 7.5;
-    // return wedge(/*this.f.r*/30-13, 0, -WW, WW, -WW, WW, {});
 
     // createKeyCap({capHeight: 8, flags:{}, isHome: false}).toSolid();
 
