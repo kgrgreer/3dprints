@@ -1,4 +1,13 @@
+/*********************************************************************
+ *                                                             CONFIG
+ *********************************************************************/
+
 const VERSION = "V8";
+
+const KEYS    = false;     // include key-caps
+const PREVIEW = false;
+
+
 
 // TODO:
 //   Make ledge thicker
@@ -45,14 +54,6 @@ var HOME_COLOR        = [0,0,0];
 var DEFAULT_KEY_COLOR = [0.8,0.8,0.8];
 var MODIFIER_COLOR    = [0.8,0,0];
 
-
-
-/*********************************************************************
- *                                                             CONFIG
- *********************************************************************/
-
-var KEYS    = false;     // include key-caps
-var PREVIEW = false;
 
 
 
@@ -184,41 +185,49 @@ function createKeyCap(k) {
  *********************************************************************/
 
 var SWITCH = {
-  w:    13.7, // use 13.7 for testing, 13.6,    // width of sides of switch
-  d:    6, //8, // depth below surface
-  h:    6.6, // 6.6,     // height above surface
-  stem: 4, //3.6,     // height of stem, 4mm travel
-  latchDepth: 1.45, // 1.5
-  latchWidth: 3.7,
-  latchHeight: 1,
+  w:           13.7, // use 13.7 for testing, 13.6,    // width of sides of switch
+  d:           9,    // depth below surface
+  h:           6,    // height above surface
+  stem:        4,    // height of stem, 4mm travel
+
+  latchDepth:  1.5,  // from top of lip
+  latchWidth:  3.7,
+  latchHeight: 1.4,
+
   holderThickness: 2,
-  holderHeight: 3,
+  holderHeight:    3,
+
+  lipHeight: 1,
+  lipWidth: 15.5*1.03,
+
   createHolderOutline: memoize(function() {
     var h = this.holderHeight;
     var t = this.holderThickness;
-    var holder = cube({size:[this.w+2*t, this.w+2*t, h]}).translate([-this.w/2-t,-this.w/2-t,-this.h-h]).setColor([1,1,1]);
+    var holder = cube({size:[this.w+2*t, this.w+2*t, h], center:[true,true,false]}).setColor([1,1,1]);
     return holder;
   }),
   createLatch: function() {
-     return cube({size:[this.latchWidth,17,this.latchHeight]}).translate([-this.latchWidth/2,-17/2,-this.latchDepth-this.h-this.latchHeight]);
+     return cube({size:[this.latchWidth,17,this.latchHeight], center: [true,true, false]}).translate([0,0,-this.latchDepth-this.latchHeight]);
   },
   createHolder: memoize(function() {
     var h      = this.holderHeight;
     var holder = this.createHolderOutline();
-    var top    = cube({size:[this.w, this.w, this.h+4]}).translate([-this.w/2,-this.w/2,-this.h-h]);
+    var top    = cube({size:[this.w, this.w, this.h]}).translate([-this.w/2,-this.w/2,0]);
 
     return holder.subtract(top);
   }),
   createSwitch: memoize(function() {
-    var top    = cube({size:[this.w, this.w, this.h]}).translate([-this.w/2,-this.w/2,-this.h]);
-    var bottom = cube({size:[this.w, this.w, this.d]}).translate([-this.w/2,-this.w/2, -this.h + -this.d]);
+    var top    = cube({size:[this.w, this.w, this.h], center:[true,true,false]});
+    var lip    = cube({size:[this.lipWidth, this.lipWidth, this.lipHeight], center:[true,true,false]});
+    var bottom = cube({size:[this.w, this.w, this.d], center:[true,true,false]}).translate([0,0,-this.d]);
     var latch  = this.createLatch();
-    return union(top, bottom, latch);
+    lip = lip.setColor([1,0,0]);
+    return union(top, lip, bottom, latch);
   }),
   toSolid: memoize(function() {
-    var sw   = this.createSwitch().setColor([0,0,0]);
-    var stem = cube({size:[4, 4, 4]}).translate([-2,-2,0]).setColor([165/256,42/256,42/256]);
-    return sw.union(stem);
+    var sw   = this.createSwitch()/*.setColor([0,0,0])*/;
+    var stem = cube({size:[4, 4, 4], center:[true,true,false]}).translate([0,0,this.h]).setColor([165/256,42/256,42/256]);
+    return sw.union(stem).translate([0,0,0]);
   })
 };
 
@@ -270,7 +279,7 @@ function key(s, x, y, reverse, r, config) {
         var t = config.tilt > 0 ? SW/2 : -SW/2;
         s = s.translate([0,t,-8]).rotateX(config.tilt).translate([0,-t,8]);
       }
-      s = s.rotateZ(r || 0).translate([x, y, 0]).rotateZ(-A).translate([0, 0, H-5/*-SWITCH.d*/]);
+      s = s.rotateZ(r || 0).translate([x, y, 0]).rotateZ(-A);
       if ( reverse ) s = s.scale([-1,1,1]);
       return s;
     }
@@ -293,21 +302,6 @@ function key(s, x, y, reverse, r, config) {
       s = s.subtract(sw);
     }
     return s.union(h);
-  function tilt(s) {
-      var t = config.tilt > 0 ? SW/2 : -SW/2;
-      return config.tilt ? s.translate([0,t,-8]).rotateX(config.tilt).translate([0,-t,8]) : s;
-  }
-  var c = tilt(cube({size:[SW,SW,100], center: true})).rotateZ(r || 0).translate([x, y, 0]).rotateZ(-A).translate([0, 0, 0]);
-  if ( reverse ) c = c.scale([-1,1,1]);
-  s = s.subtract(c);
-  if ( KEYS ) {
-    var key = tilt(cube({size:[KW, KW, 8], xxxradius: 1, center: [true,true,false]})).rotateZ(r || 0).translate([x, y,0]).rotateZ(-A).translate([0,0,KH]);
-    key = key.setColor(config.color || DEFAULT_KEY_COLOR);
-    if ( reverse ) key = key.scale([-1,1,1]);
-    s = s.union(key);
-  }
-
-  return s;
 }
 
 
@@ -388,6 +382,10 @@ function base(keys, asBase) {
 
 
 function main() {
+
+//  return key(cube({size:[1,1,1]}), 0, 0, false, 0, {});
+  //return SWITCH.toSolid().union(SWITCH.createHolder());
+
     const WW = 7.5;
     // return wedge(/*this.f.r*/30-13, 0, -WW, WW, -WW, WW, {});
 
