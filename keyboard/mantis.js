@@ -2,7 +2,7 @@
  *                                                             CONFIG
  *********************************************************************/
 
-const VERSION = "V8";
+const VERSION = "V9";
 
 const KEYS    = false;     // include key-caps
 const PREVIEW = false;
@@ -10,17 +10,18 @@ const PREVIEW = false;
 
 
 // TODO:
-// automate rounding of border
+// test with keycaps and adjust key spacing or angles if necessary
 
 
 var A    = 24;        // Key row slant angle
 
 var SHAPE = [
-  [11,27],[11,32], // bottom left
-  [35,88],[62,96], // top left
-  [145, 96],
-  [145,-32], // bottom center
-  [99+1,-32],    [99-1,-32+1],  //  [96,-41],
+  [12,30], // bottom left
+  [36,83], // top left
+  [60,92], // top-left corner of ring finger
+  [136, 92], // top center
+  [145,-30.5], // bottom center
+  [97.25,-30.5], // corner of inside thumb key
   [62, 3]
 ];
 
@@ -45,8 +46,8 @@ var H    = 13;        // Total height of keyboard
 var RW   = 19;        // Row Width
 var SW   = 14 + 0.55 ; // Switch Width 14, plus 0.6, for some reason
 var KW   = 17;        // Key Width
-var SR   = 1.7;       // screw radius
-var LR   = 3.3/2;     // LED radius
+var SR   = 1.8;       // screw radius
+var LR   = 3.4/2;     // LED radius, 3.3 plus tolerance
 var KH   = 6;         // key height above faceplate
 var TR   = 119;       // thumb radius
 
@@ -185,7 +186,7 @@ function createKeyCap(k) {
  *********************************************************************/
 
 var SWITCH = {
-  w:           13.7, // use 13.7 for testing, 13.6,    // width of sides of switch
+  w:           13.8, // use 13.7 for testing, 13.6,    // width of sides of switch
   d:           9,    // depth below surface
   h:           5,    // height above surface
   stem:        4,    // height of stem, 4mm travel
@@ -198,7 +199,7 @@ var SWITCH = {
   holderHeight:    4,
 
   lipHeight: 1, //6,
-  lipWidth: 15.5*1.03,
+  lipWidth: 15.5*1.03+1,
 
   createHolderOutline: memoize(function() {
     var h = this.holderHeight;
@@ -324,7 +325,7 @@ function post(lid, bottom, x, y) {
 
 
 function base(keys, asBase) {
-  var p = polygon({ points: SHAPE });
+  var p = polygon({ points: SHAPE }).expand(2,50);
   var base = p.extrude().scale([1,1,FT]).setColor([0.4,0.4,0.4]).translate([0,0,-FT])
   var s = base;
 
@@ -362,9 +363,9 @@ function base(keys, asBase) {
 
     for ( var i = 0 ; i < 2 ; i++ ) {
       // inside keys
-      tkey(i == 1, 59, [0.3,0.9,0.3], TR+3, -53, -77, 8, -10);
+      tkey(i == 1, 57, [0.3,0.9,0.3], TR+3, -53, -77, 8, -8);
       // outside keys
-      tkey(i == 1, 75, i == 1 ? MODIFIER_COLOR : HOME_COLOR, TR, -53, -77, 0, 4);
+      tkey(i == 1, 75, i == 1 ? MODIFIER_COLOR : HOME_COLOR, TR, -53, -77, 0, 0);
     }
   }
 
@@ -416,7 +417,7 @@ function main() {
     bottom = bottom.subtract(cylinder({r:3, h:100}).rotateX(90).translate([-78+i*16,100,H/2]));
   }
 
-  lid = lid.subtract(createText({text: VERSION, justify: 'C', h: H+.8}).toSolid().translate([0,-50,0]).scale([-1,1,1]));
+  lid = lid.subtract(createText({text: VERSION, scale: 0.3, justify: 'C', h: H+1}).toSolid().translate([0,-40,0]).scale([-1,1,1]));
 
   //return bottom.union(lid);
   //return bottom;
