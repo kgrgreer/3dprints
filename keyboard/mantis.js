@@ -2,10 +2,11 @@
  *                                                             CONFIG
  *********************************************************************/
 
-const VERSION = "V9";
+const VERSION = "V10";
 
 const KEYS    = false;     // include key-caps
 const PREVIEW = false;
+const EXPAND  = true;
 
 
 
@@ -20,9 +21,9 @@ var SHAPE = [
   [36,83], // top left
   [60,92], // top-left corner of ring finger
   [136, 92], // top center
-  [145,-30.5], // bottom center
-  [97.25,-30.5], // corner of inside thumb key
-  [62, 3]
+  [145,-32], // bottom center
+  [108,-32], // corner of inside thumb key
+  [63, 2]
 ];
 
 var LEDS = [
@@ -32,16 +33,18 @@ var LEDS = [
 ];
 
 var POSTS = [
+  [76,42],
+  [-76,42],
   [ 0, -60],
   [ 0, 24],
-  [64, -20],
-  [-64, -20]
+  [64, -14],
+  [-64, -14]
 ];
 var RS   = -119;    // Row Start
 
 
 
-var FT   = 2;         // Faceplate thickness
+var FT   = 1.2;         // Faceplate thickness
 var H    = 13;        // Total height of keyboard
 var RW   = 19;        // Row Width
 var SW   = 14 + 0.55 ; // Switch Width 14, plus 0.6, for some reason
@@ -195,8 +198,8 @@ var SWITCH = {
   latchWidth:  3.7,
   latchHeight: 1.4,
 
-  holderThickness: 2,
-  holderHeight:    4,
+  holderThickness: 3, //2.7,
+  holderHeight:    24,
 
   lipHeight: 1, //6,
   lipWidth: 15.5*1.03+1,
@@ -220,11 +223,12 @@ var SWITCH = {
   }),
   createSwitch: memoize(function() {
     var top    = cube({size:[this.w, this.w, this.h], center:[true,true,false]});
-    var lip    = cube({size:[this.lipWidth, this.lipWidth, this.lipHeight], center:[true,true,false]});
+    var lip    = cube({size:[this.lipWidth, this.lipWidth, this.lipHeight + (PREVIEW ? 0 : 6)], center:[true,true,false]});
+    var capSpace = cube({size:[this.lipWidth+2.6, this.lipWidth+2.6, 10], center:[true,true,false]}).translate([0,0,this.lipHeight+1]);
     var bottom = cube({size:[this.w, this.w, this.d], center:[true,true,false]}).translate([0,0,-this.d]);
     var latch  = this.createLatch();
     lip = lip.setColor([1,0,0]);
-    return union(top, lip, bottom, latch);
+    return union(top, lip, capSpace, bottom, latch);
   }),
   toSolid: memoize(function() {
     var sw   = this.createSwitch()/*.setColor([0,0,0])*/;
@@ -309,7 +313,7 @@ function key(s, x, y, reverse, r, config) {
 
 function row(s, x, y, rows, reverse, home) {
   for ( var i = 0 ; i < rows.length ; i++ ) {
-    s = key(s, x+12, RW*(i+1)+y-28, reverse, 0, rows[i]);
+    s = key(s, x+12, (RW+0.2)*(i+1)+y-28, reverse, 0, rows[i]);
   }
 
   return s;
@@ -325,7 +329,9 @@ function post(lid, bottom, x, y) {
 
 
 function base(keys, asBase) {
-  var p = polygon({ points: SHAPE }).expand(2,50);
+  var p = polygon({ points: SHAPE });
+  if ( EXPAND ) p = p.expand(2, 100);
+
   var base = p.extrude().scale([1,1,FT]).setColor([0.4,0.4,0.4]).translate([0,0,-FT])
   var s = base;
 
@@ -339,6 +345,8 @@ function base(keys, asBase) {
     s = s.intersect(s.scale([0.9875,0.97,1]));
     s = s.translate([0,41,0]);
   }
+
+  var blankBase = s;
 
   if ( keys ) {
     s = row(s, RS, 0, [{tilt: -10},{color: HOME_COLOR},{tilt: 12}], false, true);
@@ -361,12 +369,26 @@ function base(keys, asBase) {
       s = key(s, r/2 * Math.cos(a/180*Math.PI)+x, r/2 * Math.sin(a/180*Math.PI)+y, reverse, a + (r2 || 0), {tilt: tilt || 0, color: color});
     }
 
+//   keys: mod, backspace, tab, space, enter, mod
     for ( var i = 0 ; i < 2 ; i++ ) {
       // inside keys
-      tkey(i == 1, 57, [0.3,0.9,0.3], TR+3, -53, -77, 8, -8);
+      tkey(i == 1, 52, [0.3,0.9,0.3], TR+18, -53, -77, 18, -7);
+      // middle keys
+      tkey(i == 1, 67.75, i == 1 ? MODIFIER_COLOR : HOME_COLOR, TR+9.3, -53, -77, 6, 0);
       // outside keys
-      tkey(i == 1, 75, i == 1 ? MODIFIER_COLOR : HOME_COLOR, TR, -53, -77, 0, 0);
+      tkey(i == 1, 85.5, i == 1 ? MODIFIER_COLOR : HOME_COLOR, TR+7.4, -53, -77, 0, 7);
+
+
+      // inside keys
+   //   tkey(i == 1, 57, [0.3,0.9,0.3], TR+3, -53, -77, 8, -8);
+      // outside keys
+//      tkey(i == 1, 76, i == 1 ? MODIFIER_COLOR : HOME_COLOR, TR, -53, -77, 0, 0);
+      // outside keys
+    //  tkey(i == 1, 94.5, i == 1 ? MODIFIER_COLOR : HOME_COLOR, TR+4.4, -53, -77, -12, 8);
     }
+
+    // trim off any holders that fall outside of the lid area
+    s = s.intersect(blankBase.scale([1,1,100]).translate([0,0,50]));
   }
 
   s = s.translate([0,-41,0]);
