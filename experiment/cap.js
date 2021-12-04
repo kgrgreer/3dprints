@@ -113,7 +113,8 @@ function main () {
     return union(
 //      cap(4,12,4,12,{cLabel:{text: 'K'}}).translate([0,0,0]),
       cap(4,0,4,14,{cLabel:{text: 'Y'}}).translate([20,-20,0]),
-      cap(4,4,4,10,{cLabel:{text: 'H'}}).translate([0,-20,0]),
+      // maybe raise before slopping on top of middle key
+      cap(4,6,4,8,{cLabel:{text: 'H'}}).translate([0,-20,0]),
       cap(4,10,4,0,{cLabel:{text: 'N'}}).translate([-20,-20,0])
     )
 }
