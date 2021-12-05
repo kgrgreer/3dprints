@@ -2,7 +2,7 @@
  *                                                             CONFIG
  *********************************************************************/
 
-const VERSION = "V10";
+const VERSION = "V12";
 
 const KEYS    = false;     // include key-caps
 const PREVIEW = false;
@@ -44,12 +44,12 @@ var RS   = -119;    // Row Start
 
 
 
-var FT   = 1.2;         // Faceplate thickness
-var H    = 13;        // Total height of keyboard
+var FT   = 2.2;         // Faceplate thickness
+var H    = 15;        // Total height of keyboard
 var RW   = 19;        // Row Width
-var SW   = 14 + 0.55 ; // Switch Width 14, plus 0.6, for some reason
+var SW   = 14 + 0.6 ; // Switch Width 14, plus 0.6
 var KW   = 17;        // Key Width
-var SR   = 1.8;       // screw radius
+var SR   = 1.7;       // screw radius
 var LR   = 3.4/2;     // LED radius, 3.3 plus tolerance
 var KH   = 6;         // key height above faceplate
 var TR   = 119;       // thumb radius
@@ -198,7 +198,7 @@ var SWITCH = {
   latchWidth:  3.7,
   latchHeight: 1.4,
 
-  holderThickness: 3, //2.7,
+  holderThickness: 2.6, //2.7,
   holderHeight:    24,
 
   lipHeight: 1, //6,
@@ -224,11 +224,15 @@ var SWITCH = {
   createSwitch: memoize(function() {
     var top    = cube({size:[this.w, this.w, this.h], center:[true,true,false]});
     var lip    = cube({size:[this.lipWidth, this.lipWidth, this.lipHeight + (PREVIEW ? 0 : 6)], center:[true,true,false]});
-    var capSpace = cube({size:[this.lipWidth+2.6, this.lipWidth+2.6, 10], center:[true,true,false]}).translate([0,0,this.lipHeight+1]);
     var bottom = cube({size:[this.w, this.w, this.d], center:[true,true,false]}).translate([0,0,-this.d]);
     var latch  = this.createLatch();
     lip = lip.setColor([1,0,0]);
-    return union(top, lip, capSpace, bottom, latch);
+    top = top.union(bottom, latch);
+    if ( ! PREVIEW ) {
+      var capSpace = cube({size:[this.lipWidth+2.6, this.lipWidth+2.6, 10], center:[true,true,false]}).translate([0,0,this.lipHeight+1]);
+      top = top.union(capSpace);
+    }
+    return top;
   }),
   toSolid: memoize(function() {
     var sw   = this.createSwitch()/*.setColor([0,0,0])*/;
@@ -342,6 +346,7 @@ function base(keys, asBase) {
 
   if ( ! asBase ) {
     s = s.translate([0,-41,0]);
+    // Make Lid slightly smaller than base
     s = s.intersect(s.scale([0.9875,0.97,1]));
     s = s.translate([0,41,0]);
   }
@@ -349,20 +354,20 @@ function base(keys, asBase) {
   var blankBase = s;
 
   if ( keys ) {
-    s = row(s, RS, 0, [{tilt: -10},{color: HOME_COLOR},{tilt: 12}], false, true);
-    s = row(s, RS, 0, [{tilt: -10},{color: HOME_COLOR},{tilt: 12}], true, true);
+    s = row(s, RS, 0, [{tilt: -10},{color: HOME_COLOR},{tilt: 10}], false, true);
+    s = row(s, RS, 0, [{tilt: -10},{color: HOME_COLOR},{tilt: 10}], true, true);
 
-    s = row(s, RS+RW, 17, [{tilt: -10},{color: HOME_COLOR},{tilt: 12}], false, true);
-    s = row(s, RS+RW, 17, [{tilt: -10},{color: HOME_COLOR},{tilt: 12}], true, true);
+    s = row(s, RS+RW, 17, [{tilt: -10},{color: HOME_COLOR},{tilt: 10}], false, true);
+    s = row(s, RS+RW, 17, [{tilt: -10},{color: HOME_COLOR},{tilt: 10}], true, true);
 
-    s = row(s, RS+RW*2, 23, [{tilt: -10},{color: HOME_COLOR},{tilt: 12}], false, true);
-    s = row(s, RS+RW*2, 23, [{tilt: -10},{color: HOME_COLOR},{tilt: 12}], true, true);
+    s = row(s, RS+RW*2, 23, [{tilt: -10},{color: HOME_COLOR},{tilt: 10}], false, true);
+    s = row(s, RS+RW*2, 23, [{tilt: -10},{color: HOME_COLOR},{tilt: 10}], true, true);
 
-    s = row(s, RS+RW*3, 17, [{tilt: -10},{color: HOME_COLOR},{tilt: 12}], false, true);
-    s = row(s, RS+RW*3, 17, [{tilt: -10},{color: HOME_COLOR},{tilt: 12}], true, true);
+    s = row(s, RS+RW*3, 17, [{tilt: -10},{color: HOME_COLOR},{tilt: 10}], false, true);
+    s = row(s, RS+RW*3, 17, [{tilt: -10},{color: HOME_COLOR},{tilt: 10}], true, true);
 
-    s = row(s, RS+RW*4, 12, [{tilt: -10},{},{tilt: 12}]);
-    s = row(s, RS+RW*4, 12, [{tilt: -10},{},{tilt: 12}], true);
+    s = row(s, RS+RW*4, 12, [{tilt: -10},{},{tilt: 10}]);
+    s = row(s, RS+RW*4, 12, [{tilt: -10},{},{tilt: 10}], true);
 
     // thumb key
     function tkey(reverse, a, color, r, x, y, r2, tilt) {
@@ -394,11 +399,11 @@ function base(keys, asBase) {
   s = s.translate([0,-41,0]);
 
   if ( asBase ) {
-    var base = s.scale([1,1,H/FT]);
-    base = base.subtract(base.scale([0.98, 0.95, 1]));
-    base = base.subtract(s.scale([1,1,H/FT]).translate([0,0,H-FT]).scale([0.99,0.975,1]));
+    var base = s.scale([1,1,-H/FT]);
+    base = base.subtract(base.scale([0.96, 0.93, 1]));
+    base = base.subtract(s.scale([1,1,-H/FT]).translate([0,0,H-FT]).scale([0.99,0.975,1]));
     // add bottom to base
-    return base.union(s.scale([1,1,1/1.5]));
+    return base.union(s.scale([1,1,-1/1.5]));
   }
 
   return s.translate([0,0,FT]);
@@ -406,19 +411,6 @@ function base(keys, asBase) {
 
 
 function main() {
-
-// return key(cube({size:[1,1,1]}), 0, 0, false, 0, {});
-  //return SWITCH.toSolid().union(SWITCH.createHolder());
-
-    // createKeyCap({capHeight: 8, flags:{}, isHome: false}).toSolid();
-
-    /*
-    var s = cube({size:[100, 100, 2], center: true});
-    s = key(s, 0, 0, false, 0, {tilt: 10});
-    s = key(s, 0, -KW, false, 0, {});
-    return s;
-    */
-
   var bottom = base(false, true).setColor([1,1,1]);
   var lid    = base(true, false);
 
@@ -434,16 +426,17 @@ function main() {
     lid = lid.subtract(cylinder({r:LR,h: 100}).translate([led[0],led[1],0]));
   });
 
-  for ( var i = 0 ; i < 11 ; i++ ) {
-    if ( i == 5 || i == 1 || i == 9 ) continue;
-    bottom = bottom.subtract(cylinder({r:3, h:100}).rotateX(90).translate([-78+i*16,100,H/2]));
-  }
+  // Cable hole
+  bottom = bottom.subtract(cylinder({r:3, h:100}).rotateX(90).translate([-86,100,H-1]));
+  bottom = bottom.subtract(cylinder({r:3, h:100}).rotateX(90).translate([-86,100,H-1-FT/2]));
+  bottom = bottom.subtract(cylinder({r:3, h:100}).rotateX(90).translate([-86,100,H-1-FT]));
 
-  lid = lid.subtract(createText({text: VERSION, scale: 0.3, justify: 'C', h: H+1}).toSolid().translate([0,-40,0]).scale([-1,1,1]));
+  // Version Engraving
+  lid = lid.subtract(createText({text: VERSION, w:5, scale: 0.2, justify: 'C', h: H+1}).toSolid().translate([0,-40,0]).scale([-1,1,1]));
 
-  //return bottom.union(lid);
-  //return bottom;
+  return bottom;
+  return bottom.union(lid);
 
-//  lid = lid.subtract(bottom);
+  lid = lid.subtract(bottom);
   return lid.rotateZ(-15);
 }
