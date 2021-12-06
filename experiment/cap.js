@@ -13,7 +13,7 @@ function createText(m) {
     text: 'A',
     w: 4,
     h: 7,          // depth
-    scale: 0.14,
+    scale: 0.2,
     justify: 'L',  // justification: R, C or defaults to Left
     a: 0,          // angle of rotation
     color: [1,1,1],
@@ -44,7 +44,7 @@ function createText(m) {
 
 function stem() {
         var sw = 6.2; /*make smaller to reduce friction Was: 5.4+1.5*/
-        var sh = 4.4;
+        var sh = 4.8;
         const W = 4.3; // add 0.2 when testing to make easier to put on and remove
         const H = 1.4;
         var D = 8;
@@ -58,18 +58,6 @@ function cap(n, e, s, w, config) {
 const W2 = W + 2;
     var c = cube({fn:50,size:[W,W2,H], center: [true,true,false], xxxradius: 0.5});
     var o = c.scale([1,1,10]);
-
-/*
-    c = c.intersect(o.rotateZ(45).rotateX(20).rotateZ(-45));
-    c = c.intersect(o.rotateZ(-45).rotateX(20).rotateZ(45));
-    c = c.intersect(o.rotateZ(45+90).rotateX(20).rotateZ(-45-90));
-    c = c.intersect(o.rotateZ(-45-90).rotateX(20).rotateZ(45+90));
-
-    c = c.intersect(o.translate([-W/2, -W/2, 0]).rotateX(n).rotateY(-e).translate([W/2, W/2,0]));
-    c = c.intersect(o.translate([-W/2,  W/2, 0]).rotateX(n).rotateY(w).translate([W/2, -W/2,0]));
-    c = c.intersect(o.translate([ W/2, -W/2, 0]).rotateX(-s).rotateY(-e).translate([-W/2, W/2,0]));
-    c = c.intersect(o.translate([ W/2,  W/2, 0]).rotateX(-s).rotateY(w).translate([-W/2, -W/2,0]));
-*/
 
     c = c.intersect(o.translate([0,-W2/2,0]).rotateX(n).translate([0,W2/2,0]));
     c = c.intersect(o.translate([-W/2,0,0]).rotateY(-e).translate([W/2,0,0]));
@@ -93,13 +81,12 @@ const W2 = W + 2;
     c = c.subtract(c.scale([0.95,0.95,0.77]));
     c = c.union(stem());
     c = c.subtract(cy);
-    c = c.union(cube({size:[3,16,0.5],center:[true,true,false]}).translate([0,0,6.3]))
+    c = c.union(cube({size:[3,15,0.5],center:[true,true,false]}).translate([0,0,6.3]))
 
     if ( config.cLabel ) {
         config.cLabel.justify = 'C';
-        config.cLabel.scale = 0.2;
         config.cLabel.w = 5;
-      var t = createText(config.cLabel).toSolid().rotateZ(-90).translate([1.5,5,H]);
+      var t = createText(config.cLabel).toSolid().rotateZ(-90).translate([1.5,4.5,H]);
       t = t.subtract(c);
       t = t.translate([0,0,-1]).setColor([1,1,1]);
       c = c.subtract(t);
@@ -111,10 +98,12 @@ function main () {
   //  return stem();
    // return cap(5,5,5,5);
     return union(
-//      cap(4,12,4,12,{cLabel:{text: 'K'}}).translate([0,0,0]),
-      cap(4,0,4,14,{cLabel:{text: 'Y'}}).translate([20,-20,0]),
-      // maybe raise before slopping on top of middle key
-      cap(4,6,4,8,{cLabel:{text: 'H'}}).translate([0,-20,0]),
-      cap(4,10,4,0,{cLabel:{text: 'N'}}).translate([-20,-20,0])
+      cap(5,0,5,14,{cLabel: {text: 'Y'}}).translate([20,-20,0]),
+      cap(5,10,5,10,{cLabel:{text: 'H'}}).translate([0,-20,0]),
+      cap(5,14,5,0,{cLabel: {text: 'N'}}).translate([-20,-20,0]),
+
+      cap(14,0,14,0,{}).translate([40,40,0]),
+      cap(14,0,14,0,{cLabel:{text: '    Space', scale: 0.14}}).translate([40,20,0]),
+      cap(14,0,14,0,{cLabel: {text: '   Enter', scale: 0.14}}).translate([40,0,0])
     )
 }
