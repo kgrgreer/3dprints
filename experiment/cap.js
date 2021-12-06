@@ -2,7 +2,7 @@ function interp(d1, d2, r1, r2, v) {
     return r1 + (r2-r1) * (v-d1)/(d2-d1);
 }
 
-const H = 10;
+const H = 9;
 const W = 17;
 const R = 35;
 
@@ -12,7 +12,7 @@ function createText(m) {
   return Object.assign({
     text: 'A',
     w: 4,
-    h: 7,          // depth
+    h: 6,          // depth
     scale: 0.2,
     justify: 'L',  // justification: R, C or defaults to Left
     a: 0,          // angle of rotation
@@ -66,7 +66,7 @@ const W2 = W + 2;
 
 
     c = c.intersect(cube({size:[20,20,20], center: [true, true, false] }))
-
+ o = c;
 //    c = c.subtract(c.scale([0.97,0.97,.5]));
 
    // c = c.subtract(cube({size:[20,20,5], center: [true, true, false] }))
@@ -81,7 +81,8 @@ const W2 = W + 2;
     c = c.subtract(c.scale([0.95,0.95,0.77]));
     c = c.union(stem());
     c = c.subtract(cy);
-    c = c.union(cube({size:[3,15,0.5],center:[true,true,false]}).translate([0,0,6.3]))
+    c = c.union(cube({size:[3,17,0.5],center:[true,true,false]}).translate([0,0,5.3]))
+    c = c.intersect(o);
 
     if ( config.cLabel ) {
         config.cLabel.justify = 'C';
@@ -98,12 +99,12 @@ function main () {
   //  return stem();
    // return cap(5,5,5,5);
     return union(
-      cap(5,0,5,14,{cLabel: {text: 'Y'}}).translate([20,-20,0]),
+      cap(5,4,5,14,{cLabel: {text: 'Y'}}).translate([20,-20,0]),
       cap(5,10,5,10,{cLabel:{text: 'H'}}).translate([0,-20,0]),
-      cap(5,14,5,0,{cLabel: {text: 'N'}}).translate([-20,-20,0]),
+      cap(5,14,5,4,{cLabel: {text: 'N'}}).translate([-20,-20,0]),
 
-      cap(14,0,14,0,{}).translate([40,40,0]),
-      cap(14,0,14,0,{cLabel:{text: '    Space', scale: 0.14}}).translate([40,20,0]),
-      cap(14,0,14,0,{cLabel: {text: '   Enter', scale: 0.14}}).translate([40,0,0])
+      cap(4,0,15,0,{}).translate([40,40,0]),
+      cap(15,0,15,0,{cLabel:{text: '    Space', scale: 0.14}}).translate([40,20,0]),
+      cap(15,0,4,0,{cLabel: {text: '   Enter', scale: 0.14}}).translate([40,0,0])
     )
 }
