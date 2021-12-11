@@ -45,12 +45,11 @@ var RS   = -119;    // Row Start
 
 
 var FT   = 2.2;         // Faceplate thickness
-var H    = 13;        // Total height of keyboard
+var H    = 15;        // Total height of keyboard
 var RW   = 19;        // Row Width
 var SW   = 14 + 0.6 ; // Switch Width 14, plus 0.6
-var KW   = 17;        // Key Width
 var SR   = 1.7;       // screw radius
-var LR   = 3.4/2;     // LED radius, 3.3 plus tolerance
+var LR   = 3.6/2;     // LED radius, 3.3 plus tolerance
 var KH   = 6;         // key height above faceplate
 var TR   = 119;       // thumb radius
 
@@ -189,7 +188,7 @@ function createKeyCap(k) {
  *********************************************************************/
 
 var SWITCH = {
-  w:           13.8, // use 13.7 for testing, 13.6,    // width of sides of switch
+  w:           13.9, // use 13.7 for testing, 13.6,    // width of sides of switch
   d:           9,    // depth below surface
   h:           5,    // height above surface
   stem:        4,    // height of stem, 4mm travel
@@ -227,7 +226,7 @@ var SWITCH = {
     var bottom = cube({size:[this.w, this.w, this.d], center:[true,true,false]}).translate([0,0,-this.d]);
     var latch  = this.createLatch();
     lip = lip.setColor([1,0,0]);
-    top = top.union(lip, KEYS ? null : capSpace, bottom, latch);
+    top = top.union(bottom, latch);
     if ( ! PREVIEW ) {
       var capSpace = cube({size:[this.lipWidth+2.6, this.lipWidth+2.6, 10], center:[true,true,false]}).translate([0,0,this.lipHeight+1]);
       top = top.union(capSpace);
@@ -302,9 +301,6 @@ function key(s, x, y, reverse, r, config) {
     var cc = createKeyCap({capTilt: 0, capHeight: 5, color: config.color || DEFAULT_KEY_COLOR})
     var cap = transform(cc.toSolid().translate([0,0,SWITCH.h]));
     sw = sw.union(cap);
-//    h = h.intersect(cap);
-//      var key = transform(cube({size:[KW, KW, 8], xxxradius: 1, center: [true,true,false]}));
-//      sw = sw.union(key);
     }
     if ( PREVIEW ) {
       s = s.union(sw);
@@ -427,15 +423,16 @@ function main() {
   });
 
   // Cable hole
-  bottom = bottom.subtract(cylinder({r:3, h:100}).rotateX(90).translate([-88,100,H-1]));
-  bottom = bottom.subtract(cylinder({r:3, h:100}).rotateX(90).translate([-88,100,H-1-FT]));
+  bottom = bottom.subtract(cylinder({r:3, h:100}).rotateX(90).translate([-86,100,H-1]));
+  bottom = bottom.subtract(cylinder({r:3, h:100}).rotateX(90).translate([-86,100,H-1-FT/2]));
+  bottom = bottom.subtract(cylinder({r:3, h:100}).rotateX(90).translate([-86,100,H-1-FT]));
 
   // Version Engraving
   lid = lid.subtract(createText({text: VERSION, w:5, scale: 0.2, justify: 'C', h: H+1}).toSolid().translate([0,-40,0]).scale([-1,1,1]));
 
-  return bottom;
-  return bottom.union(lid);
+  //return bottom.rotateZ(-15);
+  //return bottom.union(lid);
 
-//  lid = lid.subtract(bottom);
+  lid = lid.subtract(bottom);
   return lid.rotateZ(-15);
 }
