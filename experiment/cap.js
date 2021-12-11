@@ -15,7 +15,7 @@ return ret;
 
 const TOP_SLOPE = 8;
 const H  = 9;
-const W  = 16;
+const W  = 16.4;
 const W2 = 17;
 const R  = 20; // radius of cylinder carved out of top of caps
 const TEXT_DEPTH = 0.6;
@@ -38,13 +38,13 @@ const CAPS = [
 {cLabel: {text: 'D'}, bLabel: {text: '3'}, dLabel: {text: 'o', color: RED}, col:3, row: 2},
 {cLabel: {text: 'C'}, bLabel: {text: '\\'}, col:3, row: 3},
 
-{cLabel: {text: 'R'}, bLabel: {text: '$'}, col:4, row: 1, slope: TOP_SLOPE},
-{cLabel: {text: 'F'}, bLabel: {text: '4'}, dLabel: {text: 'c', color: RED}, col:4, row: 2, color: BLUE},
-{cLabel: {text: 'V'}, bLabel: {text: '|'}, col:4, row: 3},
+{cLabel: {text: 'R'}, bLabel: {text: '$'}, col:4, row: 1, slope: TOP_SLOPE, style: 'i1' },
+{cLabel: {text: 'F'}, bLabel: {text: '4'}, dLabel: {text: 'c', color: RED}, col:4, row: 2, color: BLUE, style: 'i1'},
+{cLabel: {text: 'V'}, bLabel: {text: '|'}, col:4, row: 3, style: 'i1'},
 
-{cLabel: {text: 'T'}, bLabel: {text: '%'}, col:5, row: 1, slope: TOP_SLOPE},
-{cLabel: {text: 'G'}, bLabel: {text: '5'}, col:5, row: 2},
-{cLabel: {text: 'B'}, bLabel: {text: ':'}, col:5, row: 3},
+{cLabel: {text: 'T'}, bLabel: {text: '%'}, col:5, row: 1, slope: TOP_SLOPE, style: 'i2'},
+{cLabel: {text: 'G'}, bLabel: {text: '5'}, col:5, row: 2, style: 'i2'},
+{cLabel: {text: 'B'}, bLabel: {text: ':'}, col:5, row: 3, style: 'i2'},
 
 
 
@@ -201,6 +201,12 @@ function cap(config) {
     cy = cylinder({r:R, h:20, center: true, fn:200}).rotateX(90).translate([0,0,R+H-2+0.4]);
     // trim off sharp edge
     cy = cy.union(cube({size:[20,20,5], center:[true,true,false]}).translate([0,0,H-0.4]))
+
+    if ( config.style == 'i1' ) {
+      cy = cy.union(cube({size:[20,20,10], center:[false,true,false]}).translate([0,0,H-2+0.4]))
+    } else if ( config.style == 'i2' ) {
+      cy = cy.union(cube({size:[-20,20,10], center:[false,true,false]}).translate([0,0,H-2+0.4]))
+    }
     if ( config.slope ) cy = cy.translate([0,10,0]).rotateX(config.slope).translate([0,-10,0]);
     //cy = cy.union(sphere({r:R*4, fn:40}).scale([1,1,1]).translate([0,0,H+R*4-2-0.3]));
     c = c.subtract(cy);
@@ -214,10 +220,10 @@ function cap(config) {
 
   c = c.union(cube({size:[17,17,0.5],center:[true,true,false]}).translate([0,0,5.6]))
 
-  c = c.union(cube({size:[0.2,7,0.5],center:[1,0,0]}).translate([2.8,2,0]))
-  c = c.union(cube({size:[0.2,7,0.5],center:[1,0,0]}).translate([-2.8,2,0]))
-  c = c.union(cube({size:[0.2,7,0.5],center:[1,0,0]}).translate([2.8,-9,0]))
-  c = c.union(cube({size:[0.2,7,0.5],center:[1,0,0]}).translate([-2.8,-9,0]))
+  c = c.union(cube({size:[0.2,7,1],center:[1,0,0]}).translate([2.8,2,0]))
+  c = c.union(cube({size:[0.2,7,1],center:[1,0,0]}).translate([-2.8,2,0]))
+  c = c.union(cube({size:[0.2,7,1],center:[1,0,0]}).translate([2.8,-9,0]))
+  c = c.union(cube({size:[0.2,7,1],center:[1,0,0]}).translate([-2.8,-9,0]))
 
 
   c = c.intersect(o);
@@ -252,7 +258,7 @@ function cap(config) {
   var base = c.intersect(area).scale([1,1,(2+add)/2]);
   var top  = c.subtract(area).translate([0,0,add]);
   c = base.union(top);
-  c = c.translate([config.col*16.25, -config.row*17.25, 0]);
+  c = c.translate([config.col*(W+0.25), -config.row*17.25, 0]);
 
   return c;
 }
