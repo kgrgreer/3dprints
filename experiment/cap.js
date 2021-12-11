@@ -1,10 +1,11 @@
+// TODO: customze size of humb keys to make narrower but longer
+
 const TEXT    = true;
 const PREVIEW = false;
 
 const FILTER = (c) => {
-//    return true;
-return c.col<6;
-return c.col == 8 || c.col == 9;
+    return true;
+return c.col <6;
 var ret = c.col == 4 || c.col == 9;
 if ( c.col == 9 ) c.col = 5;
 if ( c.row > 2 ) return false;
@@ -14,69 +15,69 @@ return ret;
 };
 
 const TOP_SLOPE = 8;
-const H  = 9;
+const H  = PREVIEW ? 7 : 9;
 const W  = 16.4;
 const W2 = 17;
 const R  = 20; // radius of cylinder carved out of top of caps
 const TEXT_DEPTH = 0.6;
 
-const RED   = [0.9,0.2,0.2];
-const BLUE  = [0.25,0.25,0.9];
-const GREEN = [0.2,0.65,0.2];
-const GREY  = [0.8, 0.8, 0.8];
+const RED   = [0.9,  0.2,  0.2];
+const BLUE  = [0.25, 0.25, 0.9];
+const GREEN = [0.2,  0.65, 0.2];
+const GREY  = [0.8,  0.8,  0.8];
 
 const CAPS = [
-{cLabel: {text: 'Q'}, bLabel: {text: '!'}, col:1, row: 1, slope: TOP_SLOPE},
-{cLabel: {text: 'A'}, bLabel: {text: '1'}, dLabel: {text: 's', color: RED}, col:1, row: 2},
-{cLabel: {text: 'Z'}, bLabel: {text: '~'}, col:1, row: 3},
+{cLabel: {text: 'Q'}, col:1, row: 1, slope: TOP_SLOPE},
+{cLabel: {text: 'A'}, dLabel: {text: 's', color: RED}, col:1, row: 2},
+{cLabel: {text: 'Z'}, col:1, row: 3},
 
-{cLabel: {text: 'W'}, bLabel: {text: '@'}, col:2, row: 1, slope: TOP_SLOPE},
-{cLabel: {text: 'S'}, bLabel: {text: '2'}, dLabel: {text: '^', color: RED}, col:2, row: 2},
-{cLabel: {text: 'X'}, bLabel: {text: '`'}, col:2, row: 3},
+{cLabel: {text: 'W'}, col:2, row: 1, slope: TOP_SLOPE},
+{cLabel: {text: 'S'}, dLabel: {text: '^', color: RED}, col:2, row: 2},
+{cLabel: {text: 'X'}, col:2, row: 3},
 
-{cLabel: {text: 'E'}, bLabel: {text: '#'}, col:3, row: 1, slope: TOP_SLOPE},
-{cLabel: {text: 'D'}, bLabel: {text: '3'}, dLabel: {text: 'o', color: RED}, col:3, row: 2},
-{cLabel: {text: 'C'}, bLabel: {text: '\\'}, col:3, row: 3},
+{cLabel: {text: 'E'}, col:3, row: 1, slope: TOP_SLOPE},
+{cLabel: {text: 'D'}, dLabel: {text: 'o', color: RED}, col:3, row: 2},
+{cLabel: {text: 'C'}, col:3, row: 3},
 
-{cLabel: {text: 'R'}, bLabel: {text: '$'}, col:4, row: 1, slope: TOP_SLOPE, style: 'i1' },
-{cLabel: {text: 'F'}, bLabel: {text: '4'}, dLabel: {text: 'c', color: RED}, col:4, row: 2, color: BLUE, style: 'i1'},
-{cLabel: {text: 'V'}, bLabel: {text: '|'}, col:4, row: 3, style: 'i1'},
+{cLabel: {text: 'R'}, col:4, row: 1, slope: TOP_SLOPE, style: 'i1' },
+{cLabel: {text: 'F'}, dLabel: {text: 'c', color: RED}, col:4, row: 2, color: BLUE, style: 'i1'},
+{cLabel: {text: 'V'}, col:4, row: 3, style: 'i1'},
 
-{cLabel: {text: 'T'}, bLabel: {text: '%'}, col:5, row: 1, slope: TOP_SLOPE, style: 'i2'},
-{cLabel: {text: 'G'}, bLabel: {text: '5'}, col:5, row: 2, style: 'i2'},
-{cLabel: {text: 'B'}, bLabel: {text: ':'}, col:5, row: 3, style: 'i2'},
-
-
-
-{cLabel: {text: 'Y'}, bLabel: {text: '^'}, col:8, row: 1, slope: TOP_SLOPE},
-{cLabel: {text: 'H'}, bLabel: {text: '6'}, col:8, row: 2},
-{cLabel: {text: 'N'}, bLabel: {text: '_'}, col:8, row: 3},
-
-{cLabel: {text: 'U'}, bLabel: {text: '&'}, col:9, row: 1, slope: TOP_SLOPE},
-{cLabel: {text: 'J'}, bLabel: {text: '7'}, dLabel: {text: 'c', color: RED}, col:9, row: 2, color: BLUE},
-{cLabel: {text: 'M'}, bLabel: {text: '-'}, col:9, row: 3},
-
-{cLabel: {text: 'I'}, bLabel: {text: '*'}, col:10, row: 1, color: BLUE, slope: TOP_SLOPE},
-{cLabel: {text: 'K'}, bLabel: {text: '8'}, dLabel: {text: 'o', color: RED}, col:10, row: 2, color: BLUE},
-{cLabel: {text: ',<'}, bLabel: {text: '+'}, col:10, row: 3},
-
-{cLabel: {text: 'O'}, bLabel: {text: '('}, col:11, row: 1, slope: TOP_SLOPE},
-{cLabel: {text: 'L'}, bLabel: {text: '9'}, dLabel: {text: '^', color: RED}, col:11, row: 2, color: BLUE},
-{cLabel: {text: '.>'}, bLabel: {text: '='}, col:11, row: 3},
-
-{cLabel: {text: 'P'}, bLabel: {text: ')'}, col:12, row: 1, slope: TOP_SLOPE},
-{cLabel: {text: `'"`}, bLabel: {text: '0'}, dLabel: {text: 's', color: RED}, col:12, row: 2},
-{cLabel: {text: '?/'}, bLabel: {text: ';'}, col:12, row: 3},
+{cLabel: {text: 'T'}, col:5, row: 1, slope: TOP_SLOPE, style: 'i2'},
+{cLabel: {text: 'G'}, col:5, row: 2, style: 'i2'},
+{cLabel: {text: 'B'}, col:5, row: 3, style: 'i2'},
 
 
 
-{thumb: true, col:6, row: 1, color: BLUE },
-{thumb: true, col:6, row: 2, color: RED, cLabel: {text: 'del', x: 3, y: -2, scale: 0.14}},
-{thumb: true, col:6, row: 3, color: GREY, cLabel: {text: '->', x: 4, y: -2, scale: 0.12} },
+{cLabel: {text: 'Y'}, col:6, row: 1, slope: TOP_SLOPE},
+{cLabel: {text: 'H'}, col:6, row: 2},
+{cLabel: {text: 'N'}, col:6, row: 3},
 
-{thumb: true, col:7, row:1, color: GREEN },
-{thumb: true, col:7, row: 2, xxxcLabel: {text: 'space', scale: 0.12}, color: GREY},
-{thumb: true, col:7, row: 3, cLabel: {text: 'enter', x: 1, y:-2, scale: 0.14}, color: RED},
+{cLabel: {text: 'U'}, col:7, row: 1, slope: TOP_SLOPE},
+{cLabel: {text: 'J'}, dLabel: {text: 'c', color: RED}, col:7, row: 2, color: BLUE},
+{cLabel: {text: 'M'}, col:7, row: 3},
+
+{cLabel: {text: 'I'}, col:8, row: 1, color: BLUE, slope: TOP_SLOPE},
+{cLabel: {text: 'K'}, dLabel: {text: 'o', color: RED}, col:8 , row: 2, color: BLUE},
+{cLabel: {text: ',<'}, col:8, row: 3},
+
+{cLabel: {text: 'O'}, col:9, row: 1, slope: TOP_SLOPE},
+{cLabel: {text: 'L'}, dLabel: {text: '^', color: RED}, col:9, row: 2, color: BLUE},
+{cLabel: {text: '.>'}, col:9, row: 3},
+
+{cLabel: {text: 'P'}, col:10, row: 1, slope: TOP_SLOPE},
+{cLabel: {text: `'"`}, dLabel: {text: 's', color: RED}, col:10, row: 2},
+{cLabel: {text: '?/'}, col:10, row: 3},
+
+
+
+{thumb: true, col:3, row: 4, color: BLUE },
+{thumb: true, col:4, row: 4, color: RED, cLabel: {text: 'del', x: 3, y: -2, scale: 0.14}},
+{thumb: true, col:5, row: 4, color: GREY, cLabel: {text: '->', x: 4, y: -2, scale: 0.12} },
+
+{thumb: true, col:6, row: 4, color: GREEN },
+{thumb: true, col:7, row: 4, xxxcLabel: {text: 'space', scale: 0.12}, color: GREY},
+{thumb: true, col:8, row: 4, cLabel: {text: 'enter', x: 1, y:-2, scale: 0.14}, color: RED},
 
 ];
 
@@ -112,7 +113,7 @@ function createText(m) {
   return Object.assign({
     text: 'A',
     w: 4.2,
-    h: 6,          // depth
+    h: 8,          // depth
     scale: 0.16,
     justify: 'L',  // justification: R, C or defaults to Left
     a: 0,          // angle of rotation
@@ -176,8 +177,12 @@ function cap(config) {
       [w, n, e, s] = [
         [ 4, 4, 15, 14],
         [15, 4, 15, 14],
-        [15, 4,  4, 14]
-      ][config.row-1];
+        [15, 4,  4, 14],
+
+        [4, 4,  15, 14],
+        [15, 4, 15, 14],
+        [15, 4, 4, 14]
+      ][config.col-3];
     } else {
       [w, n, e, s] = [
         [5, 4,  5, 14],
@@ -247,10 +252,10 @@ function cap(config) {
     }
   }
 
-  text(config.cLabel, -6,  1);
-  text(config.sLabel, 2.5, 1);
-  text(config.vLabel, -6,  -5);
-  text(config.dLabel, 3.5, -5);
+  text(config.cLabel, -6.1,  1);
+  text(config.sLabel, 2.6, 1);
+  text(config.vLabel, -6.1,  -5);
+  text(config.dLabel, 3.6, -5);
 
   // raise the height of the cap by 'add' mm's
   const add = 0.6;
