@@ -4,6 +4,7 @@ const TEXT    = true;
 const PREVIEW = false;
 
 const FILTER = (c) => {
+return c.row == 2;
     return true;
 return c.col <6;
 var ret = c.col == 4 || c.col == 9;
@@ -144,14 +145,14 @@ function createText(m) {
 
 
 const stem = memoize(function stem() {
-  var   sw = 4; /*make smaller to reduce friction Was: 5.4+1.5*/
-  var   sh = 5.8;
+  var   sh = 3.4; /*make smaller to reduce friction Was: 5.4+1.5*/
+  var   sw = 6.2;
   const W  = 4.3; // add 0.2 when testing to make easier to put on and remove
   const H  = 1.5;
   var   D  = 8;
   const R  = 5.4/2;
 
-  var s = cube({xxxradius:1.5, fn: 40, xxxroundradius: 0.5,size:[sh,sw, D+4]}).intersect(cube({size:[sh,sw, D]})).translate([-sh/2,-sw/2,-0.8]);
+  var s = cube({xxxradius:0.5, fn: 40, xxxroundradius: 0.25,size:[sw,sh, D+4]}).intersect(cube({size:[sw,sh, D]})).translate([-sw/2,-sh/2,-0.8]);
   //var s = cylinder({r: R, h: 20});
 
   function cross(p, height) {
@@ -225,12 +226,13 @@ function cap(config) {
 
   c = c.union(cube({size:[17,17,0.5],center:[true,true,false]}).translate([0,0,5.6]))
 
+/*
   c = c.union(cube({size:[0.2,7,1],center:[1,0,0]}).translate([2.8,2,0]))
   c = c.union(cube({size:[0.2,7,1],center:[1,0,0]}).translate([-2.8,2,0]))
   c = c.union(cube({size:[0.2,7,1],center:[1,0,0]}).translate([2.8,-9,0]))
   c = c.union(cube({size:[0.2,7,1],center:[1,0,0]}).translate([-2.8,-9,0]))
 
-
+*/
   c = c.intersect(o);
 
   c = c.union(cube({size:[W+0.2,W2+0.2,0.2], center:[true,true,false]}).subtract(cube({size:[W*0.95-0.6,W2*0.95-0.6,0.2], center:[true,true,false]})))
