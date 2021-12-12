@@ -2,7 +2,7 @@
  *                                                             CONFIG
  *********************************************************************/
 
-const VERSION = "V12";
+const VERSION = "V13";
 
 const KEYS    = false;     // include key-caps
 const PREVIEW = false;
@@ -44,7 +44,7 @@ var RS   = -119;    // Row Start
 
 
 
-var FT   = 2.2;         // Faceplate thickness
+var FT   = 2.2;         // Faceplate thickness, should be 1.5
 var H    = 15;        // Total height of keyboard
 var RW   = 19;        // Row Width
 var SW   = 14 + 0.6 ; // Switch Width 14, plus 0.6
@@ -431,9 +431,20 @@ function main() {
   bottom = bottom.subtract(cylinder({r:3, h:100}).rotateX(90).translate([-86,100,H-1-FT/2]));
   bottom = bottom.subtract(cylinder({r:3, h:100}).rotateX(90).translate([-86,100,H-1-FT]));
 
+  function plate(x, y, w, h, r) {
+      var s = cube({size: [w, h, 0.2]}).rotateZ(r|| 0).translate([x,y,H]).setColor([0.4,0.4,0.4]);
+      lid = lid.union(s);
+      lid = lid.union(s.scale([-1,1,1]));
+  }
+
+  plate(-24, 33, 48, 7);
+  plate(-10, -51, 20, 40);
+  plate(-10, -71, 20, 8);
+  plate(-95,-21,33,17,-28.75);
+
   // Version Engraving
   lid = lid.subtract(createText({text: VERSION, w:5, scale: 0.2, justify: 'C', h: H+1}).toSolid().translate([0,-40,0]).scale([-1,1,1]));
-
+return lid;
   return bottom;
   return bottom.union(lid);
 
