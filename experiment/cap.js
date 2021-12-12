@@ -4,7 +4,8 @@ const TEXT    = true;
 const PREVIEW = false;
 
 const FILTER = (c) => {
-return c.row == 2;
+    return true;
+return c.row == 2 && c.col == 1;
     return true;
 return c.col <6;
 var ret = c.col == 4 || c.col == 9;
@@ -17,7 +18,7 @@ return ret;
 
 const TOP_SLOPE = 8;
 const H  = PREVIEW ? 7 : 9;
-const W  = 16.4;
+const W  = 16.6;
 const W2 = 17;
 const R  = 20; // radius of cylinder carved out of top of caps
 const TEXT_DEPTH = 0.6;
@@ -40,19 +41,19 @@ const CAPS = [
 {cLabel: {text: 'D'}, dLabel: {text: 'o', color: RED}, col:3, row: 2},
 {cLabel: {text: 'C'}, col:3, row: 3},
 
-{cLabel: {text: 'R'}, col:4, row: 1, slope: TOP_SLOPE, style: 'i1' },
-{cLabel: {text: 'F'}, dLabel: {text: 'c', color: RED}, col:4, row: 2, color: BLUE, style: 'i1'},
-{cLabel: {text: 'V'}, col:4, row: 3, style: 'i1'},
+{cLabel: {text: 'R'}, col:4, row: 1, slope: TOP_SLOPE},
+{cLabel: {text: 'F'}, dLabel: {text: 'c', color: RED}, col:4, row: 2, color: BLUE},
+{cLabel: {text: 'V'}, col:4, row: 3},
 
-{cLabel: {text: 'T'}, col:5, row: 1, slope: TOP_SLOPE, style: 'i2'},
-{cLabel: {text: 'G'}, col:5, row: 2, style: 'i2'},
-{cLabel: {text: 'B'}, col:5, row: 3, style: 'i2'},
+{cLabel: {text: 'T'}, col:5, row: 1, slope: TOP_SLOPE, style: 'i2', h: 1},
+{cLabel: {text: 'G'}, col:5, row: 2, style: 'i2', h: 1},
+{cLabel: {text: 'B'}, col:5, row: 3, style: 'i2', h: 1},
 
 
 
-{cLabel: {text: 'Y'}, col:6, row: 1, slope: TOP_SLOPE},
-{cLabel: {text: 'H'}, col:6, row: 2},
-{cLabel: {text: 'N'}, col:6, row: 3},
+{cLabel: {text: 'Y'}, col:6, row: 1, style: 'i1', slope: TOP_SLOPE, h: 1},
+{cLabel: {text: 'H'}, col:6, row: 2, style: 'i1', h: 1},
+{cLabel: {text: 'N'}, col:6, row: 3, style: 'i1', h: 1},
 
 {cLabel: {text: 'U'}, col:7, row: 1, slope: TOP_SLOPE},
 {cLabel: {text: 'J'}, dLabel: {text: 'c', color: RED}, col:7, row: 2, color: BLUE},
@@ -72,20 +73,20 @@ const CAPS = [
 
 
 
-{thumb: true, col:3, row: 4, color: BLUE },
-{thumb: true, col:4, row: 4, color: RED, cLabel: {text: 'del', x: 3, y: -2, scale: 0.14}},
-{thumb: true, col:5, row: 4, color: GREY, cLabel: {text: '->', x: 4, y: -2, scale: 0.12} },
+{thumb: true, col:3, row: 4, color: GREY, style: 'i1', slope: TOP_SLOPE, cLabel: {text: '->', x: 4, y: -2, scale: 0.12} },
+{thumb: true, col:4, row: 4, color: RED, slope: TOP_SLOPE, cLabel: {text: 'del', x: 3, y: -2, scale: 0.14}, h: -1},
+{thumb: true, col:5, row: 4, color: BLUE, style: 'i2', slope: TOP_SLOPE },
 
-{thumb: true, col:6, row: 4, color: GREEN },
-{thumb: true, col:7, row: 4, xxxcLabel: {text: 'space', scale: 0.12}, color: GREY},
-{thumb: true, col:8, row: 4, cLabel: {text: 'enter', x: 1, y:-2, scale: 0.14}, color: RED},
+{thumb: true, col:6, row: 4, color: GREEN, style: 'i1', slope: TOP_SLOPE },
+{thumb: true, col:7, row: 4, color: GREY, slope: TOP_SLOPE, h: -1},
+{thumb: true, col:8, row: 4, color: RED, style: 'i2', slope: TOP_SLOPE, cLabel: {text: 'enter', x: 1, y:-2, scale: 0.14}},
 
 ];
 
 const LAYERS = {
-  num: 'f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 1 2 3 4 5 6 7 8 9 0 f11 f12 esc v- v+ bk - + . pr',
+  // num: 'f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 1 2 3 4 5 6 7 8 9 0 f11 f12 Esc v- v+ bk - + . pr',
   sym: '! @ # $ % ^ & * ( ) 1 2 3 4 5 6 7 8 9 ` ~ - + = _ { } [ ] \\|',
-  nav: 'f1,11 f2,12 f3 f4 f5 PgUp <- ^ -> PgDn f6 f7 f8 f9 f10 home < v > end esc cut copy paste PrSc v- bk ins del v+',
+  nav: 'f1,11 f2,12 f3 f4 f5 PgUp <- ^ -> PgDn f6 f7 f8 f9 f10 home < v > end Esc cut copy paste PrSc v- bk ins del v+',
 };
 /*
 Print Instructions:
@@ -187,8 +188,8 @@ function cap(config) {
     } else {
       [w, n, e, s] = [
         [5, 4,  5, 14],
-        [5, 16, 5, 16],
-        [5, 19, 5,  4]
+        [5, 18, 5, 16],
+        [5, 20, 5,  4]
       ][config.row-1];
     }
   var c = cube({fn:50,size:[W,W2,H+12], center: [true,true,false], radius: PREVIEW ? 0 : 2}).translate([0,0,-8]);
@@ -202,17 +203,20 @@ function cap(config) {
   c = c.intersect(cube({size:[20,20,30], center: [true, true, false] }))
   o = c;
 
+  // ********************************************* CONTOUR CAP
   var cy;
+  const h = H + (config.h || 0);
   if ( ! PREVIEW ) {
-    cy = cylinder({r:R, h:20, center: true, fn:200}).rotateX(90).translate([0,0,R+H-2+0.4]);
+    cy = cylinder({r:R, h:20, center: true, fn:200}).rotateX(90).translate([0,0,R+h-2+0.4]);
     // trim off sharp edge
-    cy = cy.union(cube({size:[20,20,5], center:[true,true,false]}).translate([0,0,H-0.4]))
+    cy = cy.union(cube({size:[20,20,5], center:[true,true,false]}).translate([0,0,h-0.4]))
 
     if ( config.style == 'i1' ) {
-      cy = cy.union(cube({size:[20,20,10], center:[false,true,false]}).translate([0,0,H-2+0.4]))
+      cy = cy.union(cube({size:[20,20,10], center:[false,true,false]}).translate([0,0,h-2+0.4]))
     } else if ( config.style == 'i2' ) {
-      cy = cy.union(cube({size:[-20,20,10], center:[false,true,false]}).translate([0,0,H-2+0.4]))
+      cy = cy.union(cube({size:[-20,20,10], center:[false,true,false]}).translate([0,0,h-2+0.4]))
     }
+
     if ( config.slope ) cy = cy.translate([0,10,0]).rotateX(config.slope).translate([0,-10,0]);
     //cy = cy.union(sphere({r:R*4, fn:40}).scale([1,1,1]).translate([0,0,H+R*4-2-0.3]));
     c = c.subtract(cy);
