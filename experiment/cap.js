@@ -1,9 +1,11 @@
 // TODO: customze size of humb keys to make narrower but longer
+// experiment with making first row shorter and last row higher, which should reduce top slop on bottom keys
 
 const TEXT    = true;
 const PREVIEW = false;
 
 const FILTER = (c) => {
+    return c.col < 4;
     return true;
 return c.row == 2 && c.col == 1;
     return true;
@@ -30,19 +32,19 @@ const GREY  = [0.8,  0.8,  0.8];
 
 const CAPS = [
 {cLabel: {text: 'Q'}, col:1, row: 1, slope: TOP_SLOPE},
-{cLabel: {text: 'A'}, dLabel: {text: 's', color: RED}, col:1, row: 2},
+{cLabel: {text: 'A'}, dLabel: {text: 's', color: RED}, col:1, row: 2, color: BLUE},
 {cLabel: {text: 'Z'}, col:1, row: 3},
 
 {cLabel: {text: 'W'}, col:2, row: 1, slope: TOP_SLOPE},
-{cLabel: {text: 'S'}, dLabel: {text: '^', color: RED}, col:2, row: 2},
+{cLabel: {text: 'S'}, dLabel: {text: '^', color: RED}, col:2, row: 2, color: BLUE},
 {cLabel: {text: 'X'}, col:2, row: 3},
 
 {cLabel: {text: 'E'}, col:3, row: 1, slope: TOP_SLOPE},
-{cLabel: {text: 'D'}, dLabel: {text: 'o', color: RED}, col:3, row: 2},
+{cLabel: {text: 'D'}, dLabel: {text: 'o', color: RED}, col:3, row: 2, color: BLUE},
 {cLabel: {text: 'C'}, col:3, row: 3},
 
 {cLabel: {text: 'R'}, col:4, row: 1, slope: TOP_SLOPE},
-{cLabel: {text: 'F'}, dLabel: {text: 'c', color: RED}, col:4, row: 2, color: BLUE},
+{cLabel: {text: 'F'}, pip: true, dLabel: {text: 'c', color: RED}, col:4, row: 2, color: BLUE},
 {cLabel: {text: 'V'}, col:4, row: 3},
 
 {cLabel: {text: 'T'}, col:5, row: 1, slope: TOP_SLOPE, style: 'i2', h: 1},
@@ -56,7 +58,7 @@ const CAPS = [
 {cLabel: {text: 'N'}, col:6, row: 3, style: 'i1', h: 1},
 
 {cLabel: {text: 'U'}, col:7, row: 1, slope: TOP_SLOPE},
-{cLabel: {text: 'J'}, dLabel: {text: 'c', color: RED}, col:7, row: 2, color: BLUE},
+{cLabel: {text: 'J'}, pip: true, dLabel: {text: 'c', color: RED}, col:7, row: 2, color: BLUE},
 {cLabel: {text: 'M'}, col:7, row: 3},
 
 {cLabel: {text: 'I'}, col:8, row: 1, color: BLUE, slope: TOP_SLOPE},
@@ -162,11 +164,13 @@ const stem = memoize(function stem() {
 
   }
   cross(0, 4);
-//  cross(0.4, 0.1);
-//  cross(0.2, 0.2);
 
   // shave off top and bottom of stem
   s = s.intersect(cube({center:[true,true,false], size:[7, 4.4, 20]}));
+
+  // ramp out on top of stem
+  for ( var i = 0.1 ; i < 4 ; i += 0.1 )
+    s = s.union(cube({size:[sw+i*1.5,sh+i*1.5,1], center:[1,1,0]}).translate([0,0,4+i]));
 
   return s;
 });
@@ -175,24 +179,31 @@ const stem = memoize(function stem() {
 function cap(config) {
     var n, e, s, w;
 
+    config.h = config.h || 0;
+
     if ( config.thumb ) {
       [w, n, e, s] = [
-        [ 4, 4, 15, 14],
-        [15, 4, 15, 14],
-        [15, 4,  4, 14],
+      [ 6, 4, 15, 14],
+      [15, 4, 15, 14],
+      [15, 4,  6, 14],
 
-        [4, 4,  15, 14],
-        [15, 4, 15, 14],
-        [15, 4, 4, 14]
+      [6,  4, 15, 14],
+      [15, 4, 15, 14],
+      [15, 4,  6, 14]
       ][config.col-3];
     } else {
-      [w, n, e, s] = [
-        [5, 4,  5, 14],
-        [5, 18, 5, 16],
-        [5, 20, 5,  4]
+      var dh;
+      [w, n, e, s, dh] = [
+      [5, 5,  5, 14, 1.5],
+      [5, 18, 5,  4, 0],
+      [5, 22, 5,  0, -1.5]
       ][config.row-1];
+      config.h += dh;
+      if ( config.row == 2 || config.row == 3 ) config.slope = -3;
     }
-  var c = cube({fn:50,size:[W,W2,H+12], center: [true,true,false], radius: PREVIEW ? 0 : 2}).translate([0,0,-8]);
+
+
+  var c = cube({fn:50,size:[W,W2,H+12], center: [true,true,false], radius: PREVIEW ? 0 : 4}).translate([0,0,-8]);
   var o = c.scale([1,1,10]);
 
   c = c.intersect(o.translate([0,-W2/2,0]).rotateX(n).translate([0,W2/2,0]));
@@ -204,12 +215,15 @@ function cap(config) {
   o = c;
 
   // ********************************************* CONTOUR CAP
-  var cy;
-  const h = H + (config.h || 0);
   if ( ! PREVIEW ) {
-    cy = cylinder({r:R, h:20, center: true, fn:200}).rotateX(90).translate([0,0,R+h-2+0.4]);
+    const h = H + (config.h || 0);
+    var cy = cylinder({r:R, h:20, center: true, fn:100}).rotateX(90).translate([0,0,R+h-2+0.4]);
     // trim off sharp edge
     cy = cy.union(cube({size:[20,20,5], center:[true,true,false]}).translate([0,0,h-0.4]))
+
+    if (config.pip )
+      cy = cy.subtract(cylinder({roundRadius: 0.25, round: true, r:1, h:3}).rotateY(90).translate([-1.5,-1.6,h-2.4]));
+
 
     if ( config.style == 'i1' ) {
       cy = cy.union(cube({size:[20,20,10], center:[false,true,false]}).translate([0,0,h-2+0.4]))
@@ -221,14 +235,24 @@ function cap(config) {
     //cy = cy.union(sphere({r:R*4, fn:40}).scale([1,1,1]).translate([0,0,H+R*4-2-0.3]));
     c = c.subtract(cy);
     c = c.subtract(c.scale([0.94,0.94,0.77]));
-  }
 
-  if ( ! PREVIEW ) {
     c = c.union(stem());
     c = c.subtract(cy);
+
+    //c = c.union(cube({size:[17,17,0.5],center:[true,true,false]}).translate([0,0,5.6]))
+
+    // add internal bridging,
+    c = c.union(cube({size:[W,0.5,1], center:[1,1,0]}).translate([0,1.4,h-3.6]))
+    c = c.union(cube({size:[W,0.5,1], center:[1,1,0]}).translate([0,-1.4,h-3.6]))
+    c = c.union(cube({size:[0.5,W,1], center:[1,1,0]}).translate([2.8,0,h-3.6]))
+    c = c.union(cube({size:[0.5,W,1], center:[1,1,0]}).translate([-2.8,0,h-3.6]))
+
+
+//    c = c.union(cube({size:[W,0.5,h-2.6], center:[1,1,0]}).translate([0,1.98,0]))
+//    c = c.union(cube({size:[0.1,W,h-2.6], center:[1,1,0]}).translate([-2.8,0,0]))
   }
 
-  c = c.union(cube({size:[17,17,0.5],center:[true,true,false]}).translate([0,0,5.6]))
+
 
 /*
   c = c.union(cube({size:[0.2,7,1],center:[1,0,0]}).translate([2.8,2,0]))
@@ -239,7 +263,8 @@ function cap(config) {
 */
   c = c.intersect(o);
 
-  c = c.union(cube({size:[W+0.2,W2+0.2,0.2], center:[true,true,false]}).subtract(cube({size:[W*0.95-0.6,W2*0.95-0.6,0.2], center:[true,true,false]})))
+  // add a small lip around the outside of the key for better plate adhesion
+  c = c.union(cube({size:[W+0.2,W2+0.2,0.2], center:[true,true,false]}).subtract(cube({size:[W*0.95-1.5,W2*0.95-1.5,0.2], center:[true,true,false]})))
 
   c = c.setColor(config.color || [0.4,0.4,0.4]);
 
@@ -247,7 +272,7 @@ function cap(config) {
     if ( ! TEXT || ! config ) return;
     config.justify = 'L';
     config.w       = 5;
-    var t = createText(config).toSolid().translate([x + (config.x || 0), y + (config.y ||0), H]);
+    var t = createText(config).toSolid().translate([x + (config.x || 0), y + (config.y ||0), H-2]);
     t = t.subtract(c);
     t = t.translate([0,0,-TEXT_DEPTH]);
     if ( PREVIEW ) {
