@@ -5,13 +5,16 @@
 const VERSION = "V13";
 
 const KEYS    = false;     // include key-caps
-const PREVIEW = false;
-const EXPAND  = true;
+const PREVIEW = true;
+const EXPAND  = false;
 
 
 
 // TODO:
 // test with keycaps and adjust key spacing or angles if necessary
+// move bottom pinky keys in 1mm, maybe
+// rotate middle thumb key to be same as outer key
+// maybe for middle three columns move top kep up and bottom key down
 
 
 var A    = 24;        // Key row slant angle
@@ -379,9 +382,9 @@ function base(keys, asBase) {
       // inside keys
       tkey(i == 1, 52, [0.3,0.9,0.3], TR+18, -53, -77, 18, -7);
       // middle keys
-      tkey(i == 1, 67.75, i == 1 ? MODIFIER_COLOR : HOME_COLOR, TR+9.3, -53, -77, 6, 0);
+      tkey(i == 1, 67.75, i == 1 ? MODIFIER_COLOR : HOME_COLOR, TR+9.3, -53.75, -78, 7.8, 0);
       // outside keys
-      tkey(i == 1, 85.5, i == 1 ? MODIFIER_COLOR : HOME_COLOR, TR+7.4, -53, -77, 0, 7);
+      tkey(i == 1, 85.5, i == 1 ? MODIFIER_COLOR : HOME_COLOR, TR+7.4, -53, -77, -5, 7);
 
 
       // inside keys
@@ -445,7 +448,7 @@ function main() {
   // Version Engraving
   lid = lid.subtract(createText({text: VERSION, w:5, scale: 0.2, justify: 'C', h: H+1}).toSolid().translate([0,-40,0]).scale([-1,1,1]));
 return lid;
-  return bottom;
+  //return bottom;
   return bottom.union(lid);
 
   lid = lid.subtract(bottom);
