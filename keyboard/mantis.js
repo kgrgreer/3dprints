@@ -4,7 +4,7 @@
 
 const VERSION = "V13";
 
-const KEYS    = false;     // include key-caps
+const KEYS    = true;     // include key-caps
 const PREVIEW = true;
 const EXPAND  = false;
 
@@ -20,7 +20,7 @@ const EXPAND  = false;
 var A    = 24;        // Key row slant angle
 
 var SHAPE = [
-  [12,30], // bottom left
+  [12,32], // bottom left
   [36,83], // top left
   [60,92], // top-left corner of ring finger
   [136, 92], // top center
@@ -36,9 +36,9 @@ var LEDS = [
 ];
 
 var POSTS = [
-  [76,42],
-  [-76,42],
-  [ 0, -60],
+  [75,42],
+  [-75,42],
+  [ 0, -58],
   [ 0, 24],
   [64, -14],
   [-64, -14]
@@ -53,13 +53,14 @@ var RW   = 19;        // Row Width
 var SW   = 14 + 0.6 ; // Switch Width 14, plus 0.6
 var KW   = 17;        // Key Width
 var SR   = 1.7;       // screw radius
-var LR   = 3.4/2;     // LED radius, 3.3 plus tolerance
+var LR   = 3.3/2;     // LED radius, 3.3 plus tolerance
 var KH   = 6;         // key height above faceplate
 var TR   = 119;       // thumb radius
 
 var HOME_COLOR        = [0,0,0];
 var DEFAULT_KEY_COLOR = [0.8,0.8,0.8];
 var MODIFIER_COLOR    = [0.8,0,0];
+var RED               = [1,0,0];
 
 
 
@@ -330,7 +331,8 @@ function row(s, x, y, rows, reverse, home) {
 function post(lid, bottom, x, y) {
   bottom = bottom.union(cylinder({r:5,h: H-FT}).subtract(cylinder({r:SR,h: 10}).translate([0,0,H-10])).translate([x,y,0]));
   lid = lid.subtract(cylinder({r:SR,h: 100}).translate([x,y,0]));
-  lid = lid.subtract(bottom);
+  lid = lid.subtract(cylinder({r:3.5, h: 0.5}).translate([x,y,H-0.5]));
+  // lid = lid.subtract(bottom);
   return [lid, bottom];
 }
 
@@ -357,20 +359,20 @@ function base(keys, asBase) {
   var blankBase = s;
 
   if ( keys ) {
-    s = row(s, RS, 0, [{tilt: -10},{color: HOME_COLOR},{tilt: 10}], false, true);
-    s = row(s, RS, 0, [{tilt: -10},{color: HOME_COLOR},{tilt: 10}], true, true);
+    s = row(s, RS, 0+2, [{tilt: -10},{color: HOME_COLOR},{tilt: 10, color: RED}], false, true);
+    s = row(s, RS, 0+2, [{tilt: -10},{xxxcolor: HOME_COLOR},{tilt: 10}], true, true);
 
     s = row(s, RS+RW, 17, [{tilt: -10},{color: HOME_COLOR},{tilt: 10}], false, true);
     s = row(s, RS+RW, 17, [{tilt: -10},{color: HOME_COLOR},{tilt: 10}], true, true);
 
     s = row(s, RS+RW*2, 23, [{tilt: -10},{color: HOME_COLOR},{tilt: 10}], false, true);
-    s = row(s, RS+RW*2, 23, [{tilt: -10},{color: HOME_COLOR},{tilt: 10}], true, true);
+    s = row(s, RS+RW*2, 23, [{tilt: -10},{color: HOME_COLOR},{tilt: 10, color: HOME_COLOR}], true, true);
 
     s = row(s, RS+RW*3, 17, [{tilt: -10},{color: HOME_COLOR},{tilt: 10}], false, true);
     s = row(s, RS+RW*3, 17, [{tilt: -10},{color: HOME_COLOR},{tilt: 10}], true, true);
 
-    s = row(s, RS+RW*4, 12, [{tilt: -10},{},{tilt: 10}]);
-    s = row(s, RS+RW*4, 12, [{tilt: -10},{},{tilt: 10}], true);
+    s = row(s, RS+RW*4, 12+2, [{tilt: -10},{},{tilt: 10}]);
+    s = row(s, RS+RW*4, 12+2, [{tilt: -10},{},{tilt: 10}], true);
 
     // thumb key
     function tkey(reverse, a, color, r, x, y, r2, tilt) {
@@ -435,7 +437,7 @@ function main() {
   bottom = bottom.subtract(cylinder({r:3, h:100}).rotateX(90).translate([-86,100,H-1-FT]));
 
   function plate(x, y, w, h, r) {
-      var s = cube({size: [w, h, 0.2]}).rotateZ(r|| 0).translate([x,y,H]).setColor([0.4,0.4,0.4]);
+      var s = cube({size: [w, h, 0.2]}).rotateZ(r|| 0).translate([x,y,H]).setColor([0.5,0.5,0.5]);
       lid = lid.union(s);
       lid = lid.union(s.scale([-1,1,1]));
   }
@@ -443,7 +445,7 @@ function main() {
   plate(-24, 33, 48, 7);
   plate(-10, -51, 20, 40);
   plate(-10, -71, 20, 8);
-  plate(-95,-21,33,17,-28.75);
+  plate(-95,-19,33,16,-30);
 
   // Version Engraving
   lid = lid.subtract(createText({text: VERSION, w:5, scale: 0.2, justify: 'C', h: H+1}).toSolid().translate([0,-40,0]).scale([-1,1,1]));
