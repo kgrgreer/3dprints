@@ -5,7 +5,7 @@ const TEXT    = true;
 const PREVIEW = false;
 
 const FILTER = (c) => {
-    return c.col < 4;
+    return c.col < 2;
     return true;
 return c.row == 2 && c.col == 1;
     return true;
@@ -194,12 +194,12 @@ function cap(config) {
     } else {
       var dh;
       [w, n, e, s, dh] = [
-      [5, 5,  5, 14, 1.5],
+      [5, 5,  5, 14, 1],
       [5, 18, 5,  4, 0],
       [5, 22, 5,  0, -1.5]
       ][config.row-1];
       config.h += dh;
-      if ( config.row == 2 || config.row == 3 ) config.slope = -3;
+      if ( config.row == 2 || config.row == 3 ) config.slope = -4;
     }
 
 
@@ -217,7 +217,7 @@ function cap(config) {
   // ********************************************* CONTOUR CAP
   if ( ! PREVIEW ) {
     const h = H + (config.h || 0);
-    var cy = cylinder({r:R, h:20, center: true, fn:100}).rotateX(90).translate([0,0,R+h-2+0.4]);
+    var cy = cylinder({r:R, h:20, center: true, fn:120}).rotateX(90).translate([0,0,R+h-2+0.4]);
     // trim off sharp edge
     cy = cy.union(cube({size:[20,20,5], center:[true,true,false]}).translate([0,0,h-0.4]))
 
@@ -242,10 +242,10 @@ function cap(config) {
     //c = c.union(cube({size:[17,17,0.5],center:[true,true,false]}).translate([0,0,5.6]))
 
     // add internal bridging,
-    c = c.union(cube({size:[W,0.5,1], center:[1,1,0]}).translate([0,1.4,h-3.6]))
-    c = c.union(cube({size:[W,0.5,1], center:[1,1,0]}).translate([0,-1.4,h-3.6]))
-    c = c.union(cube({size:[0.5,W,1], center:[1,1,0]}).translate([2.8,0,h-3.6]))
-    c = c.union(cube({size:[0.5,W,1], center:[1,1,0]}).translate([-2.8,0,h-3.6]))
+    c = c.union(cube({size:[W,0.5,1.2], center:[1,1,0]}).translate([0,1.4,h-3.8]))
+    c = c.union(cube({size:[W,0.5,1.2], center:[1,1,0]}).translate([0,-1.4,h-3.8]))
+    c = c.union(cube({size:[0.5,W,1.2], center:[1,1,0]}).translate([2.8,0,h-3.8]))
+    c = c.union(cube({size:[0.5,W,1.2], center:[1,1,0]}).translate([-2.8,0,h-3.8]))
 
 
 //    c = c.union(cube({size:[W,0.5,h-2.6], center:[1,1,0]}).translate([0,1.98,0]))
