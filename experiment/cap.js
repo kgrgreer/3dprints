@@ -5,7 +5,10 @@ const TEXT    = true;
 const PREVIEW = false;
 
 const FILTER = (c) => {
-    return c.col < 2;
+    return c.col == 7 && c.row == 2;
+    return c.col == 6 && c.row < 4
+    return c.col == 7 || ( c.col == 6 && c.row < 4);
+    return (c.col == 6 && (c.row < 3 || c.row == 4)) || (c.col == 7 && c.row==2);
     return true;
 return c.row == 2 && c.col == 1;
     return true;
@@ -23,7 +26,7 @@ const H  = PREVIEW ? 7 : 9;
 const W  = 16.6;
 const W2 = 17;
 const R  = 20; // radius of cylinder carved out of top of caps
-const TEXT_DEPTH = 0.6;
+const TEXT_DEPTH = 0.8;
 
 const RED   = [0.9,  0.2,  0.2];
 const BLUE  = [0.25, 0.25, 0.9];
@@ -33,7 +36,7 @@ const GREY  = [0.8,  0.8,  0.8];
 const CAPS = [
 {cLabel: {text: 'Q'}, col:1, row: 1, slope: TOP_SLOPE},
 {cLabel: {text: 'A'}, dLabel: {text: 's', color: RED}, col:1, row: 2, color: BLUE},
-{cLabel: {text: 'Z'}, col:1, row: 3},
+{cLabel: {text: 'Z'}, color: RED, col:1, row: 3},
 
 {cLabel: {text: 'W'}, col:2, row: 1, slope: TOP_SLOPE},
 {cLabel: {text: 'S'}, dLabel: {text: '^', color: RED}, col:2, row: 2, color: BLUE},
@@ -53,9 +56,9 @@ const CAPS = [
 
 
 
-{cLabel: {text: 'Y'}, col:6, row: 1, style: 'i1', slope: TOP_SLOPE, h: 1},
-{cLabel: {text: 'H'}, col:6, row: 2, style: 'i1', h: 1},
-{cLabel: {text: 'N'}, col:6, row: 3, style: 'i1', h: 1},
+{cLabel: {text: 'Y'}, col:6, row: 1, style: 'i1', slope: TOP_SLOPE, h: 1.75},
+{cLabel: {text: 'H'}, col:6, row: 2, style: 'i1', h: 1.75},
+{cLabel: {text: 'N'}, col:6, row: 3, style: 'i1', h: 1.75},
 
 {cLabel: {text: 'U'}, col:7, row: 1, slope: TOP_SLOPE},
 {cLabel: {text: 'J'}, pip: true, dLabel: {text: 'c', color: RED}, col:7, row: 2, color: BLUE},
@@ -88,7 +91,7 @@ const CAPS = [
 const LAYERS = {
   // num: 'f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 1 2 3 4 5 6 7 8 9 0 f11 f12 Esc v- v+ bk - + . pr',
   sym: '! @ # $ % ^ & * ( ) 1 2 3 4 5 6 7 8 9 ` ~ - + = _ { } [ ] \\|',
-  nav: 'f1,11 f2,12 f3 f4 f5 PgUp <- ^ -> PgDn f6 f7 f8 f9 f10 home < v > end Esc cut copy paste PrSc v- bk ins del v+',
+  nav: 'f1 f2 f3 f4 f5 home <- ^ -> PgU f6 f7 f8 f9 f10 end < v > PgD Esc cut copy paste PrSc v- bk ins del v+',
 };
 /*
 Print Instructions:
@@ -117,7 +120,7 @@ function createText(m) {
   return Object.assign({
     text: 'A',
     w: 4.2,
-    h: 8,          // depth
+    h: 12,          // depth
     scale: 0.16,
     justify: 'L',  // justification: R, C or defaults to Left
     a: 0,          // angle of rotation
@@ -194,12 +197,12 @@ function cap(config) {
     } else {
       var dh;
       [w, n, e, s, dh] = [
-      [5, 5,  5, 14, 1],
-      [5, 18, 5,  4, 0],
-      [5, 22, 5,  0, -1.5]
+      [5, 5,  5, 14, 0.1],
+      [5, 16, 5,  4, 0.4],
+      [5, 22, 5,  0, -0.5]
       ][config.row-1];
       config.h += dh;
-      if ( config.row == 2 || config.row == 3 ) config.slope = -4;
+      if ( config.row == 2 || config.row == 3 ) config.slope = -5;
     }
 
 
@@ -222,7 +225,7 @@ function cap(config) {
     cy = cy.union(cube({size:[20,20,5], center:[true,true,false]}).translate([0,0,h-0.4]))
 
     if (config.pip )
-      cy = cy.subtract(cylinder({roundRadius: 0.25, round: true, r:1, h:3}).rotateY(90).translate([-1.5,-1.6,h-2.4]));
+      cy = cy.subtract(cylinder({roundRadius: 0.25, round: true, r:1.5, h:4}).rotateY(90).translate([-1.5,-1.6,h-2.1]));
 
 
     if ( config.style == 'i1' ) {
@@ -242,10 +245,10 @@ function cap(config) {
     //c = c.union(cube({size:[17,17,0.5],center:[true,true,false]}).translate([0,0,5.6]))
 
     // add internal bridging,
-    c = c.union(cube({size:[W,0.5,1.2], center:[1,1,0]}).translate([0,1.4,h-3.8]))
-    c = c.union(cube({size:[W,0.5,1.2], center:[1,1,0]}).translate([0,-1.4,h-3.8]))
-    c = c.union(cube({size:[0.5,W,1.2], center:[1,1,0]}).translate([2.8,0,h-3.8]))
-    c = c.union(cube({size:[0.5,W,1.2], center:[1,1,0]}).translate([-2.8,0,h-3.8]))
+    c = c.union(cube({size:[W,0.6,1.2], center:[1,1,0]}).translate([0,1.4,h-4.1]))
+    c = c.union(cube({size:[W,0.6,1.2], center:[1,1,0]}).translate([0,-1.4,h-4.1]))
+    c = c.union(cube({size:[0.6,W,1.2], center:[1,1,0]}).translate([2.8,0,h-4.1]))
+    c = c.union(cube({size:[0.6,W,1.2], center:[1,1,0]}).translate([-2.8,0,h-4.1]))
 
 
 //    c = c.union(cube({size:[W,0.5,h-2.6], center:[1,1,0]}).translate([0,1.98,0]))
@@ -264,7 +267,7 @@ function cap(config) {
   c = c.intersect(o);
 
   // add a small lip around the outside of the key for better plate adhesion
-  c = c.union(cube({size:[W+0.2,W2+0.2,0.2], center:[true,true,false]}).subtract(cube({size:[W*0.95-1.5,W2*0.95-1.5,0.2], center:[true,true,false]})))
+  // c = c.union(cube({size:[W+0.2,W2+0.2,0.2], center:[true,true,false]}).subtract(cube({size:[W*0.95-1.5,W2*0.95-1.5,0.2], center:[true,true,false]})))
 
   c = c.setColor(config.color || [0.4,0.4,0.4]);
 
