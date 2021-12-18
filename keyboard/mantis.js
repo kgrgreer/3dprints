@@ -5,7 +5,7 @@
 const VERSION = "V13";
 
 const KEYS    = true;     // include key-caps
-const PREVIEW = true;
+const PREVIEW = false;
 const EXPAND  = false;
 
 
@@ -39,7 +39,7 @@ var POSTS = [
   [75,42],
   [-75,42],
   [ 0, -58],
-  [ 0, 24],
+  [ 0, 0],
   [64, -14],
   [-64, -14]
 ];
@@ -414,6 +414,15 @@ function base(keys, asBase) {
   return s.translate([0,0,FT]);
 }
 
+function tilt(bottom) {
+    var b = bottom.rotateX(2);
+
+    b = b.translate([0,0,-1.6]);
+
+    var bs = bottom.scale([1,1,100]).rotateX(2).translate([0,0,-1.6]);
+    bs = bs.intersect(cube({size:[500,500,1.5], center:[1,1,0]}));
+    return b.union(bs).intersect(cube({size:[500,500,100], center:[1,1,0]}));
+}
 
 function main() {
   var bottom = base(false, true).setColor([1,1,1]);
@@ -428,7 +437,7 @@ function main() {
 
   // Add LED cutouts
   LEDS.forEach(led  => {
-    lid = lid.subtract(cylinder({r:LR,h: 100}).translate([led[0],led[1],0]));
+    lid = lid.subtract(cylinder({r:LR,h: H-0.2}).translate([led[0],led[1],0]));
   });
 
   // Cable hole
@@ -442,15 +451,16 @@ function main() {
       lid = lid.union(s.scale([-1,1,1]));
   }
 
-  plate(-24, 33, 48, 7);
+  plate(-24, 33, 48, 16);
   plate(-10, -51, 20, 40);
   plate(-10, -71, 20, 8);
   plate(-95,-19,33,16,-30);
 
   // Version Engraving
   lid = lid.subtract(createText({text: VERSION, w:5, scale: 0.2, justify: 'C', h: H+1}).toSolid().translate([0,-40,0]).scale([-1,1,1]));
+//return tilt(bottom);
 return lid;
-  //return bottom;
+  return bottom;
   return bottom.union(lid);
 
   lid = lid.subtract(bottom);
