@@ -5,7 +5,15 @@ const TEXT    = true;
 const PREVIEW = false;
 
 const FILTER = (c) => {
-    return c.col == 7 && c.row == 2;
+    return c.color == BLUE && c.row == 4;
+  return c.row < 6 && c.col <4;
+//    return c.row == 4 && (c.col == 4 || c.col == 7);
+    if ( c.col == 1 ) return false;
+  //  return c.col == 1 && ! c.color;
+//    return c.row > 3;
+    return c.col < 6 && ! c.color;
+    if ( c.row == 3)  return;
+   // return c.col == 7 && c.row == 4;
     return c.col == 6 && c.row < 4
     return c.col == 7 || ( c.col == 6 && c.row < 4);
     return (c.col == 6 && (c.row < 3 || c.row == 4)) || (c.col == 7 && c.row==2);
@@ -32,6 +40,25 @@ const RED   = [0.9,  0.2,  0.2];
 const BLUE  = [0.25, 0.25, 0.9];
 const GREEN = [0.2,  0.65, 0.2];
 const GREY  = [0.8,  0.8,  0.8];
+
+const THUMBS = [
+      // w n   e   s
+      [ 2, 4, 18, 14],
+      [15, 4, 15, 14],
+      [18, 4,  2, 14],
+
+      [2,  4, 18, 14],
+      [15, 4, 15, 14],
+      [18, 4,  2, 14]
+];
+
+const FINGERS = [
+    // w  n   e   s  dh
+      [5, 5,  5, 14, 0.3],
+      [5, 16, 5,  4, 0.4],
+      [5, 22, 5,  0, -0.5]
+];
+
 
 const CAPS = [
 {cLabel: {text: 'Q'}, col:1, row: 1, slope: TOP_SLOPE},
@@ -78,8 +105,8 @@ const CAPS = [
 
 
 
-{thumb: true, col:3, row: 4, color: GREY, style: 'i1', slope: TOP_SLOPE, cLabel: {text: '->', x: 4, y: -2, scale: 0.12} },
-{thumb: true, col:4, row: 4, color: RED, slope: TOP_SLOPE, cLabel: {text: 'del', x: 3, y: -2, scale: 0.14}, h: -1},
+{thumb: true, col:3, row: 4, color: RED, style: 'i1', slope: TOP_SLOPE, cLabel: {text: 'del', x: 4, y: -2, scale: 0.12} },
+{thumb: true, col:4, row: 4, color: GREY, slope: TOP_SLOPE, cLabel: {text: '->', x: 3, y: -2, scale: 0.14}, h: -1},
 {thumb: true, col:5, row: 4, color: BLUE, style: 'i2', slope: TOP_SLOPE },
 
 {thumb: true, col:6, row: 4, color: GREEN, style: 'i1', slope: TOP_SLOPE },
@@ -119,7 +146,7 @@ function createText(m) {
 
   return Object.assign({
     text: 'A',
-    w: 4.2,
+    w: 4.5,
     h: 12,          // depth
     scale: 0.16,
     justify: 'L',  // justification: R, C or defaults to Left
@@ -154,7 +181,7 @@ const stem = memoize(function stem() {
   var   sh = 3.4; /*make smaller to reduce friction Was: 5.4+1.5*/
   var   sw = 6.2;
   const W  = 4.3; // add 0.2 when testing to make easier to put on and remove
-  const H  = 1.5;
+  const H  = 1.3; // 1.5 with green metalic filament
   var   D  = 8;
   const R  = 5.4/2;
 
@@ -185,23 +212,21 @@ function cap(config) {
     config.h = config.h || 0;
 
     if ( config.thumb ) {
-      [w, n, e, s] = [
-      [ 6, 4, 15, 14],
-      [15, 4, 15, 14],
-      [15, 4,  6, 14],
-
-      [6,  4, 15, 14],
-      [15, 4, 15, 14],
-      [15, 4,  6, 14]
-      ][config.col-3];
+      [w, n, e, s] = THUMBS[config.col-3];
     } else {
       var dh;
-      [w, n, e, s, dh] = [
-      [5, 5,  5, 14, 0.1],
-      [5, 16, 5,  4, 0.4],
-      [5, 22, 5,  0, -0.5]
-      ][config.row-1];
+      [w, n, e, s, dh] = FINGERS[config.row-1];
       config.h += dh;
+      if ( config.row == 6 ) {
+          e += 4;
+          w -= 4;
+      }
+      if ( config.row == 7 ) w += 3;
+      if ( config.row == 5 ) {
+          w += 4;
+          e -= 4;
+      }
+      if ( config.row == 4 ) e += 3;
       if ( config.row == 2 || config.row == 3 ) config.slope = -5;
     }
 
@@ -257,13 +282,14 @@ function cap(config) {
 
 
 
-/*
-  c = c.union(cube({size:[0.2,7,1],center:[1,0,0]}).translate([2.8,2,0]))
-  c = c.union(cube({size:[0.2,7,1],center:[1,0,0]}).translate([-2.8,2,0]))
-  c = c.union(cube({size:[0.2,7,1],center:[1,0,0]}).translate([2.8,-9,0]))
-  c = c.union(cube({size:[0.2,7,1],center:[1,0,0]}).translate([-2.8,-9,0]))
+  c = c.union(cube({size:[0.5,7,.64],center:[1,0,0]}).translate([2,1,0]))
+  c = c.union(cube({size:[0.5,7,.64],center:[1,0,0]}).translate([-2,1,0]))
+  c = c.union(cube({size:[0.5,7,.64],center:[1,0,0]}).translate([2,-8,0]))
+  c = c.union(cube({size:[0.5,7,.64],center:[1,0,0]}).translate([-2,-8,0]))
 
-*/
+  c = c.union(cube({size:[10,0.5,.64],center:[1,1,0]}).translate([8,0,0]))
+  c = c.union(cube({size:[10,0.5,.64],center:[1,1,0]}).translate([-8,0,0]))
+
   c = c.intersect(o);
 
   // add a small lip around the outside of the key for better plate adhesion
@@ -332,3 +358,31 @@ function main () {
 
   return union(CAPS.filter(FILTER).map(c => cap(c))).translate([-100,25,0]);
 }
+
+/*
+
+Print Instructions:
+
+PETG:
+2mm retraction distance
+0.12mm layer height
+50% infill
+shortest z seam alignment
+30 mm/s print speed
+60 mm/s travel speed
+Temp: 240/55/55
+Print Cooling: 25%
+z offset 0.1mm
+
+PLA:
+1.5mm retraction distance
+0.12mm layer height
+50% infill
+shortest z seam alignment
+30 mm/s print speed
+80 mm/s travel speed
+Temp: 205/60/50
+Print Cooling: 100%
+z offset 0.1mm
+
+*/
