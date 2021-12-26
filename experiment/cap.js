@@ -5,6 +5,13 @@ const TEXT    = true;
 const PREVIEW = false;
 
 const FILTER = (c) => {
+  //  return c.col == 1;
+
+    return c.color == RED && c.row == 3;
+    if ( ! c.cLabel ) return false;
+    var t = c.cLabel.text;
+    c.row = 1;
+    return  t == 'X' || t == 'E' || t == 'Y' || t == 'O';
     return c.color == BLUE && c.row == 4;
   return c.row < 6 && c.col <4;
 //    return c.row == 4 && (c.col == 4 || c.col == 7);
@@ -118,7 +125,7 @@ const CAPS = [
 const LAYERS = {
   // num: 'f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 1 2 3 4 5 6 7 8 9 0 f11 f12 Esc v- v+ bk - + . pr',
   sym: '! @ # $ % ^ & * ( ) 1 2 3 4 5 6 7 8 9 ` ~ - + = _ { } [ ] \\|',
-  nav: 'f1 f2 f3 f4 f5 home <- ^ -> PgU f6 f7 f8 f9 f10 end < v > PgD Esc cut copy paste PrSc v- bk ins del v+',
+  nav: 'f1 f2 f3 f4 f5 home <- ^ -> PgU f6 f7 f8 f9 f10 end < v > PgD ESC cut copy paste PrSc v- bk ins del v+',
 };
 /*
 Print Instructions:
@@ -178,14 +185,14 @@ function createText(m) {
 
 
 const stem = memoize(function stem() {
-  var   sh = 3.4; /*make smaller to reduce friction Was: 5.4+1.5*/
-  var   sw = 6.2;
+  var   sh = 2.8; // 3.4 /*make smaller to reduce friction Was: 5.4+1.5*/
+  var   sw = 5.8; // 6.2
   const W  = 4.3; // add 0.2 when testing to make easier to put on and remove
   const H  = 1.3; // 1.5 with green metalic filament
   var   D  = 8;
   const R  = 5.4/2;
 
-  var s = cube({xxxradius:0.5, fn: 40, xxxroundradius: 0.25,size:[sw,sh, D+4]}).intersect(cube({size:[sw,sh, D]})).translate([-sw/2,-sh/2,-0.8]);
+  var s = cube({radius:0.5, fn: 40, roundradius: 0.25,size:[sw,sh, D+4]}).intersect(cube({size:[sw,sh, D]})).translate([-sw/2,-sh/2,-0.8]);
   //var s = cylinder({r: R, h: 20});
 
   function cross(p, height) {
@@ -216,6 +223,7 @@ function cap(config) {
     } else {
       var dh;
       [w, n, e, s, dh] = FINGERS[config.row-1];
+      if ( config.col == 1 || config.col == 10 ) dh += 3;
       config.h += dh;
       if ( config.row == 6 ) {
           e += 4;
@@ -262,7 +270,7 @@ function cap(config) {
     if ( config.slope ) cy = cy.translate([0,10,0]).rotateX(config.slope).translate([0,-10,0]);
     //cy = cy.union(sphere({r:R*4, fn:40}).scale([1,1,1]).translate([0,0,H+R*4-2-0.3]));
     c = c.subtract(cy);
-    c = c.subtract(c.scale([0.94,0.94,0.77]));
+    c = c.subtract(c.scale([0.94,0.94,0.7]));
 
     c = c.union(stem());
     c = c.subtract(cy);
@@ -287,8 +295,8 @@ function cap(config) {
   c = c.union(cube({size:[0.5,7,.64],center:[1,0,0]}).translate([2,-8,0]))
   c = c.union(cube({size:[0.5,7,.64],center:[1,0,0]}).translate([-2,-8,0]))
 
-  c = c.union(cube({size:[10,0.5,.64],center:[1,1,0]}).translate([8,0,0]))
-  c = c.union(cube({size:[10,0.5,.64],center:[1,1,0]}).translate([-8,0,0]))
+  c = c.union(cube({size:[11,0.5,.64],center:[1,1,0]}).translate([8,0,0]))
+  c = c.union(cube({size:[11,0.5,.64],center:[1,1,0]}).translate([-8,0,0]))
 
   c = c.intersect(o);
 
