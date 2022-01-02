@@ -5,8 +5,10 @@ const TEXT    = true;
 const PREVIEW = false;
 
 const FILTER = (c) => {
+    return c.col == 1 && c.row == 1;
   //  return c.col == 1;
 
+    return c.col == 10;
     return c.color == RED && c.row == 3;
     if ( ! c.cLabel ) return false;
     var t = c.cLabel.text;
@@ -239,7 +241,7 @@ function cap(config) {
     }
 
 
-  var c = cube({fn:50,size:[W,W2,H+12], center: [true,true,false], radius: PREVIEW ? 0 : 4}).translate([0,0,-8]);
+  var c = cube({fn:50,size:[W,W2,H+20], center: [true,true,false], radius: PREVIEW ? 0 : 4}).translate([0,0,-8]);
   var o = c.scale([1,1,10]);
 
   c = c.intersect(o.translate([0,-W2/2,0]).rotateX(n).translate([0,W2/2,0]));
