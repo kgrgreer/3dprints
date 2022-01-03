@@ -5,7 +5,11 @@ const TEXT    = true;
 const PREVIEW = false;
 
 const FILTER = (c) => {
-    return c.col == 1 && c.row == 1;
+return c.col == 10;// && c.row == 1;
+   if (c.col == 1 && c.row == 2 ) return true;
+   return false;
+//   if (c.col == 1 && c.row == 2 ) return true;
+    return c.col == 10 && c.row == 1;
   //  return c.col == 1;
 
     return c.col == 10;
@@ -187,8 +191,8 @@ function createText(m) {
 
 
 const stem = memoize(function stem() {
-  var   sh = 2.8; // 3.4 /*make smaller to reduce friction Was: 5.4+1.5*/
-  var   sw = 5.8; // 6.2
+  var   sh = 2.8+0.2; // 3.4 /*make smaller to reduce friction Was: 5.4+1.5*/
+  var   sw = 5.8+0.2; // 6.2
   const W  = 4.3; // add 0.2 when testing to make easier to put on and remove
   const H  = 1.3; // 1.5 with green metalic filament
   var   D  = 8;
@@ -225,7 +229,11 @@ function cap(config) {
     } else {
       var dh;
       [w, n, e, s, dh] = FINGERS[config.row-1];
-      if ( config.col == 1 || config.col == 10 ) dh += 3;
+      if ( config.col == 1 || config.col == 10 ) {
+          dh += config.row == 1 ? 2 : 3;
+          if ( config.row == 1 ) s -= 5;
+          if ( config.row == 3 ) n -= 5;
+      }
       config.h += dh;
       if ( config.row == 6 ) {
           e += 4;
