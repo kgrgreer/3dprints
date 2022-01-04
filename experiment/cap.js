@@ -4,42 +4,20 @@
 const TEXT    = true;
 const PREVIEW = false;
 
-const FILTER = (c) => {
-return c.col == 10;// && c.row == 1;
-   if (c.col == 1 && c.row == 2 ) return true;
-   return false;
-//   if (c.col == 1 && c.row == 2 ) return true;
-    return c.col == 10 && c.row == 1;
-  //  return c.col == 1;
+const PLA = {
+    STEM_GUIDES: false,
+    STEM_TOLERANCE: 0
+};
 
-    return c.col == 10;
-    return c.color == RED && c.row == 3;
-    if ( ! c.cLabel ) return false;
-    var t = c.cLabel.text;
-    c.row = 1;
-    return  t == 'X' || t == 'E' || t == 'Y' || t == 'O';
-    return c.color == BLUE && c.row == 4;
-  return c.row < 6 && c.col <4;
-//    return c.row == 4 && (c.col == 4 || c.col == 7);
-    if ( c.col == 1 ) return false;
-  //  return c.col == 1 && ! c.color;
-//    return c.row > 3;
-    return c.col < 6 && ! c.color;
-    if ( c.row == 3)  return;
-   // return c.col == 7 && c.row == 4;
-    return c.col == 6 && c.row < 4
-    return c.col == 7 || ( c.col == 6 && c.row < 4);
-    return (c.col == 6 && (c.row < 3 || c.row == 4)) || (c.col == 7 && c.row==2);
-    return true;
-return c.row == 2 && c.col == 1;
-    return true;
-return c.col <6;
-var ret = c.col == 4 || c.col == 9;
-if ( c.col == 9 ) c.col = 5;
-if ( c.row > 2 ) return false;
-return ret;
-    return c.col == 12;
-    return c.row == 1 && c.col == 1;
+const PETG = {
+    STEM_GUIDES: true,
+    STEM_TOLERANCE: 0.2
+};
+
+const MATERIAL = PLA;
+
+const FILTER = (c) => {
+    return c.col == 1;
 };
 
 const TOP_SLOPE = 8;
@@ -193,8 +171,8 @@ function createText(m) {
 const stem = memoize(function stem() {
   var   sh = 2.8+0.2; // 3.4 /*make smaller to reduce friction Was: 5.4+1.5*/
   var   sw = 5.8+0.2; // 6.2
-  const W  = 4.3; // add 0.2 when testing to make easier to put on and remove
-  const H  = 1.3; // 1.5 with green metalic filament
+  const W  = 4.3 + MATERIAL.STEM_TOLERANCE; // add 0.2 when testing to make easier to put on and remove
+  const H  = 1.3 + MATERIAL.STEM_TOLERANCE; // 1.5 with green metalic filament
   var   D  = 8;
   const R  = 5.4/2;
 
@@ -230,7 +208,7 @@ function cap(config) {
       var dh;
       [w, n, e, s, dh] = FINGERS[config.row-1];
       if ( config.col == 1 || config.col == 10 ) {
-          dh += config.row == 1 ? 2 : 3;
+          dh += config.row == 1 ? 1 : 3;
           if ( config.row == 1 ) s -= 5;
           if ( config.row == 3 ) n -= 5;
       }
@@ -243,6 +221,10 @@ function cap(config) {
       if ( config.row == 5 ) {
           w += 4;
           e -= 4;
+      }
+      if ( config.col == 3 || config.col == 8 ) {
+          if ( config.row <= 3 )
+              dh--;
       }
       if ( config.row == 4 ) e += 3;
       if ( config.row == 2 || config.row == 3 ) config.slope = -5;
@@ -299,15 +281,15 @@ function cap(config) {
   }
 
 
+  if ( MATERIAL.STEM_GUIDES ) {
+    c = c.union(cube({size:[0.5,7,.64],center:[1,0,0]}).translate([2,1,0]))
+    c = c.union(cube({size:[0.5,7,.64],center:[1,0,0]}).translate([-2,1,0]))
+    c = c.union(cube({size:[0.5,7,.64],center:[1,0,0]}).translate([2,-8,0]))
+    c = c.union(cube({size:[0.5,7,.64],center:[1,0,0]}).translate([-2,-8,0]))
 
-  c = c.union(cube({size:[0.5,7,.64],center:[1,0,0]}).translate([2,1,0]))
-  c = c.union(cube({size:[0.5,7,.64],center:[1,0,0]}).translate([-2,1,0]))
-  c = c.union(cube({size:[0.5,7,.64],center:[1,0,0]}).translate([2,-8,0]))
-  c = c.union(cube({size:[0.5,7,.64],center:[1,0,0]}).translate([-2,-8,0]))
-
-  c = c.union(cube({size:[11,0.5,.64],center:[1,1,0]}).translate([8,0,0]))
-  c = c.union(cube({size:[11,0.5,.64],center:[1,1,0]}).translate([-8,0,0]))
-
+    c = c.union(cube({size:[11,0.5,.64],center:[1,1,0]}).translate([8,0,0]))
+    c = c.union(cube({size:[11,0.5,.64],center:[1,1,0]}).translate([-8,0,0]))
+  }
   c = c.intersect(o);
 
   // add a small lip around the outside of the key for better plate adhesion
