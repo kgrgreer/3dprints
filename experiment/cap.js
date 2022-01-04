@@ -17,7 +17,7 @@ const PETG = {
 const MATERIAL = PLA;
 
 const FILTER = (c) => {
-    return c.col == 1;
+    return c.col == 2;
 };
 
 const TOP_SLOPE = 8;
@@ -46,8 +46,8 @@ const THUMBS = [
 const FINGERS = [
     // w  n   e   s  dh
       [5, 5,  5, 14, 0.3],
-      [5, 16, 5,  4, 0.4],
-      [5, 22, 5,  0, -0.5]
+      [5, 16, 5,  5, 0.4],
+      [5, 22, 5,  0, -1]
 ];
 
 
