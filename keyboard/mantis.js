@@ -2,30 +2,25 @@
  *                                                             CONFIG
  *********************************************************************/
 
-const VERSION = "V13";
+const VERSION = "V14";
 
-const KEYS    = true;     // include key-caps
+const KEYS    = false;     // include key-caps
 const PREVIEW = false;
-const EXPAND  = false;
-
+const EXPAND  = true;
 
 
 // TODO:
-// test with keycaps and adjust key spacing or angles if necessary
-// move bottom pinky keys in 1mm, maybe
-// rotate middle thumb key to be same as outer key
-// maybe for middle three columns move top kep up and bottom key down
 
 
 var A    = 24;        // Key row slant angle
 
 var SHAPE = [
-  [12,32], // bottom left
-  [36,83], // top left
-  [60,92], // top-left corner of ring finger
-  [136, 92], // top center
-  [145,-32], // bottom center
-  [108,-32], // corner of inside thumb key
+  [13.5-1,31], // bottom left
+  [36.5,85], // top left
+  [62-1,90], // top-left corner of ring finger
+  [136, 90], // top center
+  [145,-31], // bottom center
+  [110,-31], // corner of inside thumb key
   [63, 2]
 ];
 
@@ -36,18 +31,16 @@ var LEDS = [
 ];
 
 var POSTS = [
-  [75,42],
-  [-75,42],
+  [74.8,40.8],
+  [-74.8,40.8],
   [ 0, -58],
   [ 0, 0],
   [64, -14],
   [-64, -14]
 ];
-var RS   = -119;    // Row Start
 
-
-
-var FT   = 2.2;         // Faceplate thickness, should be 1.5
+var RS   = -120.5;    // Row Start
+var FT   = 3;         // Faceplate thickness, should be 1.5
 var H    = 15;        // Total height of keyboard
 var RW   = 19;        // Row Width
 var SW   = 14 + 0.6 ; // Switch Width 14, plus 0.6
@@ -194,7 +187,7 @@ function createKeyCap(k) {
 
 var SWITCH = {
   w:           13.8, // use 13.7 for testing, 13.6,    // width of sides of switch
-  d:           9,    // depth below surface
+  d:           16,    // depth below surface
   h:           5,    // height above surface
   stem:        4,    // height of stem, 4mm travel
 
@@ -211,7 +204,7 @@ var SWITCH = {
   createHolderOutline: memoize(function() {
     var h = this.holderHeight;
     var t = this.holderThickness;
-    var holder = cube({size:[this.w+2*t, this.w+2*t, h], center:[true,true,false]}).translate([0,0,-h]).setColor([1,1,1]);
+    var holder = cube({size:[this.w+2*t, this.w+2*t+2.5, h], center:[true,true,false]}).translate([0,0,-h]).setColor([1,1,1]);
     return holder;
   }),
   createLatch: function() {
@@ -220,8 +213,7 @@ var SWITCH = {
   createHolder: memoize(function() {
     var h      = this.holderHeight;
     var holder = this.createHolderOutline();
-    var top    = cube({size:[this.w, this.w, this.h]}).translate([-this.w/2,-this.w/2,-this.h
-]);
+    var top    = cube({size:[this.w, this.w, this.h]}).translate([-this.w/2,-this.w/2,-this.h]);
 
     return holder.subtract(top);
   }),
@@ -288,10 +280,11 @@ function createText(m) {
 
 function key(s, x, y, reverse, r, config) {
     function transform(s) {
-      if ( config.tilt ) {
-          config.tilt = config.tilt * 1.1;
+      if ( config.tilt || true ) {
+          config.tilt = (config.tilt || 0) * 1.1;
         var t = config.tilt > 0 ? SW/2 : -SW/2;
-        s = s.translate([0,t,0]).rotateX(config.tilt).translate([0,-t,0]);
+        var d = (config.tilt || 0 ) < 0 ? -2 : 2;
+        s = s.translate([0,t+d,0]).rotateX(config.tilt).translate([0,-t-d,config.height || 0]);
       }
       s = s.rotateZ(r || 0).translate([x, y, 0]).rotateZ(-A);
       if ( reverse ) s = s.scale([-1,1,1]);
@@ -310,17 +303,19 @@ function key(s, x, y, reverse, r, config) {
 //      var key = transform(cube({size:[KW, KW, 8], xxxradius: 1, center: [true,true,false]}));
 //      sw = sw.union(key);
     }
+    s = s.union(h);
     if ( PREVIEW ) {
       s = s.union(sw);
     } else {
       s = s.subtract(sw);
     }
-    return s.union(h);
+    return s;
 }
 
 
-function row(s, x, y, rows, reverse, home) {
+function row(s, x, y, height, rows, reverse, home) {
   for ( var i = 0 ; i < rows.length ; i++ ) {
+    rows[i].height = height;
     s = key(s, x+12, (RW+0.2)*(i+1)+y-28, reverse, 0, rows[i]);
   }
 
@@ -331,7 +326,7 @@ function row(s, x, y, rows, reverse, home) {
 function post(lid, bottom, x, y) {
   bottom = bottom.union(cylinder({r:5,h: H-FT}).subtract(cylinder({r:SR,h: 10}).translate([0,0,H-10])).translate([x,y,0]));
   lid = lid.subtract(cylinder({r:SR,h: 100}).translate([x,y,0]));
-  lid = lid.subtract(cylinder({r:3.5, h: 0.5}).translate([x,y,H-0.5]));
+  lid = lid.subtract(cylinder({r:3.8, h: 20.5}).translate([x,y,H-0.5]));
   // lid = lid.subtract(bottom);
   return [lid, bottom];
 }
@@ -359,34 +354,43 @@ function base(keys, asBase) {
   var blankBase = s;
 
   if ( keys ) {
-    s = row(s, RS, 0+2, [{tilt: -10},{color: HOME_COLOR},{tilt: 10, color: RED}], false, true);
-    s = row(s, RS, 0+2, [{tilt: -10},{xxxcolor: HOME_COLOR},{tilt: 10}], true, true);
+    s = row(s, RS, 0, 8, [{tilt: -10},{color: HOME_COLOR},{tilt: 14, color: RED}], false, true);
+    s = row(s, RS, 0, 8, [{tilt: -10},{xxxcolor: HOME_COLOR},{tilt: 14}], true, true);
 
-    s = row(s, RS+RW, 17, [{tilt: -10},{color: HOME_COLOR},{tilt: 10}], false, true);
-    s = row(s, RS+RW, 17, [{tilt: -10},{color: HOME_COLOR},{tilt: 10}], true, true);
+    s = row(s, RS+RW, 17, 2, [{tilt: -10},{color: HOME_COLOR},{tilt: 14}], false, true);
+    s = row(s, RS+RW, 17, 2, [{tilt: -10},{color: HOME_COLOR},{tilt: 14}], true, true);
 
-    s = row(s, RS+RW*2, 23, [{tilt: -10},{color: HOME_COLOR},{tilt: 10}], false, true);
-    s = row(s, RS+RW*2, 23, [{tilt: -10},{color: HOME_COLOR},{tilt: 10, color: HOME_COLOR}], true, true);
+    s = row(s, RS+RW*2, 23.4, 0, [{tilt: -10},{color: HOME_COLOR},{tilt: 14}], false, true);
+    s = row(s, RS+RW*2, 23.4, 0, [{tilt: -10},{color: HOME_COLOR},{tilt: 14, color: HOME_COLOR}], true, true);
 
-    s = row(s, RS+RW*3, 17, [{tilt: -10},{color: HOME_COLOR},{tilt: 10}], false, true);
-    s = row(s, RS+RW*3, 17, [{tilt: -10},{color: HOME_COLOR},{tilt: 10}], true, true);
+    s = row(s, RS+RW*3, 17, 2.2, [{tilt: -10},{color: HOME_COLOR},{tilt: 14}], false, true);
+    s = row(s, RS+RW*3, 17, 2.2, [{tilt: -10},{color: HOME_COLOR},{tilt: 14}], true, true);
 
-    s = row(s, RS+RW*4, 12+2, [{tilt: -10},{},{tilt: 10}]);
-    s = row(s, RS+RW*4, 12+2, [{tilt: -10},{},{tilt: 10}], true);
+    s = row(s, RS+RW*4, 12+2, 2.5, [{tilt: -10},{},{tilt: 14}]);
+    s = row(s, RS+RW*4, 12+2, 2.5, [{tilt: -10},{},{tilt: 14}], true);
 
     // thumb key
     function tkey(reverse, a, color, r, x, y, r2, tilt) {
-      s = key(s, r/2 * Math.cos(a/180*Math.PI)+x, r/2 * Math.sin(a/180*Math.PI)+y, reverse, a + (r2 || 0), {tilt: tilt || 0, color: color});
+        //tilt = 0;
+        r2 = 0;
+        r = TR+9.3
+        x = -53.75;
+        y = -78;
+        r = r;
+        y -= 66;
+        a = a+10;
+      s = key(s, r * Math.cos(a/180*Math.PI)+x, r * Math.sin(a/180*Math.PI)+y, reverse, a + (r2 || 0), {tilt: tilt || 0, color: color});
     }
 
+const D = 9;
 //   keys: mod, backspace, tab, space, enter, mod
     for ( var i = 0 ; i < 2 ; i++ ) {
       // inside keys
-      tkey(i == 1, 52, [0.3,0.9,0.3], TR+18, -53, -77, 18, -7);
+      tkey(i == 1, /*52*/69-D, [0.3,0.9,0.3], TR+18, -53, -77, 18, -7);
       // middle keys
-      tkey(i == 1, 67.75, i == 1 ? MODIFIER_COLOR : HOME_COLOR, TR+9.3, -53.75, -78, 7.8, 0);
+      tkey(i == 1, 69, i == 1 ? MODIFIER_COLOR : HOME_COLOR, TR+9.3, -53.75, -78, 7.8, 0);
       // outside keys
-      tkey(i == 1, 85.5, i == 1 ? MODIFIER_COLOR : HOME_COLOR, TR+7.4, -53, -77, -5, 7);
+      tkey(i == 1, 69+D/*85.5*/, i == 1 ? MODIFIER_COLOR : HOME_COLOR, TR+7.4, -53, -77, -5, 7);
 
 
       // inside keys
@@ -425,6 +429,7 @@ function tilt(bottom) {
 }
 
 function main() {
+//    return SWITCH.toSolid().translate([0,0,20]);
   var bottom = base(false, true).setColor([1,1,1]);
   var lid    = base(true, false);
 
@@ -451,18 +456,18 @@ function main() {
       lid = lid.union(s.scale([-1,1,1]));
   }
 
-  plate(-24, 33, 48, 16);
+  plate(-24, 35, 45, 14);
   plate(-10, -51, 20, 40);
   plate(-10, -71, 20, 8);
   plate(-95,-19,33,16,-30);
 
   // Version Engraving
-  lid = lid.subtract(createText({text: VERSION, w:5, scale: 0.2, justify: 'C', h: H+1}).toSolid().translate([0,-40,0]).scale([-1,1,1]));
+  lid = lid.subtract(createText({text: VERSION, w:6, scale: 0.25, justify: 'C', h: H+1}).toSolid().translate([0,-40,0]).scale([-1,1,1]));
 //return tilt(bottom);
-return lid;
-  return bottom;
-  return bottom.union(lid);
+//return lid;
+//  return bottom;
+//  return bottom.union(lid);
 
-  lid = lid.subtract(bottom);
+  //lid = lid.subtract(bottom);
   return lid.rotateZ(-15);
 }
