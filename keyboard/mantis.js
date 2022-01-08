@@ -459,7 +459,7 @@ function main() {
   plate(-24, 35, 45, 14);
   plate(-10, -51, 20, 40);
   plate(-10, -71, 20, 8);
-  plate(-95,-19,33,16,-30);
+  plate(-95,-21,33,16,-30);
 
   // Version Engraving
   lid = lid.subtract(createText({text: VERSION, w:6, scale: 0.25, justify: 'C', h: H+1}).toSolid().translate([0,-40,0]).scale([-1,1,1]));
