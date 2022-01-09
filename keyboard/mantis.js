@@ -43,7 +43,7 @@ var A    = 24;        // Key row slant angle
 var RS   = -120.5;    // Row Start
 
 var FT   = 3;         // Faceplate thickness, should be 1.5
-var H    = 15;        // Total height of keyboard
+var H    = 12;        // Total height of keyboard
 var RW   = 19;        // Row Width
 var SW   = 14 + 0.6 ; // Switch Width 14, plus 0.6
 var KW   = 17;        // Key Width
@@ -51,6 +51,7 @@ var SR   = 1.7;       // screw radius
 var LR   = 3.3/2;     // LED radius, 3.3 plus tolerance
 var KH   = 6;         // key height above faceplate
 var TR   = 119;       // thumb radius
+var TILT = 2;         // tilt of keyboard
 
 var HOME_COLOR        = [0,0,0];
 var DEFAULT_KEY_COLOR = [0.8,0.8,0.8];
@@ -206,7 +207,7 @@ var SWITCH = {
   createHolderOutline: memoize(function() {
     var h = this.holderHeight;
     var t = this.holderThickness;
-    var holder = cube({size:[this.w+2*t, this.w+2*t+2.5, h], center:[true,true,false]}).translate([0,0,-h]).setColor([1,1,1]);
+    var holder = cube({radius:1, size:[this.w+2*t, this.w+2*t+2.9, h], center:[true,true,false]}).translate([0,0,-h]).setColor([1,1,1]);
     return holder;
   }),
   createLatch: function() {
@@ -364,14 +365,14 @@ function base(keys, asBase) {
     s = row(s, RS+RW, 17, 2, [{tilt: -10},{color: HOME_COLOR},{tilt: 14}], false, true);
     s = row(s, RS+RW, 17, 2, [{tilt: -10},{color: HOME_COLOR},{tilt: 14}], true, true);
 
-    s = row(s, RS+RW*2, 23.4, 0, [{tilt: -10},{color: HOME_COLOR},{tilt: 14}], false, true);
-    s = row(s, RS+RW*2, 23.4, 0, [{tilt: -10},{color: HOME_COLOR},{tilt: 14, color: HOME_COLOR}], true, true);
-
     s = row(s, RS+RW*3, 17, 2.2, [{tilt: -10},{color: HOME_COLOR},{tilt: 14}], false, true);
     s = row(s, RS+RW*3, 17, 2.2, [{tilt: -10},{color: HOME_COLOR},{tilt: 14}], true, true);
 
     s = row(s, RS+RW*4, 12+2, 2.5, [{tilt: -10},{},{tilt: 14}]);
     s = row(s, RS+RW*4, 12+2, 2.5, [{tilt: -10},{},{tilt: 14}], true);
+
+    s = row(s, RS+RW*2, 23.4, 0, [{tilt: -10},{color: HOME_COLOR},{tilt: 14}], false, true);
+    s = row(s, RS+RW*2, 23.4, 0, [{tilt: -10},{color: HOME_COLOR},{tilt: 14, color: HOME_COLOR}], true, true);
 
     // thumb key
     function tkey(reverse, a, color, r, x, y, r2, tilt) {
@@ -423,7 +424,7 @@ const D = 9;
 }
 
 function tilt(bottom) {
-    var b = bottom.rotateX(2);
+    var b = bottom.rotateX(TILT);
 
     b = b.translate([0,0,-1.6]);
 
@@ -467,11 +468,8 @@ function main() {
 
   // Version Engraving
   lid = lid.subtract(createText({text: VERSION, w:6, scale: 0.25, justify: 'C', h: H+1}).toSolid().translate([0,-40,0]).scale([-1,1,1]));
-//return tilt(bottom);
-//return lid;
-//  return bottom;
-//  return bottom.union(lid);
 
-  //lid = lid.subtract(bottom);
-  return lid.rotateZ(-15);
+return tilt(bottom.union(lid));
+return tilt(bottom);
+return lid.rotateZ(-15);
 }
