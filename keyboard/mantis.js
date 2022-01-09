@@ -2,7 +2,7 @@
  *                                                             CONFIG
  *********************************************************************/
 
-const VERSION = "V14";
+const VERSION = "V15";
 
 const KEYS    = false;     // include key-caps
 const PREVIEW = false;
@@ -12,10 +12,10 @@ const EXPAND  = true;
 // TODO:
 
 
-var A    = 24;        // Key row slant angle
-
 var SHAPE = [
-  [13.5-1,31], // bottom left
+  [15,30], // bottom left
+  [22,46],
+  [22,51],
   [36.5,85], // top left
   [62-1,90], // top-left corner of ring finger
   [136, 90], // top center
@@ -35,11 +35,13 @@ var POSTS = [
   [-74.8,40.8],
   [ 0, -58],
   [ 0, 0],
-  [64, -14],
-  [-64, -14]
+  [65.4, -14],
+  [-65.4, -14]
 ];
 
+var A    = 24;        // Key row slant angle
 var RS   = -120.5;    // Row Start
+
 var FT   = 3;         // Faceplate thickness, should be 1.5
 var H    = 15;        // Total height of keyboard
 var RW   = 19;        // Row Width
@@ -279,6 +281,8 @@ function createText(m) {
 
 
 function key(s, x, y, reverse, r, config) {
+    x += (config.x || 0);
+    y += (config.y || 0);
     function transform(s) {
       if ( config.tilt || true ) {
           config.tilt = (config.tilt || 0) * 1.1;
@@ -354,8 +358,8 @@ function base(keys, asBase) {
   var blankBase = s;
 
   if ( keys ) {
-    s = row(s, RS, 0, 8, [{tilt: -10},{color: HOME_COLOR},{tilt: 14, color: RED}], false, true);
-    s = row(s, RS, 0, 8, [{tilt: -10},{xxxcolor: HOME_COLOR},{tilt: 14}], true, true);
+    s = row(s, RS, 0, 8, [{tilt: -10, x: 2},{color: HOME_COLOR},{tilt: 14, color: RED}], false, true);
+    s = row(s, RS, 0, 8, [{tilt: -10, x: 2},{xxxcolor: HOME_COLOR},{tilt: 14}], true, true);
 
     s = row(s, RS+RW, 17, 2, [{tilt: -10},{color: HOME_COLOR},{tilt: 14}], false, true);
     s = row(s, RS+RW, 17, 2, [{tilt: -10},{color: HOME_COLOR},{tilt: 14}], true, true);
