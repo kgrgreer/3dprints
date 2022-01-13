@@ -4,8 +4,8 @@
 
 const VERSION = "V15";
 
-const KEYS    = false;     // include key-caps
-const PREVIEW = false;
+const KEYS    = true;     // include key-caps
+const PREVIEW = true;
 const EXPAND  = true;
 
 
@@ -84,7 +84,7 @@ function wedge(r, w, a1, a2, b1, b2, flags) {
   // bottom
   s = s.subtract(cube({size:[d, -d, d]}).translate([-r,0,-d]).rotateX(-a2).translate([0,-w,r]));
 
-  return s;
+  return s.scale([1,1,0.5]);
 }
 
 
@@ -112,14 +112,12 @@ function memoize(f) {
 function createKeyCap(k) {
   var cap = Object.assign(k, {
       toSolid: memoize(function() {
-         const KEYW = 17;
+         const KEYW = 15;
          const WW   = 7.5;
-         var w   = wedge(/*this.f.r*/84-13, 0, -WW, WW, -WW, WW, k.flags);
-         var key = w.intersect(cube({radius:0, size:[KEYW,KEYW,3.6+this.capHeight+14]}).translate([-KEYW/2,-KEYW/2,-4-11]).intersect(cube({size:[100,100,100]}).translate([-50,-50,-4])));
+var w = cube({size:[17.6,16.3,3.5], center:[1,1,0]})
+var key = w;
 
-         key = key.intersect(cylinder({r2:0,r1:11.5,h:100}).translate([0,0,-10]));
          key = this.concaveKey(key);
-  //       key = this.edgeKey(key);
 
        key = key.setColor(this.color);
 
@@ -146,11 +144,7 @@ function createKeyCap(k) {
       concaveKey: function(o) {
         var tiltY = Math.cos(degToRad(this.capTilt))*30;
         var tiltZ = Math.sin(degToRad(this.capTilt))*30;
-        if ( k.isHome ) {
-          o = o.subtract(sphere({r:45}).scale([1,1,1.3]).rotateX(this.capTilt/2.5).translate([0,-tiltZ,41-7+20+this.capHeight]));
-        } else {
-          o = o.subtract(sphere({r:45}).scale([1,3,1.3]).rotateX(this.capTilt/2.5).translate([0,-tiltZ,41-7+20+this.capHeight]));
-        }
+        o = o.subtract(sphere({r:60}).scale([1,1,1]).rotateX(this.capTilt/2.5).translate([0,-tiltZ,42+15+this.capHeight]));
         return o;
       },
       edgeKey: function(o) {
@@ -191,8 +185,8 @@ function createKeyCap(k) {
 var SWITCH = {
   w:           13.8, // use 13.7 for testing, 13.6,    // width of sides of switch
   d:           16,    // depth below surface
-  h:           5,    // height above surface
-  stem:        4,    // height of stem, 4mm travel
+  h:           3,    // height above surface
+  stem:        2,    // height of stem, 4mm travel
 
   latchDepth:  1.5,  // from top of lip
   latchWidth:  3.7,
@@ -207,7 +201,7 @@ var SWITCH = {
   createHolderOutline: memoize(function() {
     var h = this.holderHeight;
     var t = this.holderThickness;
-    var holder = cube({radius:1, size:[this.w+2*t, this.w+2*t+2.9, h], center:[true,true,false]}).translate([0,0,-h]).setColor([1,1,1]);
+    var holder = cube({radius:1, size:[this.w+2*t+0.2, this.w+2*t+2.9, h], center:[true,true,false]}).translate([0,0,-h]).setColor([1,1,1]);
     return holder;
   }),
   createLatch: function() {
@@ -235,7 +229,7 @@ var SWITCH = {
   }),
   toSolid: memoize(function() {
     var sw   = this.createSwitch()/*.setColor([0,0,0])*/;
-    var stem = cube({size:[4, 4, 4], center:[true,true,false]}).translate([0,0,this.h]).setColor([165/256,42/256,42/256]);
+    var stem = cube({size:[4, 4, 2.5], center:[true,true,false]}).translate([0,0,this.h]).setColor([165/256,42/256,42/256]);
     return sw.union(stem);
   })
 };
