@@ -4,12 +4,17 @@
 
 const VERSION = "V15";
 
-const KEYS    = true;     // include key-caps
-const PREVIEW = true;
+const KEYS    = false;     // include key-caps
+const PREVIEW = false;
 const EXPAND  = true;
 
 
 // TODO:
+// - holder for controller
+// - better cable port
+// - spacers around switch pins
+// - cleanup thum keys
+// - move key layout from code to config
 
 
 var SHAPE = [
@@ -463,6 +468,7 @@ function main() {
   // Version Engraving
   lid = lid.subtract(createText({text: VERSION, w:6, scale: 0.25, justify: 'C', h: H+1}).toSolid().translate([0,-40,0]).scale([-1,1,1]));
 
+return lid;
 return tilt(bottom.union(lid));
 return tilt(bottom);
 return lid.rotateZ(-15);
