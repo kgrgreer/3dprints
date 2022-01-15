@@ -13,8 +13,6 @@ const EXPAND  = true;
 // - holder for controller
 // - better cable port
 // - spacers around switch pins
-// - cleanup thum keys
-// - move key layout from code to config
 
 
 var SHAPE = [
@@ -358,8 +356,8 @@ function base(keys, asBase) {
   var blankBase = s;
 
   if ( keys ) {
-    s = row(s, RS, 0, 8, [{tilt: -10, x: 2},{color: HOME_COLOR},{tilt: 14, color: RED}], false, true);
-    s = row(s, RS, 0, 8, [{tilt: -10, x: 2},{xxxcolor: HOME_COLOR},{tilt: 14}], true, true);
+    s = row(s, RS, 0, 8, [{tilt: -10, x: 2},{color: HOME_COLOR},{tilt: 14, color: RED, x:-2}], false, true);
+    s = row(s, RS, 0, 8, [{tilt: -10, x: 2},{xxxcolor: HOME_COLOR},{tilt: 14, x:-2}], true, true);
 
     s = row(s, RS+RW, 17, 2, [{tilt: -10},{color: HOME_COLOR},{tilt: 14}], false, true);
     s = row(s, RS+RW, 17, 2, [{tilt: -10},{color: HOME_COLOR},{tilt: 14}], true, true);
