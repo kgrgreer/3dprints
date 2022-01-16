@@ -17,9 +17,11 @@ const EXPAND  = true;
 
 var SHAPE = [
   [15,30], // bottom left
-  [22,46],
-  [22,51],
-  [36.5,85], // top left
+  [22,47],
+  [22,52],
+  [(36.5+22)/2-1, (51+85)/2-1.5],
+  [(36.5+22)/2-1, (51+85)/2+2.5],
+  [35,85], // top left
   [62-1,90], // top-left corner of ring finger
   [136, 90], // top center
   [145,-31], // bottom center
@@ -204,7 +206,7 @@ var SWITCH = {
   createHolderOutline: memoize(function() {
     var h = this.holderHeight;
     var t = this.holderThickness;
-    var holder = cube({radius:1, size:[this.w+2*t+0.2, this.w+2*t+2.9, h], center:[true,true,false]}).translate([0,0,-h]).setColor([1,1,1]);
+    var holder = cube({radius:0.25, size:[this.w+2*t+0.2, this.w+2*t+2.9, h], center:[true,true,false]}).translate([0,0,-h]).setColor([1,1,1]);
     return holder;
   }),
   createLatch: function() {
@@ -359,8 +361,8 @@ function base(keys, asBase) {
     s = row(s, RS, 0, 8, [{tilt: -10, x: 2},{color: HOME_COLOR},{tilt: 14, color: RED, x:-2}], false, true);
     s = row(s, RS, 0, 8, [{tilt: -10, x: 2},{xxxcolor: HOME_COLOR},{tilt: 14, x:-2}], true, true);
 
-    s = row(s, RS+RW, 17, 2, [{tilt: -10},{color: HOME_COLOR},{tilt: 14}], false, true);
-    s = row(s, RS+RW, 17, 2, [{tilt: -10},{color: HOME_COLOR},{tilt: 14}], true, true);
+    s = row(s, RS+RW, 17, 2, [{tilt: -10},{color: HOME_COLOR, dw: 10},{tilt: 14}], false, true);
+    s = row(s, RS+RW, 17, 2, [{tilt: -10},{color: HOME_COLOR, dw: 10},{tilt: 14}], true, true);
 
     s = row(s, RS+RW*3, 17, 2.2, [{tilt: -10},{color: HOME_COLOR},{tilt: 14}], false, true);
     s = row(s, RS+RW*3, 17, 2.2, [{tilt: -10},{color: HOME_COLOR},{tilt: 14}], true, true);
@@ -437,11 +439,6 @@ function main() {
 
   lid = lid.translate([0,0,H-FT]);
 
-  // Add screw hold and post
-  POSTS.forEach(p => {
-    [lid, bottom] = post(lid, bottom, p[0], p[1]);
-  });
-
   // Add LED cutouts
   LEDS.forEach(led  => {
     lid = lid.subtract(cylinder({r:LR,h: H-0.2}).translate([led[0],led[1],0]));
@@ -452,8 +449,8 @@ function main() {
   bottom = bottom.subtract(cylinder({r:3, h:100}).rotateX(90).translate([-86,100,H-1-FT/2]));
   bottom = bottom.subtract(cylinder({r:3, h:100}).rotateX(90).translate([-86,100,H-1-FT]));
 
-  function plate(x, y, w, h, r) {
-      var s = cube({size: [w, h, 0.2]}).rotateZ(r|| 0).translate([x,y,H]).setColor([0.5,0.5,0.5]);
+  function plate(x, y, w, h, r, height) {
+      var s = cube({size: [w, h, height || 0.2]}).rotateZ(r|| 0).translate([x,y,H]).setColor([0.5,0.5,0.5]);
       lid = lid.union(s);
       lid = lid.union(s.scale([-1,1,1]));
   }
@@ -462,6 +459,14 @@ function main() {
   plate(-10, -51, 20, 40);
   plate(-10, -71, 20, 8);
   plate(-95,-21,33,16,-30);
+
+  // fill space between pinky and ring finger in top row
+  plate(79.5,18,5,20,24,2);
+
+  // Add screw hold and post
+  POSTS.forEach(p => {
+    [lid, bottom] = post(lid, bottom, p[0], p[1]);
+  });
 
   // Version Engraving
   lid = lid.subtract(createText({text: VERSION, w:6, scale: 0.25, justify: 'C', h: H+1}).toSolid().translate([0,-40,0]).scale([-1,1,1]));
