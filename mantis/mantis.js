@@ -29,19 +29,22 @@ var SHAPE = [
   [63, 2]
 ];
 
-var LEDS = [
-  [  0, 42],
-  [ 18, 42],
-  [-18, 42]
-];
-
 var POSTS = [
   [74.8,40.8],
   [-74.8,40.8],
-  [ 0, -58],
+  [ 0, -65],
+  [ 0, -35],
   [ 0, 0],
   [65.4, -14],
-  [-65.4, -14]
+  [-65.4, -14],
+//  [0,46],
+/*
+  [32,-10],
+  [-32,-10],
+  [66,8],
+  [-66,8]
+  */
+
 ];
 
 var A    = 24;        // Key row slant angle
@@ -432,17 +435,23 @@ function tilt(bottom) {
     return b.union(bs).intersect(cube({size:[500,500,100], center:[1,1,0]}));
 }
 
+
+function cover(lid) {
+    var s = lid.intersect(cube({size:[300,300,0.1], center:[1,1,0]}).translate([0,0,H-0.1]));
+
+    var l = lid.translate([0,0,-0.1]);
+    for ( var i = -2 ; i <= 2 ; i += 1 )
+    for ( var j = -2 ; j <= 2 ; j += 1 )
+    s = s.subtract(l.translate([i,j,0]));
+    return s.setColor([0.5,1,0.5]);
+}
+
 function main() {
 //    return SWITCH.toSolid().translate([0,0,20]);
   var bottom = base(false, true).setColor([1,1,1]);
   var lid    = base(true, false);
 
   lid = lid.translate([0,0,H-FT]);
-
-  // Add LED cutouts
-  LEDS.forEach(led  => {
-    lid = lid.subtract(cylinder({r:LR,h: H-0.2}).translate([led[0],led[1],0]));
-  });
 
   // Cable hole
   bottom = bottom.subtract(cylinder({r:3, h:100}).rotateX(90).translate([-86,100,H-1]));
@@ -455,10 +464,12 @@ function main() {
       lid = lid.union(s.scale([-1,1,1]));
   }
 
+    /*
   plate(-24, 35, 45, 14);
   plate(-10, -51, 20, 40);
   plate(-10, -71, 20, 8);
   plate(-95,-21,33,16,-30);
+  */
 
   // fill space between pinky and ring finger in top row
   plate(79.5,18,5,20,24,2);
@@ -471,6 +482,10 @@ function main() {
   // Version Engraving
   lid = lid.subtract(createText({text: VERSION, w:6, scale: 0.25, justify: 'C', h: H+1}).toSolid().translate([0,-40,0]).scale([-1,1,1]));
 
+var c = cover(lid);
+
+lid = lid.union(c.translate([0,0,0.1]))
+//return tilt(bottom);
 return lid;
 return tilt(bottom.union(lid));
 return tilt(bottom);
