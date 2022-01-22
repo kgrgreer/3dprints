@@ -449,7 +449,7 @@ function cover(lid) {
 function oledCase(lid) {
   const W0 = 26;
   const W = 28.5;
-  const H0 = 20;
+  const H0 = 15;
   const CH = 24.5; //26.5;
   const D0 = 1.5
   const D = 3.8;
@@ -460,7 +460,8 @@ function oledCase(lid) {
     negative = negative.union(cube({size:[11,8,2*CH], center:[1,0,0]}).translate([0,1,-CH]));
     negative = negative.translate([0,0,2]).rotateX(-30).translate([0,27.5,H]);
 
-    s = s.subtract(cube({size:[W0, D0+2, H0],center:[1,0,0]}).translate([0,0,2]).setColor([0,0,0]));
+    // winddow
+    s = s.subtract(cube({size:[W0, D0+2, H0],center:[1,0,0]}).translate([0,0,7]).setColor([0,0,0]));
     s = s.rotateX(-30);
     s = s.intersect(cube({size:[100,100,100], center:[1,1,0]}))
     s = s.subtract(cube({size:[40,25,300], center:[1,0,0]}).translate([0,22,0]));
