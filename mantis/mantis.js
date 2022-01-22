@@ -440,10 +440,36 @@ function cover(lid) {
     var s = lid.intersect(cube({size:[300,300,0.1], center:[1,1,0]}).translate([0,0,H-0.1]));
 
     var l = lid.translate([0,0,-0.1]);
-    for ( var i = -2 ; i <= 2 ; i += 1 )
-    for ( var j = -2 ; j <= 2 ; j += 1 )
-    s = s.subtract(l.translate([i,j,0]));
-    return s.setColor([0.5,1,0.5]);
+    for ( var i = -1 ; i <= 1 ; i += 0.5 )
+    for ( var j = -1 ; j <= 1 ; j += 0.5 )
+    s = s.subtract(l.translate([i/2,j/2,0]));
+    return s;
+}
+
+function oledCase(lid) {
+  const W0 = 26;
+  const W = 28.5;
+  const H0 = 20;
+  const CH = 24.5; //26.5;
+  const D0 = 1.5
+  const D = 3.8;
+
+    var s = cube({size:[W+2,30,CH+4], radius:2, center:[1,0,0]});
+
+    var negative = cube({size:[W,4,2*CH], center:[1,0,0]}).translate([0,1,-CH]);
+    negative = negative.union(cube({size:[11,8,2*CH], center:[1,0,0]}).translate([0,1,-CH]));
+    negative = negative.translate([0,0,2]).rotateX(-30).translate([0,27,H]);
+
+    s = s.subtract(cube({size:[W0, D0+2, H0],center:[1,0,0]}).translate([0,0,2]).setColor([0,0,0]));
+    s = s.rotateX(-30);
+    s = s.intersect(cube({size:[100,100,100], center:[1,1,0]}))
+    s = s.subtract(cube({size:[40,25,300], center:[1,0,0]}).translate([0,22,0]));
+    s = s.setColor([0.5, 0.5, 0.5]);
+    lid = lid.union(s.translate([0,27,H]));
+
+    lid = lid.subtract(negative);
+
+ return lid;
 }
 
 function main() {
@@ -454,22 +480,17 @@ function main() {
   lid = lid.translate([0,0,H-FT]);
 
   // Cable hole
+  /*
   bottom = bottom.subtract(cylinder({r:3, h:100}).rotateX(90).translate([-86,100,H-1]));
   bottom = bottom.subtract(cylinder({r:3, h:100}).rotateX(90).translate([-86,100,H-1-FT/2]));
   bottom = bottom.subtract(cylinder({r:3, h:100}).rotateX(90).translate([-86,100,H-1-FT]));
+  */
 
   function plate(x, y, w, h, r, height) {
       var s = cube({size: [w, h, height || 0.2]}).rotateZ(r|| 0).translate([x,y,H]).setColor([0.5,0.5,0.5]);
       lid = lid.union(s);
       lid = lid.union(s.scale([-1,1,1]));
   }
-
-    /*
-  plate(-24, 35, 45, 14);
-  plate(-10, -51, 20, 40);
-  plate(-10, -71, 20, 8);
-  plate(-95,-21,33,16,-30);
-  */
 
   // fill space between pinky and ring finger in top row
   plate(79.5,18,5,20,24,2);
@@ -482,6 +503,8 @@ function main() {
   // Version Engraving
   lid = lid.subtract(createText({text: VERSION, w:6, scale: 0.25, justify: 'C', h: H+1}).toSolid().translate([0,-40,0]).scale([-1,1,1]));
 
+  lid = oledCase(lid);
+  return lid;
 var c = cover(lid);
 
 lid = lid.union(c.translate([0,0,0.1]))
