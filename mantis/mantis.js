@@ -51,7 +51,7 @@ var A    = 24;        // Key row slant angle
 var RS   = -120.5;    // Row Start
 
 var FT   = 3;         // Faceplate thickness, should be 1.5
-var H    = 12;        // Total height of keyboard
+var H    = 11;        // Total height of keyboard
 var RW   = 19;        // Row Width
 var SW   = 14 + 0.6 ; // Switch Width 14, plus 0.6
 var KW   = 17;        // Key Width
@@ -447,22 +447,28 @@ function cover(lid) {
 }
 
 
-function cpuHolder(base) {
-  const D = 51.5*1.03;
-  const W = 20.2*1.03;
+function cpuHolder(base, d, w, x, hole) {
+  const D = d*1.03;
+  const W = w*1.03;
   const H2 = H-FT;
 
-  var s = cube({size:[W+2, D+2, H2], center:[1,1,0]});
+  var s = cube({size:[W+3, D+3, H2], center:[1,1,0]});
   s = s.subtract(cube({size:[W, D, H2], center:[1,1,0]}))
-  s = s.subtract(cube({size:[W-8, D+2, H2], center:[1,1,0]}))
-  s = s.subtract(cube({size:[W+2, D-8, H2], center:[1,1,0]}))
-  var negative = cube({size:[10,20,4], radius: 2, center:[1,0,0]}).translate([0,D/2,2]);
+  s = s.subtract(cube({size:[W-4, D+3, H2], center:[1,1,0]}))
+  s = s.subtract(cube({size:[W+3, D-10, H2], center:[1,1,0]}))
 
-  negative = negative.translate([-45,20,0]);
-  s = s.translate([-45,20,0]);
+  s = s.translate([x,-D/2-5+54,0]);
 
-  base = base.subtract(negative);
-  return base.union(s);
+  base = base.union(s);
+
+  if ( hole ) {
+    var negative = cube({size:[10,20,4], radius: 2, center:[1,0,0]}).translate([0,D/2,2]);
+
+    negative = negative.translate([x,20,0]);
+    base = base.subtract(negative);
+  }
+
+  return base;
 }
 
 
@@ -500,13 +506,6 @@ function main() {
 
   lid = lid.translate([0,0,H-FT]);
 
-  // Cable hole
-  /*
-  bottom = bottom.subtract(cylinder({r:3, h:100}).rotateX(90).translate([-86,100,H-1]));
-  bottom = bottom.subtract(cylinder({r:3, h:100}).rotateX(90).translate([-86,100,H-1-FT/2]));
-  bottom = bottom.subtract(cylinder({r:3, h:100}).rotateX(90).translate([-86,100,H-1-FT]));
-  */
-
   function plate(x, y, w, h, r, height) {
       var s = cube({size: [w, h, height || 0.2]}).rotateZ(r|| 0).translate([x,y,H]).setColor([0.5,0.5,0.5]);
       lid = lid.union(s);
@@ -524,18 +523,20 @@ function main() {
   // Version Engraving
   lid = lid.subtract(createText({text: VERSION, w:6, scale: 0.25, justify: 'C', h: H+1}).toSolid().translate([0,-40,0]).scale([-1,1,1]));
 
-bottom = cpuHolder(bottom);
+  bottom = cpuHolder(bottom, 51.5, 20.2, -45, true);
 
-return bottom;
+  bottom = cpuHolder(bottom, 48.3, 14.7, 20);
+  bottom = cpuHolder(bottom, 48.3, 14.7, 20+17);
+  bottom = cpuHolder(bottom, 48.3, 14.7, 20+17*2);
+
   lid = oledCase(lid);
-  return lid;
 
-var c = cover(lid);
+  var c = cover(lid);
+  lid = lid.union(c.translate([0,0,0.1]))
 
-lid = lid.union(c.translate([0,0,0.1]))
 //return tilt(bottom);
-return lid;
-return tilt(bottom.union(lid));
-return tilt(bottom);
+//return lid;
+//return tilt(bottom.union(lid));
+//return tilt(bottom);
 return lid.rotateZ(-15);
 }
