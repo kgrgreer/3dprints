@@ -33,18 +33,9 @@ var POSTS = [
   [74.8,40.8],
   [-74.8,40.8],
   [ 0, -65],
-//  [ 0, -35],
   [ 0, 0],
   [65.4, -14],
-  [-65.4, -14],
-//  [0,46],
-/*
-  [32,-10],
-  [-32,-10],
-  [66,8],
-  [-66,8]
-  */
-
+  [-65.4, -14]
 ];
 
 var A    = 24;        // Key row slant angle
@@ -59,7 +50,7 @@ var SR   = 1.7;       // screw radius
 var LR   = 3.3/2;     // LED radius, 3.3 plus tolerance
 var KH   = 6;         // key height above faceplate
 var TR   = 119;       // thumb radius
-var TILT = 2;         // tilt of keyboard
+var TILT = 3;         // tilt of keyboard
 
 var HOME_COLOR        = [0,0,0];
 var DEFAULT_KEY_COLOR = [0.8,0.8,0.8];
@@ -442,8 +433,8 @@ function cover(lid) {
     var l = lid.translate([0,0,-0.1]);
     for ( var i = -1 ; i <= 1 ; i += 0.5 )
     for ( var j = -1 ; j <= 1 ; j += 0.5 )
-    s = s.subtract(l.translate([i/2,j/2,0]));
-    return s;
+    s = s.subtract(l.translate([i,j,0]));
+    return s.setColor([0.3,0.3,0.3]);
 }
 
 
@@ -534,7 +525,7 @@ function main() {
   var c = cover(lid);
   lid = lid.union(c.translate([0,0,0.1]))
 
-//return tilt(bottom);
+return tilt(bottom);
 //return lid;
 //return tilt(bottom.union(lid));
 //return tilt(bottom);
