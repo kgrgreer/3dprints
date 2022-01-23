@@ -446,6 +446,26 @@ function cover(lid) {
     return s;
 }
 
+
+function cpuHolder(base) {
+  const D = 51.5*1.03;
+  const W = 20.2*1.03;
+  const H2 = H-FT;
+
+  var s = cube({size:[W+2, D+2, H2], center:[1,1,0]});
+  s = s.subtract(cube({size:[W, D, H2], center:[1,1,0]}))
+  s = s.subtract(cube({size:[W-8, D+2, H2], center:[1,1,0]}))
+  s = s.subtract(cube({size:[W+2, D-8, H2], center:[1,1,0]}))
+  var negative = cube({size:[10,20,4], radius: 2, center:[1,0,0]}).translate([0,D/2,2]);
+
+  negative = negative.translate([-45,20,0]);
+  s = s.translate([-45,20,0]);
+
+  base = base.subtract(negative);
+  return base.union(s);
+}
+
+
 function oledCase(lid) {
   const W0 = 26;
   const W = 28.5;
@@ -454,7 +474,7 @@ function oledCase(lid) {
   const D0 = 1.5
   const D = 3.8;
 
-    var s = cube({size:[W+2,30,CH+4], radius:2, center:[1,0,0]});
+    var s = cube({size:[W+2,30,CH+4], radius:1, center:[1,0,0]});
 
     var negative = cube({size:[W,4,2*CH], center:[1,0,0]}).translate([0,1,-CH]);
     negative = negative.union(cube({size:[11,8,2*CH], center:[1,0,0]}).translate([0,1,-CH]));
@@ -504,8 +524,12 @@ function main() {
   // Version Engraving
   lid = lid.subtract(createText({text: VERSION, w:6, scale: 0.25, justify: 'C', h: H+1}).toSolid().translate([0,-40,0]).scale([-1,1,1]));
 
+bottom = cpuHolder(bottom);
+
+return bottom;
   lid = oledCase(lid);
   return lid;
+
 var c = cover(lid);
 
 lid = lid.union(c.translate([0,0,0.1]))
