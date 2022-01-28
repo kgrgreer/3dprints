@@ -197,22 +197,22 @@ var SWITCH = {
   lipHeight: 1, //6,
   lipWidth: 15.5*1.03+1,
 
-  createHolderOutline: memoize(function() {
+  createHolderOutline: function(vPad) {
     var h = this.holderHeight;
     var t = this.holderThickness;
-    var holder = cube({radius:0.25, size:[this.w+2*t+0.2, this.w+2*t+2.9, h], center:[true,true,false]}).translate([0,0,-h]).setColor([1,1,1]);
+    var holder = cube({radius:0.25, size:[this.w+2*t+0.2, this.w+2*t+1.5+vPad, h], center:[true,true,false]}).translate([0,0,-h]).setColor([1,1,1]);
     return holder;
-  }),
+  },
   createLatch: function() {
      return cube({size:[this.latchWidth,17,this.latchHeight], center: [true,true, false]}).translate([0,0,-this.latchDepth-this.latchHeight]);
   },
-  createHolder: memoize(function() {
+  createHolder: function(vPad) {
     var h      = this.holderHeight;
-    var holder = this.createHolderOutline();
+    var holder = this.createHolderOutline(vPad);
     var top    = cube({size:[this.w, this.w, this.h]}).translate([-this.w/2,-this.w/2,-this.h]);
 
     return holder.subtract(top);
-  }),
+  },
   createSwitch: memoize(function() {
     var top    = cube({size:[this.w, this.w, this.h], center:[true,true,false]});
     var lip    = cube({size:[this.lipWidth, this.lipWidth, this.lipHeight + (PREVIEW ? 0 : 6)], center:[true,true,false]});
@@ -289,7 +289,7 @@ function key(s, x, y, reverse, r, config) {
       return s;
     }
     var sw = transform(SWITCH.toSolid());
-    var h  = transform(SWITCH.createHolder());
+    var h  = transform(SWITCH.createHolder(config.vPad || 0));
     //
     h = h.intersect(cube({size:[500,500,20], center: [true, true, false]}));
 
@@ -352,8 +352,8 @@ function base(keys, asBase) {
   var blankBase = s;
 
   if ( keys ) {
-    s = row(s, RS, 0, 8, [{tilt: -10, x: 2},{color: HOME_COLOR},{tilt: 14, color: RED, x:-2}], false, true);
-    s = row(s, RS, 0, 8, [{tilt: -10, x: 2},{xxxcolor: HOME_COLOR},{tilt: 14, x:-2}], true, true);
+    s = row(s, RS, 0, 8, [{tilt: -10, x: 2, vPad: 4},{color: HOME_COLOR, vPad: 4},{tilt: 14, color: RED, x:-2, vPad: 4}], false, true);
+    s = row(s, RS, 0, 8, [{tilt: -10, x: 2, vPad: 4},{xxxcolor: HOME_COLOR, vPad: 4},{tilt: 14, x:-2, vPad: 4}], true, true);
 
     s = row(s, RS+RW, 17, 2, [{tilt: -10},{color: HOME_COLOR, dw: 10},{tilt: 14}], false, true);
     s = row(s, RS+RW, 17, 2, [{tilt: -10},{color: HOME_COLOR, dw: 10},{tilt: 14}], true, true);
@@ -524,7 +524,7 @@ function main() {
 
   var c = cover(lid);
   lid = lid.union(c.translate([0,0,0.1]))
-
+return lid;
 return tilt(bottom);
 //return lid;
 //return tilt(bottom.union(lid));
