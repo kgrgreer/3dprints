@@ -42,7 +42,7 @@ var A    = 24;        // Key row slant angle
 var RS   = -120.5;    // Row Start
 
 var FT   = 3;         // Faceplate thickness, should be 1.5
-var H    = 11;        // Total height of keyboard
+var H    = 12.25;        // Total height of keyboard
 var RW   = 19;        // Row Width
 var SW   = 14 + 0.6 ; // Switch Width 14, plus 0.6
 var KW   = 17;        // Key Width
@@ -88,38 +88,42 @@ function createTBHolder(m) {
       y: 16.5,
       x2: 15.1, y2: 21.8-16.5,
       switchWidth: 14,
-      z: 1.5
+      z: 1.5,
+      h: 10+FT
     };
 
     return Object.assign({
        transform: function(s) { return s.translate([0,-18,H]); },
        rcube: function(x,y,z) {
-         var s = cube({fn:32, radius: 1, size: [x,y,z+10], center:[1,1,0]});
+         var s = cube({fn:32, radius: 0.5, size: [x,y,z+10], center:[1,1,0]});
          s = s.translate([0,0,-10]);
          return s.intersect(cube({size:[100,100,100], center:[1,1,0]}))
        },
-       base: function() {
+       toNegative: function() {
+           var s = cube({size:[this.x, this.y, this.z+FT+this.z], center:[1,1,-FT-this.z]});
+           s = s.union(cube({size:[this.x2, this.y2, this.z+FT+this.z], center:[1,1,0]}).translate([0,this.y/2+this.y2/2,-FT-this.z]));
+           return s;
+       },
+       toSolid: function() {
            var w2 = this.width*2;
            var s = this.rcube(this.x+w2, this.y+w2, this.z+this.width);
            s = s.union(this.rcube(this.x2+w2, this.y2+5, this.z+this.width).translate([0,(this.y+w2)/2+this.y2/2-2.5,0]));
            s = s.subtract(cube({radius:1, fn: 36, size:[this.switchWidth, this.switchWidth, this.z+5], center:[1,1,0]}));
-           return s.setColor([1,1,1]).rotateZ(180);
+
+
+           var stand = cube({size:[this.x, this.y, this.h], center: [1,1,0]}).translate([0,0,-this.h]);
+           stand = stand.subtract(cube({size:[this.x-6, this.y, this.h], center: [1,1,0]}).translate([0,0,-this.h]));
+
+            s = s.union(stand);
+
+           return s.setColor([1,1,1]);
        },
-       toNegative: function() {
-           var s = cube({size:[this.x, this.y, this.z], center:[1,1,0]});
-           s = s.union(cube({size:[this.x2, this.y2, this.z], center:[1,1,0]}).translate([0,this.y/2+this.y2/2,0]));
-           s = s.union(s.scale([1,1,-10]));
-           return s.rotateZ(180);
-       },
-       toSolid: function() {
-           var s = this.base();
-           s = s.union(cube({radius:1, fn: 36, size:[this.switchWidth, this.switchWidth, this.z+5], center:[1,1,0]}));
-           s = s.union(sphere({r:3}).translate([0,0,6]))
-           return s;
+       toPreview: function() {
+         return this.toSolid().subtract(this.toNegative().setColor([0,0,0]));
        },
        install: function(s, opt_t) {
-           var t = opt_t || this.transform;
-           var base = t(this.base());
+           var t = opt_t || this.transform.bind(this);
+           var base = t(this.toSolid());
            var neg  = t(this.toNegative());
            s = s.union(base);
            s = s.subtract(neg);
@@ -127,6 +131,56 @@ function createTBHolder(m) {
        }
     }, m);
 };
+
+
+function createOLEDHolder(m) {
+    m = {
+      ...m,
+      width: 1.2, // wall thickness
+      x: 28.5,
+      y: 27.5,
+      displayWidth: 26,
+      displayHeight: 15,
+      z: 3.2,
+      h: 10
+    };
+
+    return Object.assign({
+       transform: function(s) { return s.translate([0,-41,H-this.h-FT]); },
+       rcube: function(x,y,z) {
+         var s = cube({fn:32, radius: 0.5, size: [x,y,z+10], center:[1,1,0]});
+         s = s.translate([0,0,-10]);
+         return s.intersect(cube({size:[100,100,100], center:[1,1,0]}))
+       },
+       toNegative: function() {
+           var s = cube({fnsize:[this.displayWidth, this.displayHeight, 5], center:[1,0,0]}).translate([0,-this.width-5,this.h]);
+           s = s.union(cube({size:[this.x,this.y,this.z],center:[1,1,0]}).translate([0,0,this.h-this.z]))
+           return s;
+       },
+       toSolid: function() {
+           var w2 = this.width*2;
+           var s = cube({size:[this.x+w2, this.y+w2, this.h], center: [1,1,0]});
+           s = s.subtract(cube({size:[this.x-this.width/2,14,15],center:true}))
+           s = s.subtract(cube({size:[12,12,100],center:true}).translate([0,15,0]))
+           s = s.subtract(cube({size:[20,20,100],center:true}).translate([18,-18,0]))
+           s = s.subtract(cube({size:[20,20,100],center:true}).translate([-18,-18,0]))
+           return s.setColor([1,1,1]);
+       },
+       toPreview: function() {
+         return this.toSolid().subtract(this.toNegative().setColor([0,0,0]));
+       },
+       install: function(s, opt_t) {
+           var t = opt_t || this.transform.bind(this);
+           var base = t(this.toSolid());
+           var neg  = t(this.toNegative());
+           s = s.union(base);
+           s = s.subtract(neg);
+           return s;
+       }
+    }, m);
+};
+
+
 
 /*********************************************************************
  *                                                             CAP
@@ -514,9 +568,10 @@ function oledCase(lid) {
  return lid;
 }
 
-function main() {
+function main2() {
 
- //   return createTBHolder().base();
+//return createOLEDHolder().toPreview();
+ //   return createTBHolder().toPreview();
 //    return SWITCH.toSolid().translate([0,0,20]);
   var bottom = base(false, true).setColor([1,1,1]);
   var lid    = base(true, false);
@@ -542,20 +597,34 @@ function main() {
   bottom = cpuHolder(bottom, 48.3, 14.7, 20+17);
   bottom = cpuHolder(bottom, 48.3, 14.7, 20+17*2);
 
-  lid = oledCase(lid);
+//  lid = oledCase(lid);
 
   lid = createTBHolder().install(lid);
+  lid = createOLEDHolder().install(lid);
+
+  bottom = createTBHolder().install(bottom);
+  bottom = createOLEDHolder().install(bottom);
+
+
+  var c = cover(lid);
+  lid = lid.union(c.translate([0,0,0.1]));
+
+  lid = lid.subtract(cube({size:[200,200,H-FT],center:[1,1,0]}))
+  bottom = bottom.subtract(lid);
 
   // Add screw hold and post
   POSTS.forEach(p => {
     [lid, bottom] = post(lid, bottom, p[0], p[1]);
   });
-  var c = cover(lid);
-  lid = lid.union(c.translate([0,0,0.1]))
-return lid;
+
+//return lid;
 return tilt(bottom);
 //return lid;
 //return tilt(bottom.union(lid));
 //return tilt(bottom);
-return lid.rotateZ(-15);
+return lid;
+}
+
+function main() {
+    return main2().rotateZ(-15);
 }
