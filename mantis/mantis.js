@@ -64,28 +64,6 @@ var RED               = [1,0,0];
  *                                                             LIB
  *********************************************************************/
 
-function wedge(r, w, a1, a2, b1, b2, flags) {
-  var s = sphere({r:r});
-  var d = 2*r;
-  flags = flags || {};
-
-  //s = s.intersect(cube({size:[1000,1000,1000]}).translate([-500,-500,0]));
-
-  // left
-  if ( ! flags.left ) s = s.subtract(cube({size:[-d, d, d]}).translate([0,r,-d]).rotateY(b2).translate([-w,-d,r]));
-
-  // right
-  if ( ! flags.right ) s = s.subtract(cube({size:[d, d, d]}).translate([0,r,-d]).rotateY(b1).translate([w,-d,r]));
-
-  // top
-  if ( ! flags.top ) s = s.subtract(cube({size:[d, d, d]}).translate([-r,0,-d]).rotateX(-a1).translate([0,w,r]));
-
-  // bottom
-  s = s.subtract(cube({size:[d, -d, d]}).translate([-r,0,-d]).rotateX(-a2).translate([0,-w,r]));
-
-  return s.scale([1,1,0.5]);
-}
-
 
 function degToRad(d) {
   return d/360*Math.PI;
@@ -102,7 +80,53 @@ function memoize(f) {
 }
 
 
+function createTBHolder(m) {
+    m = {
+      ...m,
+      width: 1.2, // wall thickness
+      x: 25,
+      y: 16.5,
+      x2: 15.1, y2: 21.8-16.5,
+      switchWidth: 14,
+      z: 1.5
+    };
 
+    return Object.assign({
+       transform: function(s) { return s.translate([0,-18,H]); },
+       rcube: function(x,y,z) {
+         var s = cube({fn:32, radius: 1, size: [x,y,z+10], center:[1,1,0]});
+         s = s.translate([0,0,-10]);
+         return s.intersect(cube({size:[100,100,100], center:[1,1,0]}))
+       },
+       base: function() {
+           var w2 = this.width*2;
+           var s = this.rcube(this.x+w2, this.y+w2, this.z+this.width);
+           s = s.union(this.rcube(this.x2+w2, this.y2+5, this.z+this.width).translate([0,(this.y+w2)/2+this.y2/2-2.5,0]));
+           s = s.subtract(cube({radius:1, fn: 36, size:[this.switchWidth, this.switchWidth, this.z+5], center:[1,1,0]}));
+           return s.setColor([1,1,1]).rotateZ(180);
+       },
+       toNegative: function() {
+           var s = cube({size:[this.x, this.y, this.z], center:[1,1,0]});
+           s = s.union(cube({size:[this.x2, this.y2, this.z], center:[1,1,0]}).translate([0,this.y/2+this.y2/2,0]));
+           s = s.union(s.scale([1,1,-10]));
+           return s.rotateZ(180);
+       },
+       toSolid: function() {
+           var s = this.base();
+           s = s.union(cube({radius:1, fn: 36, size:[this.switchWidth, this.switchWidth, this.z+5], center:[1,1,0]}));
+           s = s.union(sphere({r:3}).translate([0,0,6]))
+           return s;
+       },
+       install: function(s, opt_t) {
+           var t = opt_t || this.transform;
+           var base = t(this.base());
+           var neg  = t(this.toNegative());
+           s = s.union(base);
+           s = s.subtract(neg);
+           return s;
+       }
+    }, m);
+};
 
 /*********************************************************************
  *                                                             CAP
@@ -471,7 +495,7 @@ function oledCase(lid) {
   const D0 = 1.5
   const D = 3.8;
 
-    var s = cube({size:[W+2,30,CH+4], radius:1, center:[1,0,0]});
+    var s = cube({size:[W+2,30,CH+4], fn: 36, radius:1, center:[1,0,0]});
 
     var negative = cube({size:[W,4,2*CH], center:[1,0,0]}).translate([0,1,-CH]);
     negative = negative.union(cube({size:[11,8,2*CH], center:[1,0,0]}).translate([0,1,-CH]));
@@ -491,6 +515,8 @@ function oledCase(lid) {
 }
 
 function main() {
+
+ //   return createTBHolder().base();
 //    return SWITCH.toSolid().translate([0,0,20]);
   var bottom = base(false, true).setColor([1,1,1]);
   var lid    = base(true, false);
@@ -506,10 +532,6 @@ function main() {
   // fill space between pinky and ring finger in top row
   plate(79.5,18,5,20,24,2);
 
-  // Add screw hold and post
-  POSTS.forEach(p => {
-    [lid, bottom] = post(lid, bottom, p[0], p[1]);
-  });
 
   // Version Engraving
   lid = lid.subtract(createText({text: VERSION, w:6, scale: 0.25, justify: 'C', h: H+1}).toSolid().translate([0,-40,0]).scale([-1,1,1]));
@@ -522,6 +544,12 @@ function main() {
 
   lid = oledCase(lid);
 
+  lid = createTBHolder().install(lid);
+
+  // Add screw hold and post
+  POSTS.forEach(p => {
+    [lid, bottom] = post(lid, bottom, p[0], p[1]);
+  });
   var c = cover(lid);
   lid = lid.union(c.translate([0,0,0.1]))
 return lid;
