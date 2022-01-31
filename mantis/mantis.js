@@ -605,7 +605,6 @@ function main2() {
   bottom = createTBHolder().install(bottom);
   bottom = createOLEDHolder().install(bottom);
 
-
   var c = cover(lid);
   lid = lid.union(c.translate([0,0,0.1]));
 
@@ -618,7 +617,12 @@ function main2() {
   });
 
 //return lid;
-return tilt(bottom);
+bottom = tilt(bottom);
+
+bottom = bottom.subtract(createText({text: VERSION, w:6, scale: 0.25, justify: 'C', h: 2.6}).toSolid().translate([0,-40,0]).scale([-1,1,1]).setColor([0.5,0.5,0.5]));
+
+return bottom;
+
 //return lid;
 //return tilt(bottom.union(lid));
 //return tilt(bottom);
