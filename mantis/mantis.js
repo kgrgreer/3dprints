@@ -83,7 +83,7 @@ function memoize(f) {
 function createTBHolder(m) {
     m = {
       ...m,
-      width: 1.2, // wall thickness
+      width: 1, // wall thickness
       x: 25,
       y: 16.5,
       x2: 15.1, y2: 21.8-16.5,
@@ -107,7 +107,7 @@ function createTBHolder(m) {
        toSolid: function() {
            var w2 = this.width*2;
            var s = this.rcube(this.x+w2, this.y+w2, this.z+this.width);
-           s = s.union(this.rcube(this.x2+w2, this.y2+5, this.z+this.width).translate([0,(this.y+w2)/2+this.y2/2-2.5,0]));
+           s = s.union(this.rcube(this.x2+w2+5.85, this.y2+5, this.z+this.width).translate([0,(this.y+w2)/2+this.y2/2-2.5,0]));
            s = s.subtract(cube({radius:1, fn: 36, size:[this.switchWidth, this.switchWidth, this.z+5], center:[1,1,0]}));
 
 
