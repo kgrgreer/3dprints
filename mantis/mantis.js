@@ -84,11 +84,11 @@ function createTBHolder(m) {
     m = {
       ...m,
       width: 1, // wall thickness
-      x: 25,
-      y: 16.5,
+      x: 25*1.05,
+      y: 16.5*1.05,
       x2: 15.1, y2: 21.8-16.5,
       switchWidth: 14,
-      z: 1.5,
+      z: 1.5*1.05,
       h: 10+FT
     };
 
@@ -139,12 +139,12 @@ function createTBHolder(m) {
 function createOLEDHolder(m) {
     m = {
       ...m,
-      width: 1.2, // wall thickness
-      x: 28.5,
-      y: 27.5,
+      width: 5, // wall thickness
+      x: 28.5*1.05,
+      y: 27.5*1.05,
       displayWidth: 26,
       displayHeight: 15,
-      z: 3.2,
+      z: 3.2*1.05,
       h: 10
     };
 
@@ -520,8 +520,8 @@ function cover(lid) {
 
 
 function cpuHolder(base, d, w, x, hole, opt_y) {
-  const D = d*1.03;
-  const W = w*1.03;
+  const D = d*1.06;
+  const W = w*1.06;
   const H2 = H-FT;
 
   var s = cube({size:[W+8, D+5, H2], center:[1,1,0]});
@@ -605,8 +605,8 @@ function main2() {
 
 //  lid = oledCase(lid);
 
- // lid = createTBHolder().install(lid);
- // lid = createOLEDHolder().install(lid);
+ lid = createTBHolder().install(lid);
+ lid = createOLEDHolder().install(lid);
 
   bottom = createTBHolder().install(bottom);
   bottom = createOLEDHolder().install(bottom);
@@ -624,11 +624,10 @@ function main2() {
     [lid, bottom] = post(lid, bottom, p[0], p[1]);
   });
 
-//return bottom;
-//return lid;
 bottom = tilt(bottom);
 
-bottom = bottom.subtract(createText({text: VERSION, w:6, scale: 0.25, justify: 'C', h: 2.6}).toSolid().translate([0,-40,0]).scale([-1,1,1]).setColor([0.5,0.5,0.5]));
+//return bottom;
+bottom = bottom.subtract(createText({text: VERSION, w:6, scale: 0.25, justify: 'C', h: 2.8}).toSolid().translate([0,-40,0]).scale([-1,1,1]).setColor([0.5,0.5,0.5]));
 
 return bottom;
 
