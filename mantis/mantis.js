@@ -33,7 +33,7 @@ var POSTS = [
   [74.8,40.8],
   [-74.8,40.8],
   [ 0, -65],
-  [ 0, 0],
+  [ 0, 24],
   [65.4, -14],
   [-65.4, -14]
 ];
@@ -42,7 +42,7 @@ var A    = 24;        // Key row slant angle
 var RS   = -120.5;    // Row Start
 
 var FT   = 3;         // Faceplate thickness, should be 1.5
-var H    = 12.25;        // Total height of keyboard
+var H    = 12.25;     // Total height of keyboard
 var RW   = 19;        // Row Width
 var SW   = 14 + 0.6 ; // Switch Width 14, plus 0.6
 var KW   = 17;        // Key Width
@@ -107,8 +107,11 @@ function createTBHolder(m) {
        toSolid: function() {
            var w2 = this.width*2;
            var s = this.rcube(this.x+w2, this.y+w2, this.z+this.width);
+           s = s.union(this.rcube(this.x+w2+12, this.y+w2-12, this.z+this.width).translate([0,-7,0]));
+           s = s.union(this.rcube(this.x+w2+2, this.y+w2-5, this.z+this.width).translate([0,0,0]));
+           s = s.union(this.rcube(this.x+w2+9, this.y+w2-5, this.z+this.width).translate([0,-3.3,0]));
            s = s.union(this.rcube(this.x2+w2+5.85, this.y2+5, this.z+this.width).translate([0,(this.y+w2)/2+this.y2/2-2.5,0]));
-           s = s.subtract(cube({radius:1, fn: 36, size:[this.switchWidth, this.switchWidth, this.z+5], center:[1,1,0]}));
+           s = s.subtract(cube({radius:1, fn: 32, size:[this.switchWidth, this.switchWidth, this.z+5], center:[1,1,0]}));
 
 
            var stand = cube({size:[this.x, this.y, this.h], center: [1,1,0]}).translate([0,0,-this.h]);
@@ -403,7 +406,6 @@ function post(lid, bottom, x, y) {
   bottom = bottom.union(cylinder({r:5,h: H-FT}).subtract(cylinder({r:SR,h: 10}).translate([0,0,H-10])).translate([x,y,0]));
   lid = lid.subtract(cylinder({r:SR,h: 100}).translate([x,y,0]));
   lid = lid.subtract(cylinder({r:3.8, h: 20.5}).translate([x,y,H-0.5]));
-  // lid = lid.subtract(bottom);
   return [lid, bottom];
 }
 
@@ -488,11 +490,12 @@ const D = 9;
     base = base.subtract(base.scale([0.96, 0.93, 1]));
     base = base.subtract(s.scale([1,1,-H/FT]).translate([0,0,H-FT]).scale([0.99,0.975,1]));
     // add bottom to base
-    return base.union(s.scale([1,1,-1/1.5]));
+    return base.union(s.scale([1,1,-0.2]));
   }
 
   return s.translate([0,0,FT]);
 }
+
 
 function tilt(bottom) {
     var b = bottom.rotateX(TILT);
@@ -516,22 +519,25 @@ function cover(lid) {
 }
 
 
-function cpuHolder(base, d, w, x, hole) {
+function cpuHolder(base, d, w, x, hole, opt_y) {
   const D = d*1.03;
   const W = w*1.03;
   const H2 = H-FT;
 
-  var s = cube({size:[W+3, D+3, H2], center:[1,1,0]});
-  s = s.subtract(cube({size:[W, D, H2], center:[1,1,0]}))
-  s = s.subtract(cube({size:[W-4, D+3, H2], center:[1,1,0]}))
-  s = s.subtract(cube({size:[W+3, D-10, H2], center:[1,1,0]}))
+  var s = cube({size:[W+8, D+5, H2], center:[1,1,0]});
+  s = s.subtract(cube({size:[W-4, D+5, H2], center:[1,1,0]}))
+  s = s.subtract(cube({size:[W+8, D-10, H2], center:[1,1,0]}))
 
-  s = s.translate([x,-D/2-5+54,0]);
+  var neg = cube({size:[W, D, H2], center:[1,1,0]});
+
+  s = s.translate([x,-D/2+47.4+(opt_y || 0),0]);
+  neg = neg.translate([x,-D/2+47.4+(opt_y || 0),1]);
 
   base = base.union(s);
+  base = base.subtract(neg);
 
   if ( hole ) {
-    var negative = cube({size:[10,20,4], radius: 2, center:[1,0,0]}).translate([0,D/2,2]);
+    var negative = cube({size:[12,20,5], radius: 2, center:[1,0,0]}).translate([0,D/2,2]);
 
     negative = negative.translate([x,20,0]);
     base = base.subtract(negative);
@@ -549,7 +555,7 @@ function oledCase(lid) {
   const D0 = 1.5
   const D = 3.8;
 
-    var s = cube({size:[W+2,30,CH+4], fn: 36, radius:1, center:[1,0,0]});
+    var s = cube({size:[W+2,30,CH+4], fn: 32, radius:1, center:[1,0,0]});
 
     var negative = cube({size:[W,4,2*CH], center:[1,0,0]}).translate([0,1,-CH]);
     negative = negative.union(cube({size:[11,8,2*CH], center:[1,0,0]}).translate([0,1,-CH]));
@@ -585,27 +591,27 @@ function main2() {
   }
 
   // fill space between pinky and ring finger in top row
-  plate(79.5,18,5,20,24,2);
+  plate(79.5,18,5,23.1,24,2);
 
 
   // Version Engraving
   lid = lid.subtract(createText({text: VERSION, w:6, scale: 0.25, justify: 'C', h: H+1}).toSolid().translate([0,40,0]).scale([-1,1,1]));
 
-  bottom = cpuHolder(bottom, 51.5, 20.2, -45, true);
+  bottom = cpuHolder(bottom, 51.5, 20.2, -45, true, 1);
 
-  bottom = cpuHolder(bottom, 48.3, 14.7, 20);
-  bottom = cpuHolder(bottom, 48.3, 14.7, 20+17);
-  bottom = cpuHolder(bottom, 48.3, 14.7, 20+17*2);
+  bottom = cpuHolder(bottom, 48.3, 14.7, 16);
+  bottom = cpuHolder(bottom, 48.3, 14.7, 16+21);
+  bottom = cpuHolder(bottom, 48.3, 14.7, 16+21*2);
 
 //  lid = oledCase(lid);
 
-  lid = createTBHolder().install(lid);
-  lid = createOLEDHolder().install(lid);
+ // lid = createTBHolder().install(lid);
+ // lid = createOLEDHolder().install(lid);
 
-//  bottom = createTBHolder().install(bottom);
-//  bottom = createOLEDHolder().install(bottom);
+  bottom = createTBHolder().install(bottom);
+  bottom = createOLEDHolder().install(bottom);
 
-return lid;
+  bottom = bottom.intersect(cube({size:[300,300,H],center:[1,1,0]}))
   var c = cover(lid);
   lid = lid.union(c.translate([0,0,0.1]));
 
@@ -619,12 +625,12 @@ return lid;
   });
 
 //return bottom;
-return lid;
+//return lid;
 bottom = tilt(bottom);
 
 bottom = bottom.subtract(createText({text: VERSION, w:6, scale: 0.25, justify: 'C', h: 2.6}).toSolid().translate([0,-40,0]).scale([-1,1,1]).setColor([0.5,0.5,0.5]));
 
-//return bottom;
+return bottom;
 
 //return lid;
 return bottom.union(tilt(lid));
