@@ -4,10 +4,8 @@
 
 /*
   TODO:
-    - move bottom posts
     - add more support
     - fix peg well positions
-    - more rounded switch holders
     - increase size of TB opening
     - fixes sizes of CPU holders
     - angle OLED window
@@ -285,7 +283,7 @@ var SWITCH = {
   createHolderOutline: function(vPad) {
     var h = this.holderHeight;
     var t = this.holderThickness;
-    var holder = cube({radius:0.25, size:[this.w+2*t+0.2, this.w+2*t+1.5+vPad, h], center:[true,true,false]}).translate([0,0,-h]).setColor([1,1,1]);
+    var holder = cube({radius:0.5, size:[this.w+2*t+0.2, this.w+2*t+1.5+vPad, h], center:[true,true,false]}).translate([0,0,-h]).setColor([1,1,1]);
     return holder;
   },
   createLatch: function() {
