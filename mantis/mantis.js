@@ -8,13 +8,6 @@ const KEYS    = false;     // include key-caps
 const PREVIEW = false;
 const EXPAND  = true;
 
-
-// TODO:
-// - holder for controller
-// - better cable port
-// - spacers around switch pins
-
-
 var SHAPE = [
   [15,30], // bottom left
   [22,47],
@@ -30,11 +23,11 @@ var SHAPE = [
 ];
 
 var POSTS = [
-  [74.8,40.8],
-  [-74.8,40.8],
-  [ 0, -65],
-  [ 0, 24],
-  [65.4, -14],
+  [74.8,   43],
+  [-74.8,  43],
+  [ 0,    -65],
+  [ 0,     44],
+  [65.4,  -14],
   [-65.4, -14]
 ];
 
@@ -83,10 +76,10 @@ function memoize(f) {
 function createTBHolder(m) {
     m = {
       ...m,
-      width: 1, // wall thickness
-      x: 25*1.05,
-      y: 16.5*1.05,
-      x2: 15.1, y2: 21.8-16.5,
+      width: 0.7, // wall thickness
+      x: 25*1.04,
+      y: 16.5*1.04,
+      x2: 15.1*1.03, y2: 5.3*1.03,
       switchWidth: 14,
       z: 1.5*1.05,
       h: 10+FT
@@ -100,8 +93,8 @@ function createTBHolder(m) {
          return s.intersect(cube({size:[100,100,100], center:[1,1,0]}))
        },
        toNegative: function() {
-           var s = cube({size:[this.x, this.y, this.z], center:[1,1,0]});
-           s = s.union(cube({size:[this.x2, this.y2, this.z+FT+this.z], center:[1,1,0]}).translate([0,this.y/2+this.y2/2,-FT-this.z]));
+           var s = cube({size:[this.x, this.y, this.z+FT], center:[1,1,0]}).translate([0,0,-FT-this.z]);
+           s = s.union(cube({size:[this.x2, this.y2, 10], center:[1,1,0]}).translate([0,this.y/2+this.y2/2,-10]));
            return s;
        },
        toSolid: function() {
@@ -111,7 +104,7 @@ function createTBHolder(m) {
            s = s.union(this.rcube(this.x+w2+2, this.y+w2-5, this.z+this.width).translate([0,0,0]));
            s = s.union(this.rcube(this.x+w2+9, this.y+w2-5, this.z+this.width).translate([0,-3.3,0]));
            s = s.union(this.rcube(this.x2+w2+5.85, this.y2+5, this.z+this.width).translate([0,(this.y+w2)/2+this.y2/2-2.5,0]));
-           s = s.subtract(cube({radius:1, fn: 32, size:[this.switchWidth, this.switchWidth, this.z+5], center:[1,1,0]}));
+           s = s.subtract(cube({radius:1, fn: 32, size:[this.switchWidth, this.switchWidth, this.z+7], center:[1,1,-2]}));
 
 
            var stand = cube({size:[this.x, this.y, this.h], center: [1,1,0]}).translate([0,0,-this.h]);
@@ -140,8 +133,8 @@ function createOLEDHolder(m) {
     m = {
       ...m,
       width: 5, // wall thickness
-      x: 28.5*1.05,
-      y: 27.5*1.05,
+      x: 28.5*1.02,
+      y: 27.5*1.02,
       displayWidth: 26,
       displayHeight: 15,
       z: 3.2*1.05,
@@ -149,14 +142,14 @@ function createOLEDHolder(m) {
     };
 
     return Object.assign({
-       transform: function(s) { return s.translate([0,-41,H-this.h-FT]); },
+       transform: function(s) { return s.translate([0,-40,H-this.h-FT]); },
        rcube: function(x,y,z) {
          var s = cube({fn:32, radius: 0.5, size: [x,y,z+10], center:[1,1,0]});
          s = s.translate([0,0,-10]);
          return s.intersect(cube({size:[100,100,100], center:[1,1,0]}))
        },
        toNegative: function() {
-           var s = cube({size:[this.displayWidth, this.displayHeight, 5], center:[1,0,0]}).translate([0,-this.width-5,this.h]);
+           var s = cube({size:[this.displayWidth, this.displayHeight, FT], center:[1,0,0]}).translate([0,-this.width-5,this.h]);
            s = s.union(cube({size:[this.x,this.y,this.z],center:[1,1,0]}).translate([0,0,this.h-this.z]))
            return s;
        },
@@ -310,7 +303,10 @@ var SWITCH = {
   toSolid: memoize(function() {
     var sw   = this.createSwitch()/*.setColor([0,0,0])*/;
     var stem = cube({size:[4, 4, 2.5], center:[true,true,false]}).translate([0,0,this.h]).setColor([165/256,42/256,42/256]);
-    return sw.union(stem);
+    var post1 = cylinder({r:2.5, h:-30}).translate([5.5,-4,-2]);
+    var post2 = cylinder({r:2.5, h:-30}).translate([-5.5,-4,-2]);
+    var post3 = cylinder({r:2.5, h:-30}).translate([0,-5.5,-2]);
+    return union(sw, stem, post1, post2, post3);
   })
 };
 
@@ -520,8 +516,8 @@ function cover(lid) {
 
 
 function cpuHolder(base, d, w, x, hole, opt_y) {
-  const D = d*1.06;
-  const W = w*1.06;
+  const D = d*1.03;
+  const W = w*1.03;
   const H2 = H-FT;
 
   var s = cube({size:[W+8, D+5, H2], center:[1,1,0]});
@@ -537,7 +533,7 @@ function cpuHolder(base, d, w, x, hole, opt_y) {
   base = base.subtract(neg);
 
   if ( hole ) {
-    var negative = cube({size:[12,20,5], radius: 2, center:[1,0,0]}).translate([0,D/2,2]);
+    var negative = cube({size:[12,20,5], radius: 2, center:[1,0,0]}).translate([0,D/2,2.2]);
 
     negative = negative.translate([x,20,0]);
     base = base.subtract(negative);
@@ -576,6 +572,8 @@ function oledCase(lid) {
 
 function main2() {
 
+//return SWITCH.toSolid();
+//return base(true, false);
 //return createOLEDHolder().toPreview();
 //    return createTBHolder().toPreview();
 //    return SWITCH.toSolid().translate([0,0,20]);
@@ -585,9 +583,9 @@ function main2() {
   lid = lid.translate([0,0,H-FT]);
 
   function plate(x, y, w, h, r, height) {
-      var s = cube({size: [w, h, height || 0.2]}).rotateZ(r|| 0).translate([x,y,H]).setColor([0.5,0.5,0.5]);
-      lid = lid.union(s);
-      lid = lid.union(s.scale([-1,1,1]));
+    var s = cube({size: [w, h, height || 0.2]}).rotateZ(r|| 0).translate([x,y,H]).setColor([0.5,0.5,0.5]);
+    lid = lid.union(s);
+    lid = lid.union(s.scale([-1,1,1]));
   }
 
   // fill space between pinky and ring finger in top row
@@ -597,16 +595,16 @@ function main2() {
   // Version Engraving
   lid = lid.subtract(createText({text: VERSION, w:6, scale: 0.25, justify: 'C', h: H+1}).toSolid().translate([0,40,0]).scale([-1,1,1]));
 
-  bottom = cpuHolder(bottom, 51.5, 20.2, -45, true, 1);
+  bottom = cpuHolder(bottom, 51.5, 20.2, -45, true, 1.25);
 
-  bottom = cpuHolder(bottom, 48.3, 14.7, 16);
-  bottom = cpuHolder(bottom, 48.3, 14.7, 16+21);
-  bottom = cpuHolder(bottom, 48.3, 14.7, 16+21*2);
+  bottom = cpuHolder(bottom, 48.3, 15.7, 17);
+  bottom = cpuHolder(bottom, 48.3, 15.7, 17+22);
+  bottom = cpuHolder(bottom, 48.3, 15.7, 17+22*2);
 
 //  lid = oledCase(lid);
 
- lid = createTBHolder().install(lid);
  lid = createOLEDHolder().install(lid);
+ lid = createTBHolder().install(lid);
 
   bottom = createTBHolder().install(bottom);
   bottom = createOLEDHolder().install(bottom);
@@ -617,6 +615,7 @@ function main2() {
 
 
   lid = lid.subtract(cube({size:[200,200,(H-FT)*2],center:true}))
+
   bottom = bottom.subtract(lid);
 
   // Add screw hold and post
@@ -626,12 +625,12 @@ function main2() {
 
 bottom = tilt(bottom);
 
-//return bottom;
+return bottom;
 bottom = bottom.subtract(createText({text: VERSION, w:6, scale: 0.25, justify: 'C', h: 2.8}).toSolid().translate([0,-40,0]).scale([-1,1,1]).setColor([0.5,0.5,0.5]));
 
-return bottom;
+//return bottom;
 
-//return lid;
+return lid;
 return bottom.union(tilt(lid));
 //return tilt(bottom);
 return lid;
