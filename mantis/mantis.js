@@ -2,7 +2,18 @@
  *                                                             CONFIG
  *********************************************************************/
 
-const VERSION = "V15";
+/*
+  TODO:
+    - move bottom posts
+    - add more support
+    - fix peg well positions
+    - more rounded switch holders
+    - increase size of TB opening
+    - fixes sizes of CPU holders
+    - angle OLED window
+    - fix position of OLED window
+*/
+const VERSION = "V16";
 
 const KEYS    = false;     // include key-caps
 const PREVIEW = false;
@@ -23,12 +34,12 @@ var SHAPE = [
 ];
 
 var POSTS = [
-  [74.8,   43],
+  [ 74.8,  43],
   [-74.8,  43],
-  [ 0,    -65],
-  [ 0,     44],
-  [65.4,  -14],
-  [-65.4, -14]
+  [  0,   -65],
+  [  0,    44],
+  [ 80,   -25],
+  [-80,   -25]
 ];
 
 var A    = 24;        // Key row slant angle
@@ -593,7 +604,7 @@ function main2() {
 
 
   // Version Engraving
-  lid = lid.subtract(createText({text: VERSION, w:6, scale: 0.25, justify: 'C', h: H+1}).toSolid().translate([0,40,0]).scale([-1,1,1]));
+  lid = lid.subtract(createText({text: VERSION, w:6, scale: 0.25, justify: 'C', h: H+1}).toSolid().translate([0,30,0]).scale([-1,1,1]));
 
   bottom = cpuHolder(bottom, 51.5, 20.2, -45, true, 1.25);
 
@@ -625,7 +636,7 @@ function main2() {
 
 bottom = tilt(bottom);
 
-return bottom;
+//return bottom;
 bottom = bottom.subtract(createText({text: VERSION, w:6, scale: 0.25, justify: 'C', h: 2.8}).toSolid().translate([0,-40,0]).scale([-1,1,1]).setColor([0.5,0.5,0.5]));
 
 //return bottom;
