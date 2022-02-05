@@ -6,10 +6,11 @@
   TODO:
     - add more support
     - fix peg well positions
-    - increase size of TB opening
+    - increase size of TB board
     - fixes sizes of CPU holders
     - angle OLED window
-    - fix position of OLED window
+    - decrease holder size for pinking column
+    - fix ring finger cutout in pinky row
 */
 const VERSION = "V16";
 
@@ -158,7 +159,7 @@ function createOLEDHolder(m) {
          return s.intersect(cube({size:[100,100,100], center:[1,1,0]}))
        },
        toNegative: function() {
-           var s = cube({size:[this.displayWidth, this.displayHeight, FT], center:[1,0,0]}).translate([0,-this.width-5,this.h]);
+           var s = cube({size:[this.displayWidth, this.displayHeight, FT], center:[1,0,0]}).translate([0,-5,this.h]);
            s = s.union(cube({size:[this.x,this.y,this.z],center:[1,1,0]}).translate([0,0,this.h-this.z]))
            return s;
        },
