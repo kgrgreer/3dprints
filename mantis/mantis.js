@@ -4,7 +4,6 @@
 
 /*
   TODO:
-    - add more support
     - fix peg well positions
     - increase size of TB board
     - decrease holder size for pinking column
@@ -584,7 +583,9 @@ function main2() {
   bottom = cpuHolder(bottom, 48.3, 15.2, 17+22);
   bottom = cpuHolder(bottom, 48.3, 15.2, 17+22*2);
 
-//  lid = oledCase(lid);
+  // extra supports
+  bottom = bottom.union(cube({size:[30, 6, H-FT]}).rotateZ(24).translate([62,-25,0]))
+  bottom = bottom.union(cube({size:[30, 6, H-FT]}).rotateZ(24).translate([62,-25,0]).scale([-1,1,1]))
 
  lid = createOLEDHolder().install(lid);
  lid = createTBHolder().install(lid);
@@ -595,7 +596,6 @@ function main2() {
   bottom = bottom.intersect(cube({size:[300,300,H],center:[1,1,0]}))
   var c = cover(lid);
   lid = lid.union(c.translate([0,0,0.1]));
-
 
   lid = lid.subtract(cube({size:[200,200,(H-FT)*2],center:true}))
 
@@ -608,12 +608,11 @@ function main2() {
 
 bottom = tilt(bottom);
 
-return bottom;
 bottom = bottom.subtract(createText({text: VERSION, w:6, scale: 0.25, justify: 'C', h: 2.8}).toSolid().translate([0,-40,0]).scale([-1,1,1]).setColor([0.5,0.5,0.5]));
 
 //return bottom;
 
-return lid;
+//return lid;
 return bottom.union(tilt(lid));
 //return tilt(bottom);
 return lid;
