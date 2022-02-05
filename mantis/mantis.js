@@ -8,7 +8,6 @@
     - fix peg well positions
     - increase size of TB board
     - fixes sizes of CPU holders
-    - angle OLED window
     - decrease holder size for pinking column
     - fix ring finger cutout in pinky row
 */
@@ -160,6 +159,7 @@ function createOLEDHolder(m) {
        },
        toNegative: function() {
            var s = cube({size:[this.displayWidth, this.displayHeight, FT], center:[1,0,0]}).translate([0,-5,this.h]);
+           s = s.union(cube({size:[this.displayWidth, this.displayHeight, FT+2], center:[1,0,0]}).rotateX(25).translate([0,-5,this.h]));
            s = s.union(cube({size:[this.x,this.y,this.z],center:[1,1,0]}).translate([0,0,this.h-this.z]))
            return s;
        },
@@ -553,37 +553,11 @@ function cpuHolder(base, d, w, x, hole, opt_y) {
 }
 
 
-function oledCase(lid) {
-  const W0 = 26;
-  const W = 28.5;
-  const H0 = 15;
-  const CH = 24.5; //26.5;
-  const D0 = 1.5
-  const D = 3.8;
-
-    var s = cube({size:[W+2,30,CH+4], fn: 32, radius:1, center:[1,0,0]});
-
-    var negative = cube({size:[W,4,2*CH], center:[1,0,0]}).translate([0,1,-CH]);
-    negative = negative.union(cube({size:[11,8,2*CH], center:[1,0,0]}).translate([0,1,-CH]));
-    negative = negative.translate([0,0,2]).rotateX(-30).translate([0,27.5,H]);
-
-    // winddow
-    s = s.subtract(cube({size:[W0, D0+2, H0],center:[1,0,0]}).translate([0,0,7]).setColor([0,0,0]));
-    s = s.rotateX(-30);
-    s = s.intersect(cube({size:[100,100,100], center:[1,1,0]}))
-    s = s.subtract(cube({size:[40,25,300], center:[1,0,0]}).translate([0,22,0]));
-    s = s.setColor([0.5, 0.5, 0.5]);
-    lid = lid.union(s.translate([0,27.5,H]));
-
-    lid = lid.subtract(negative);
-
- return lid;
-}
-
 function main2() {
 
 //return SWITCH.toSolid();
 //return base(true, false);
+
 //return createOLEDHolder().toPreview();
 //    return createTBHolder().toPreview();
 //    return SWITCH.toSolid().translate([0,0,20]);
