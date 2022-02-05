@@ -7,7 +7,6 @@
     - add more support
     - fix peg well positions
     - increase size of TB board
-    - fixes sizes of CPU holders
     - decrease holder size for pinking column
     - fix ring finger cutout in pinky row
 */
@@ -527,7 +526,7 @@ function cover(lid) {
 
 function cpuHolder(base, d, w, x, hole, opt_y) {
   const D = d*1.03;
-  const W = w*1.03;
+  const W = w*1.02;
   const H2 = H-FT;
 
   var s = cube({size:[W+8, D+5, H2], center:[1,1,0]});
@@ -579,11 +578,11 @@ function main2() {
   // Version Engraving
   lid = lid.subtract(createText({text: VERSION, w:6, scale: 0.25, justify: 'C', h: H+1}).toSolid().translate([0,30,0]).scale([-1,1,1]));
 
-  bottom = cpuHolder(bottom, 51.5, 20.2, -45, true, 1.25);
+  bottom = cpuHolder(bottom, 51.5, 19.2, -45, true, 1.25);
 
-  bottom = cpuHolder(bottom, 48.3, 15.7, 17);
-  bottom = cpuHolder(bottom, 48.3, 15.7, 17+22);
-  bottom = cpuHolder(bottom, 48.3, 15.7, 17+22*2);
+  bottom = cpuHolder(bottom, 48.3, 15.2, 17);
+  bottom = cpuHolder(bottom, 48.3, 15.2, 17+22);
+  bottom = cpuHolder(bottom, 48.3, 15.2, 17+22*2);
 
 //  lid = oledCase(lid);
 
@@ -609,7 +608,7 @@ function main2() {
 
 bottom = tilt(bottom);
 
-//return bottom;
+return bottom;
 bottom = bottom.subtract(createText({text: VERSION, w:6, scale: 0.25, justify: 'C', h: 2.8}).toSolid().translate([0,-40,0]).scale([-1,1,1]).setColor([0.5,0.5,0.5]));
 
 //return bottom;
