@@ -4,7 +4,6 @@
 
 /*
   TODO:
-    - fix peg well positions
 */
 const VERSION = "V16";
 
@@ -309,10 +308,9 @@ var SWITCH = {
     var sw   = this.createSwitch()/*.setColor([0,0,0])*/;
     var stem = cube({size:[4, 4, 2.5], center:[true,true,false]}).translate([0,0,this.h]).setColor([165/256,42/256,42/256]);
     var plate = cube({size:[17, 15, 2], center:[true,true,false]}).setColor([165/256,42/256,42/256]);
-    var post1 = cylinder({r:2.5, h:-30}).translate([5.5,-4,-2]);
-    var post2 = cylinder({r:2.5, h:-30}).translate([-5.5,-4,-2]);
-    var post3 = cylinder({r:2.5, h:-30}).translate([0,-5.5,-2]);
-    return union(sw, plate, stem, post1, post2, post3);
+    var leftPost = cylinder({r:2.25, h:-30}).translate([-5.5,-4,-2]);
+    var bottomPost = cylinder({r:2.25, h:-30}).translate([0,-5.5,-2]);
+    return union(sw, plate, stem, leftPost, bottomPost);
   })
 };
 
@@ -369,11 +367,13 @@ function key(s, x, y, reverse, r, config) {
         s = s.translate([0,t+d,0]).rotateX(config.tilt).translate([0,-t-d,config.height || 0]);
       }
       s = s.rotateZ(r || 0).translate([x, y, 0]).rotateZ(-A);
-      if ( reverse ) s = s.scale([-1,1,1]);
+     if ( reverse ) s = s.scale([-1,1,1]);
       return s;
     }
 
     var sw = SWITCH.toSolid();
+
+    if ( reverse ) sw = sw.scale([-1,1,1]);
 
     sw = transform(sw);
     var h  = transform(SWITCH.createHolder(config.vPad || 0));
@@ -463,7 +463,7 @@ function base(keys, asBase) {
         r = r;
         y -= 66;
         a = a+10;
-      s = key(s, r * Math.cos(a/180*Math.PI)+x, r * Math.sin(a/180*Math.PI)+y, reverse, a + (r2 || 0), {tilt: tilt || 0, color: color});
+      s = key(s, r * Math.cos(a/180*Math.PI)+x, r * Math.sin(a/180*Math.PI)+y, reverse, a + (r2 || 0) - 90, {tilt: tilt || 0, color: color});
     }
 
 const D = 9;
