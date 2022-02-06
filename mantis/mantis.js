@@ -6,7 +6,6 @@
   TODO:
     - fix peg well positions
     - decrease holder size for pinking column
-    - fix ring finger cutout in pinky row
 */
 const VERSION = "V16";
 
@@ -290,9 +289,9 @@ var SWITCH = {
   createHolder: function(vPad) {
     var h      = this.holderHeight;
     var holder = this.createHolderOutline(vPad);
-    var top    = cube({size:[this.w, this.w, this.h]}).translate([-this.w/2,-this.w/2,-this.h]);
+    var top    = cube({size:[this.w, this.w, -this.h], center:[1,1,0]});
 
-    return holder.subtract(top);
+    return holder.union(top);
   },
   createSwitch: memoize(function() {
     var top    = cube({size:[this.w, this.w, this.h], center:[true,true,false]});
@@ -361,6 +360,7 @@ function createText(m) {
 function key(s, x, y, reverse, r, config) {
     x += (config.x || 0);
     y += (config.y || 0);
+
     function transform(s) {
       if ( config.tilt || true ) {
           config.tilt = (config.tilt || 0) * 1.1;
@@ -372,20 +372,26 @@ function key(s, x, y, reverse, r, config) {
       if ( reverse ) s = s.scale([-1,1,1]);
       return s;
     }
-    var sw = transform(SWITCH.toSolid());
+
+    var sw = SWITCH.toSolid();
+
+    // This is done so that the space above the holder is removed
+    // in the case than another row overlaps and blocks the switch.
+    if ( ! PREVIEW ) sw = sw.translate([0,0,-1.8]);
+    sw = transform(sw);
     var h  = transform(SWITCH.createHolder(config.vPad || 0));
-    //
     h = h.intersect(cube({size:[500,500,20], center: [true, true, false]}));
 
+    //s = s.subtract(h.translate([0,0,2]));
+
     if ( PREVIEW ) {
-    var cc = createKeyCap({capTilt: 0, capHeight: 5, color: config.color || DEFAULT_KEY_COLOR})
-    var cap = transform(cc.toSolid().translate([0,0,SWITCH.h]));
-    sw = sw.union(cap);
-//    h = h.intersect(cap);
-//      var key = transform(cube({size:[KW, KW, 8], xxxradius: 1, center: [true,true,false]}));
-//      sw = sw.union(key);
+      var cc = createKeyCap({capTilt: 0, capHeight: 5, color: config.color || DEFAULT_KEY_COLOR})
+      var cap = transform(cc.toSolid().translate([0,0,SWITCH.h]));
+      sw = sw.union(cap);
     }
+
     s = s.union(h);
+
     if ( PREVIEW ) {
       s = s.union(sw);
     } else {
