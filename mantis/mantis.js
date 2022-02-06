@@ -5,7 +5,6 @@
 /*
   TODO:
     - fix peg well positions
-    - increase size of TB board
     - decrease holder size for pinking column
     - fix ring finger cutout in pinky row
 */
@@ -86,7 +85,7 @@ function createTBHolder(m) {
       width: 0.7, // wall thickness
       x: 25*1.04,
       y: 16.5*1.04,
-      x2: 15.1*1.03, y2: 5.3*1.03,
+      x2: 15.1*1.04, y2: 5.3*1.04,
       switchWidth: 14,
       z: 1.5*1.05,
       h: 10+FT
@@ -590,6 +589,7 @@ function main2() {
  lid = createOLEDHolder().install(lid);
  lid = createTBHolder().install(lid);
 
+return lid;
   bottom = createTBHolder().install(bottom);
   bottom = createOLEDHolder().install(bottom);
 
