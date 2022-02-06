@@ -5,7 +5,6 @@
 /*
   TODO:
     - fix peg well positions
-    - decrease holder size for pinking column
 */
 const VERSION = "V16";
 
@@ -280,7 +279,7 @@ var SWITCH = {
   createHolderOutline: function(vPad) {
     var h = this.holderHeight;
     var t = this.holderThickness;
-    var holder = cube({radius:0.5, size:[this.w+2*t+0.2, this.w+2*t+1.5+vPad, h], center:[true,true,false]}).translate([0,0,-h]).setColor([1,1,1]);
+    var holder = cube({radius:0.5, size:[this.w+2*t+0.2, this.w+2*t+1.5+vPad, h], center:[true,true,false]}).translate([0,-vPad,-h]).setColor([1,1,1]);
     return holder;
   },
   createLatch: function() {
@@ -309,10 +308,11 @@ var SWITCH = {
   toSolid: memoize(function() {
     var sw   = this.createSwitch()/*.setColor([0,0,0])*/;
     var stem = cube({size:[4, 4, 2.5], center:[true,true,false]}).translate([0,0,this.h]).setColor([165/256,42/256,42/256]);
+    var plate = cube({size:[17, 15, 2], center:[true,true,false]}).setColor([165/256,42/256,42/256]);
     var post1 = cylinder({r:2.5, h:-30}).translate([5.5,-4,-2]);
     var post2 = cylinder({r:2.5, h:-30}).translate([-5.5,-4,-2]);
     var post3 = cylinder({r:2.5, h:-30}).translate([0,-5.5,-2]);
-    return union(sw, stem, post1, post2, post3);
+    return union(sw, plate, stem, post1, post2, post3);
   })
 };
 
@@ -375,9 +375,6 @@ function key(s, x, y, reverse, r, config) {
 
     var sw = SWITCH.toSolid();
 
-    // This is done so that the space above the holder is removed
-    // in the case than another row overlaps and blocks the switch.
-    if ( ! PREVIEW ) sw = sw.translate([0,0,-1.8]);
     sw = transform(sw);
     var h  = transform(SWITCH.createHolder(config.vPad || 0));
     h = h.intersect(cube({size:[500,500,20], center: [true, true, false]}));
@@ -441,8 +438,8 @@ function base(keys, asBase) {
   var blankBase = s;
 
   if ( keys ) {
-    s = row(s, RS, 0, 8, [{tilt: -10, x: 2, vPad: 4},{color: HOME_COLOR, vPad: 4},{tilt: 14, color: RED, x:-2, vPad: 4}], false, true);
-    s = row(s, RS, 0, 8, [{tilt: -10, x: 2, vPad: 4},{xxxcolor: HOME_COLOR, vPad: 4},{tilt: 14, x:-2, vPad: 4}], true, true);
+    s = row(s, RS, 0, 8, [{tilt: -10, x: 2},{color: HOME_COLOR, vPad: 1},{tilt: 14, color: RED, x:-2, vPad: 1}], false, true);
+    s = row(s, RS, 0, 8, [{tilt: -10, x: 2},{xxxcolor: HOME_COLOR, vPad: 1},{tilt: 14, x:-2, vPad: 1}], true, true);
 
     s = row(s, RS+RW, 17, 2, [{tilt: -10},{color: HOME_COLOR, dw: 10},{tilt: 14}], false, true);
     s = row(s, RS+RW, 17, 2, [{tilt: -10},{color: HOME_COLOR, dw: 10},{tilt: 14}], true, true);
@@ -557,7 +554,6 @@ function cpuHolder(base, d, w, x, hole, opt_y) {
 
 
 function main2() {
-
 //return SWITCH.toSolid();
 //return base(true, false);
 
