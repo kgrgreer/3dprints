@@ -572,7 +572,7 @@ function main2() {
   }
 
   // fill space between pinky and ring finger in top row
-  plate(79.5,18,5,23.1,24,2);
+  plate(79.5, 16, 5, 22.5, 24, 2);
 
 
   // Version Engraving
