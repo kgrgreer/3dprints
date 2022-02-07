@@ -361,10 +361,10 @@ function key(s, x, y, reverse, r, config) {
 
     function transform(s) {
       if ( config.tilt || true ) {
-          config.tilt = (config.tilt || 0) * 1.1;
-        var t = config.tilt > 0 ? SW/2 : -SW/2;
-        var d = (config.tilt || 0 ) < 0 ? -2 : 2;
-        s = s.translate([0,t+d,0]).rotateX(config.tilt).translate([0,-t-d,config.height || 0]);
+        var tilt = (config.tilt || 0) * 1.1;
+        var t = tilt > 0 ? SW/2 : -SW/2;
+        var d = tilt < 0 ? -2 : 2;
+        s = s.translate([0,t+d,0]).rotateX(tilt).translate([0,-t-d,config.height || 0]);
       }
       s = s.rotateZ(r || 0).translate([x, y, 0]).rotateZ(-A);
      if ( reverse ) s = s.scale([-1,1,1]);
