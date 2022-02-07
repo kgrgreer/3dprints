@@ -463,7 +463,7 @@ function base(keys, asBase) {
         r = r;
         y -= 66;
         a = a+10;
-      s = key(s, r * Math.cos(a/180*Math.PI)+x, r * Math.sin(a/180*Math.PI)+y, reverse, a + (r2 || 0) - 90, {tilt: tilt || 0, color: color});
+      s = key(s, r * Math.cos(a/180*Math.PI)+x, r * Math.sin(a/180*Math.PI)+y, reverse, a + (r2 || 0) - 90, {height: 0.4, tilt: tilt || 0, color: color});
     }
 
 const D = 9;
@@ -515,13 +515,13 @@ function tilt(bottom) {
 
 
 function cover(lid) {
-    var s = lid.intersect(cube({size:[300,300,0.1], center:[1,1,0]}).translate([0,0,H-0.1]));
+    var s = lid.intersect(cube({size:[300,300,0.01], center:[1,1,0]}).translate([0,0,H-0.01])).translate([0,0,-H+0.01]).scale([1,1,40]).translate([0,0,H-0.1]);
 
-    var l = lid.translate([0,0,-0.1]);
+    var l = lid.translate([0,0,-0.01]);
     for ( var i = -1 ; i <= 1 ; i += 0.5 )
     for ( var j = -1 ; j <= 1 ; j += 0.5 )
-    s = s.subtract(l.translate([i,j,0]));
-    return s.setColor([0.3,0.3,0.3]);
+    s = s.subtract(l.translate([2*i,2*j,0]));
+    return s.setColor([1,0,0]);
 }
 
 
@@ -597,7 +597,7 @@ function main2() {
 
   bottom = bottom.intersect(cube({size:[300,300,H],center:[1,1,0]}))
   var c = cover(lid);
-  lid = lid.union(c.translate([0,0,0.1]));
+  lid = lid.union(c);
 
   lid = lid.subtract(cube({size:[200,200,(H-FT)*2],center:true}))
 
