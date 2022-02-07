@@ -527,7 +527,7 @@ function cover(lid) {
 
 function cpuHolder(base, d, w, x, hole, opt_y) {
   const D = d*1.03;
-  const W = w*1.02;
+  const W = w*1.028; // 1.03 too large, 1.02 too small
   const H2 = H-FT;
 
   var s = cube({size:[W+8, D+5, H2], center:[1,1,0]});
