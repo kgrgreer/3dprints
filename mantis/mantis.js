@@ -308,8 +308,8 @@ var SWITCH = {
     var sw   = this.createSwitch()/*.setColor([0,0,0])*/;
     var stem = cube({size:[4, 4, 2.5], center:[true,true,false]}).translate([0,0,this.h]).setColor([165/256,42/256,42/256]);
     var plate = cube({size:[17, 15, 2], center:[true,true,false]}).setColor([165/256,42/256,42/256]);
-    var leftPost = cylinder({r:2.25, h:-30}).translate([-5.5,-4,-2]);
-    var bottomPost = cylinder({r:2.25, h:-30}).translate([0,-5.5,-2]);
+    var leftPost = cylinder({fn: 10, r:2.25, h:-30}).translate([-5.5,-4,-2]);
+    var bottomPost = cylinder({fn: 10, r:2.25, h:-30}).translate([0,-5.5,-2]);
     return union(sw, plate, stem, leftPost, bottomPost);
   })
 };
@@ -371,8 +371,11 @@ function key(s, x, y, reverse, r, config) {
       return s;
     }
 
-    var sw = SWITCH.toSolid();
+    var sw = SWITCH.toSolid(config.switchR);
 
+    if ( config.switchR ) {
+      sw = sw.rotateZ(config.switchR + 360);
+    }
     if ( reverse ) sw = sw.scale([-1,1,1]);
 
     sw = transform(sw);
@@ -463,7 +466,7 @@ function base(keys, asBase) {
         r = r;
         y -= 66;
         a = a+10;
-      s = key(s, r * Math.cos(a/180*Math.PI)+x, r * Math.sin(a/180*Math.PI)+y, reverse, a + (r2 || 0) - 90, {height: 0.4, tilt: tilt || 0, color: color});
+      s = key(s, r * Math.cos(a/180*Math.PI)+x, r * Math.sin(a/180*Math.PI)+y, reverse, a + (r2 || 0), {switchR: reverse ? 90 : -90, height: 0.4, tilt: tilt || 0, color: color});
     }
 
 const D = 9;
