@@ -139,13 +139,13 @@ function createOLEDHolder(m) {
       x: 28.5*1.02,
       y: 27.5*1.02,
       displayWidth: 26,
-      displayHeight: 15,
+      displayHeight: 14.5,
       z: 3.2*1.05,
       h: 10
     };
 
     return Object.assign({
-       transform: function(s) { return s.translate([0,-40,H-this.h-FT]); },
+       transform: function(s) { return s.translate([0,-41.25,H-this.h-FT]); },
        rcube: function(x,y,z) {
          var s = cube({fn:32, radius: 0.5, size: [x,y,z+10], center:[1,1,0]});
          s = s.translate([0,0,-10]);
@@ -576,7 +576,7 @@ function main2() {
 
 
   // Version Engraving
-  lid = lid.subtract(createText({text: VERSION, w:6, scale: 0.25, justify: 'C', h: H+0.5}).toSolid().translate([0,30,0]).scale([-1,1,1]));
+  lid = lid.subtract(createText({text: VERSION, w:6, scale: 0.25, justify: 'C', h: H+0.6}).toSolid().translate([0,30,0]).scale([-1,1,1]));
 
   bottom = cpuHolder(bottom, 51.5, 19.2, -45, true, 1.25);
 
@@ -612,9 +612,9 @@ bottom = tilt(bottom);
 
 bottom = bottom.subtract(createText({text: VERSION, w:6, scale: 0.25, justify: 'C', h: 3}).toSolid().translate([0,-40,0]).scale([-1,1,1]).setColor([0.5,0.5,0.5]));
 
-return bottom;
+//return bottom;
 
-//return lid;
+return lid;
 return bottom.union(tilt(lid));
 //return tilt(bottom);
 return lid;
