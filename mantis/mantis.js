@@ -83,7 +83,7 @@ function createTBHolder(m) {
       x: 25*1.04,
       y: 16.5*1.04,
       x2: 15.1*1.04, y2: 5.3*1.04,
-      switchWidth: 14,
+      switchWidth: 14.1*1.03,
       z: 1.5*1.05,
       h: 10+FT
     };
@@ -96,7 +96,7 @@ function createTBHolder(m) {
          return s.intersect(cube({size:[100,100,100], center:[1,1,0]}))
        },
        toNegative: function() {
-           var s = cube({size:[this.x, this.y, this.z+FT], center:[1,1,0]}).translate([0,0,-FT-this.z]);
+           var s = cube({size:[this.x, this.y, this.z+FT], center:[1,1,0]}).translate([0,0,-FT]);
            s = s.union(cube({size:[this.x2, this.y2, 10], center:[1,1,0]}).translate([0,this.y/2+this.y2/2,-10]));
            return s;
        },
@@ -371,7 +371,7 @@ function key(s, x, y, reverse, r, config) {
       return s;
     }
 
-    var sw = SWITCH.toSolid(config.switchR);
+    var sw = SWITCH.toSolid();
 
     if ( config.switchR ) {
       sw = sw.rotateZ(config.switchR + 360);
@@ -521,9 +521,9 @@ function cover(lid) {
     var s = lid.intersect(cube({size:[300,300,0.01], center:[1,1,0]}).translate([0,0,H-0.01])).translate([0,0,-H+0.01]).scale([1,1,40]).translate([0,0,H-0.1]);
 
     var l = lid.translate([0,0,-0.01]);
-    for ( var i = -1 ; i <= 1 ; i += 0.5 )
-    for ( var j = -1 ; j <= 1 ; j += 0.5 )
-    s = s.subtract(l.translate([2*i,2*j,0]));
+    for ( var i = -1 ; i <= 1 ; i += 0.2 )
+    for ( var j = -1 ; j <= 1 ; j += 0.2 )
+    s = s.subtract(l.translate([2.2*i,2.2*j,0]));
     return s.setColor([1,0,0]);
 }
 
@@ -599,6 +599,7 @@ function main2() {
   bottom = createOLEDHolder().install(bottom);
 
   bottom = bottom.intersect(cube({size:[300,300,H],center:[1,1,0]}))
+return bottom;
   var c = cover(lid);
   lid = lid.union(c);
 
