@@ -5,7 +5,7 @@
 /*
   TODO:
 */
-const VERSION = "V16";
+const VERSION = "V17";
 
 const KEYS    = false;     // include key-caps
 const PREVIEW = false;
@@ -415,6 +415,7 @@ function post(lid, bottom, x, y) {
   bottom = bottom.union(cylinder({r:5,h: H-FT}).subtract(cylinder({r:SR,h: 10}).translate([0,0,H-10])).translate([x,y,0]));
   lid = lid.subtract(cylinder({r:SR,h: 100}).translate([x,y,0]));
   lid = lid.subtract(cylinder({r:3.8, h: 20.5}).translate([x,y,H-0.5]));
+  bottom = bottom.subtract(cylinder({r:SR,h: 100}).translate([x,y,H-10]));
   return [lid, bottom];
 }
 
@@ -529,13 +530,13 @@ function cover(lid) {
 
 
 function cpuHolder(base, d, w, x, hole, opt_y) {
-  const D = d*1.03;
-  const W = w*1.028; // 1.03 too large, 1.02 too small
+  const D = d + 1.6;
+  const W = w + 1.6;
   const H2 = H-FT;
 
-  var s = cube({size:[W+8, D+5, H2], center:[1,1,0]});
-  s = s.subtract(cube({size:[W-4, D+5, H2], center:[1,1,0]}))
-  s = s.subtract(cube({size:[W+8, D-10, H2], center:[1,1,0]}))
+  var s = cube({size:[W+12, D+5, H2], center:[1,1,0]}).translate([0,-1,0]);
+  s = s.subtract(cube({size:[W-4, D+5, H2], center:[1,1,0]}).translate([0,-1,0]))
+  s = s.subtract(cube({size:[W+14, D-10, H2], center:[1,1,0]}))
 
   var neg = cube({size:[W, D, H2], center:[1,1,0]});
 
@@ -581,11 +582,11 @@ function main2() {
   // Version Engraving
   lid = lid.subtract(createText({text: VERSION, w:6, scale: 0.25, justify: 'C', h: H+0.6}).toSolid().translate([0,30,0]).scale([-1,1,1]));
 
-  bottom = cpuHolder(bottom, 51.5, 19.2, -45, true, 1.25);
+  bottom = cpuHolder(bottom, 51, 20.8, -45, true, 1.25);
 
-  bottom = cpuHolder(bottom, 48.3, 15.2, 17);
-  bottom = cpuHolder(bottom, 48.3, 15.2, 17+22);
-  bottom = cpuHolder(bottom, 48.3, 15.2, 17+22*2);
+  bottom = cpuHolder(bottom, 48.2, 15.8, 17);
+  bottom = cpuHolder(bottom, 48.2, 15.8, 17+22);
+  bottom = cpuHolder(bottom, 48.2, 15.8, 17+22*2);
 
   // extra supports
   bottom = bottom.union(cube({size:[30, 6, H-FT]}).rotateZ(24).translate([62,-25,0]))
@@ -599,7 +600,6 @@ function main2() {
   bottom = createOLEDHolder().install(bottom);
 
   bottom = bottom.intersect(cube({size:[300,300,H],center:[1,1,0]}))
-return bottom;
   var c = cover(lid);
   lid = lid.union(c);
 
@@ -607,7 +607,7 @@ return bottom;
 
   bottom = bottom.subtract(lid);
 
-  // Add screw hold and post
+  // Add screw hole and post
   POSTS.forEach(p => {
     [lid, bottom] = post(lid, bottom, p[0], p[1]);
   });
@@ -616,9 +616,9 @@ bottom = tilt(bottom);
 
 bottom = bottom.subtract(createText({text: VERSION, w:6, scale: 0.25, justify: 'C', h: 3}).toSolid().translate([0,-40,0]).scale([-1,1,1]).setColor([0.5,0.5,0.5]));
 
-//return bottom;
+return bottom;
 
-return lid;
+//return lid;
 return bottom.union(tilt(lid));
 //return tilt(bottom);
 return lid;
