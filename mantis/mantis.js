@@ -5,7 +5,7 @@
 /*
   TODO:
 */
-const VERSION = "V17";
+const VERSION = "V18";
 
 const KEYS    = false;     // include key-caps
 const PREVIEW = false;
@@ -530,11 +530,11 @@ function cover(lid) {
 
 
 function cpuHolder(base, d, w, x, hole, opt_y) {
-  const D = d + 1.6;
-  const W = w + 1.6;
+  const D = d + 1;
+  const W = w + 1;
   const H2 = H-FT;
 
-  var s = cube({size:[W+12, D+5, H2], center:[1,1,0]}).translate([0,-1,0]);
+  var s = cube({size:[W+10, D+5, H2], center:[1,1,0]}).translate([0,-1,0]);
   s = s.subtract(cube({size:[W-4, D+5, H2], center:[1,1,0]}).translate([0,-1,0]))
   s = s.subtract(cube({size:[W+14, D-10, H2], center:[1,1,0]}))
 
