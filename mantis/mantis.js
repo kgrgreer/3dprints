@@ -152,8 +152,8 @@ function createOLEDHolder(m) {
          return s.intersect(cube({size:[100,100,100], center:[1,1,0]}))
        },
        toNegative: function() {
-           var s = cube({size:[this.displayWidth, this.displayHeight, FT], center:[1,0,0]}).translate([0,-5,this.h]);
-           s = s.union(cube({size:[this.displayWidth, this.displayHeight, FT+2], center:[1,0,0]}).rotateX(30).translate([0,-5,this.h+0.4]));
+           var s = cube({size:[this.displayWidth, this.displayHeight, FT], center:[1,0,0]}).translate([0,-6,this.h]);
+           s = s.union(cube({size:[this.displayWidth, this.displayHeight, FT+2], center:[1,0,0]}).rotateX(30).translate([0,-6,this.h+0.4]));
            s = s.union(cube({size:[this.x,this.y,this.z],center:[1,1,0]}).translate([0,0,this.h-this.z]))
            return s;
        },
