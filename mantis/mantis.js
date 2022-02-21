@@ -584,9 +584,9 @@ function main2() {
 
   bottom = cpuHolder(bottom, 51, 20.8, -45, true, 1.25);
 
-  bottom = cpuHolder(bottom, 48.2, 15.8, 17);
-  bottom = cpuHolder(bottom, 48.2, 15.8, 17+22);
-  bottom = cpuHolder(bottom, 48.2, 15.8, 17+22*2);
+  bottom = cpuHolder(bottom, 48.2-0.4, 15.8-0.4, 17);
+  bottom = cpuHolder(bottom, 48.2-0.4, 15.8-0.4, 17+22);
+  bottom = cpuHolder(bottom, 48.2-0.4, 15.8-0.4, 17+22*2);
 
   // extra supports
   bottom = bottom.union(cube({size:[30, 6, H-FT]}).rotateZ(24).translate([62,-25,0]))
@@ -614,7 +614,7 @@ function main2() {
 
 bottom = tilt(bottom);
 
-bottom = bottom.subtract(createText({text: VERSION, w:6, scale: 0.25, justify: 'C', h: 3}).toSolid().translate([0,-40,0]).scale([-1,1,1]).setColor([0.5,0.5,0.5]));
+// bottom = bottom.subtract(createText({text: VERSION, w:6, scale: 0.25, justify: 'C', h: 3}).toSolid().translate([0,-40,0]).scale([-1,1,1]).setColor([0.5,0.5,0.5]));
 
 return bottom;
 
