@@ -12,8 +12,8 @@ const PREVIEW = false;
 const EXPAND  = true;
 
 var SHAPE = [
-  [14,3],    // bottom left
-  [29,78],   // top left
+  [16,3],    // bottom left
+  [26,78],   // top left
   [62-1,78], // top-left corner of ring finger
   [136, 78], // top center
   [145,-34], // bottom center
@@ -250,8 +250,8 @@ var key = w;
  *********************************************************************/
 
 var SWITCH = {
-  w:           14.2, // use 13.7 for testing, 13.6,    // width of sides of switch
-  d:           16,    // depth below surface
+  w:           13.8, // width of sides of switch
+  d:           16,   // depth below surface
   h:           3,    // height above surface
   stem:        2,    // height of stem, 4mm travel
 
@@ -259,7 +259,7 @@ var SWITCH = {
   latchWidth:  3.7,
   latchHeight: 1.4,
 
-  holderThickness: 2.6+0.5, //2.7,
+  holderThickness: 2.9,
   holderHeight:    24,
 
   lipHeight: 1, //6,
@@ -268,7 +268,7 @@ var SWITCH = {
   createHolderOutline: function(vPad) {
     var h = this.holderHeight;
     var t = this.holderThickness;
-    var holder = cube({radius:0.5, size:[this.w+2*t+0.2, this.w+2*t+1.5+vPad, h], center:[true,true,false]}).translate([0,-vPad,-h]).setColor([1,1,1]);
+    var holder = cube({radius:0.5, size:[this.w+2*t+0.5+vPad, this.w+2*t+2.4, h], center:[true,true,false]}).translate([-vPad/2,0,-h]).setColor([1,1,1]);
     return holder;
   },
   createLatch: function() {
@@ -432,8 +432,8 @@ function base(keys, asBase) {
   var blankBase = s;
 
   if ( keys ) {
-    s = row(s, RS, 0, 6, [{tilt: -10, xx: 2},{color: HOME_COLOR, vPad: 1},{tilt: 14, color: RED, xx:-2, vPad: 1}], false, true);
-    s = row(s, RS, 0, 6, [{tilt: -10, xx: 2},{xxxcolor: HOME_COLOR, vPad: 1},{tilt: 14, xx:-2, vPad: 1}], true, true);
+    s = row(s, RS, 0, 6, [{tilt: -10, x: 2, vPad: 8},{color: HOME_COLOR, vPad: 4},{tilt: 14, color: RED, x:-2, vPad: 4}], false, true);
+    s = row(s, RS, 0, 6, [{tilt: -10, x: 2, vPad: 8},{xxxcolor: HOME_COLOR, vPad: 4},{tilt: 14, x:-2, vPad: 4}], true, true);
 
     s = row(s, RS+RW, 17, 2, [{tilt: -10},{color: HOME_COLOR, dw: 10},{tilt: 14}], false, true);
     s = row(s, RS+RW, 17, 2, [{tilt: -10},{color: HOME_COLOR, dw: 10},{tilt: 14}], true, true);
@@ -512,8 +512,8 @@ function cover(lid) {
     var s = lid.intersect(cube({size:[300,300,0.01], center:[1,1,0]}).translate([0,0,H-0.01])).translate([0,0,-H+0.01]).scale([1,1,40]).translate([0,0,H-0.1]);
 
     var l = lid.translate([0,0,-0.01]);
-    for ( var i = -1 ; i <= 1 ; i += 0.2 )
-    for ( var j = -1 ; j <= 1 ; j += 0.2 )
+    for ( var i = -1 ; i <= 1 ; i += 0.25 )
+    for ( var j = -1 ; j <= 1 ; j += 0.25 )
     s = s.subtract(l.translate([2.2*i,2.2*j,0]));
     return s.setColor([1,0,0]);
 }
@@ -547,7 +547,7 @@ function cpuHolder(base, d, w, x, hole, opt_y) {
 }
 
 
-function main2() {
+function main() {
 //return SWITCH.toSolid();
 //return base(true, false);
 
@@ -613,8 +613,4 @@ return bottom;
 return bottom.union(tilt(lid));
 //return tilt(bottom);
 return lid;
-}
-
-function main() {
-    return main2().rotateZ(-15);
 }
