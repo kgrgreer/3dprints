@@ -13,11 +13,11 @@ const EXPAND  = true;
 
 var SHAPE = [
   [16,3],    // bottom left
-  [26,78],   // top left
-  [62-1,78], // top-left corner of ring finger
-  [136, 78], // top center
-  [145,-34], // bottom center
-  [116,-34], // corner of inside thumb key
+  [26,76],   // top left
+  [61,76], // top-left corner of ring finger
+  [136, 76], // top center
+  [145,-33], // bottom center
+  [116,-33], // corner of inside thumb key
 ];
 
 var POSTS = [
@@ -412,7 +412,7 @@ function post(lid, bottom, x, y) {
 
 function base(keys, asBase) {
   var p = polygon({ points: SHAPE });
-  if ( EXPAND ) p = p.expand(2, 100);
+  if ( EXPAND ) p = p.expand(3, 40);
 
   var base = p.extrude().scale([1,1,FT]).setColor([0.4,0.4,0.4]).translate([0,0,-FT])
   var s = base;
@@ -555,6 +555,7 @@ function main() {
 //    return createTBHolder().toPreview();
 //    return SWITCH.toSolid().translate([0,0,20]);
   var bottom = base(false, true).setColor([1,1,1]);
+
   var lid    = base(true, false);
 
   lid = lid.translate([0,0,H-FT]);
