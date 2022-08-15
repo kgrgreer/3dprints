@@ -1,4 +1,4 @@
-const FN = 130;
+const FN = 140; // 140
 
 function tube(od, id, h) {
     return cylinder({fn: FN, r: od/2, h: h}).subtract(cylinder({fn: FN, r: id/2, h: h}));
@@ -6,8 +6,8 @@ function tube(od, id, h) {
 
 function base() {
   var s = union(
-    tube(35.5,31,50),
-    tube(36.5,31,5)
+    tube(37.5,31+0.6,50),
+    tube(38.5,31+0.6,5)
   );
 
   s = s.subtract(cube({size:[100,100,100], center:[true,true,false]}).rotateX(45).translate([0,0,63.1]));
@@ -19,7 +19,7 @@ function connector() {
     tube(35.4, 27.2, 5.1714).translate([0,0,-3]),
     tube(31.5, 27.2, 9),
     tube(30, 27.2, 5).translate([0,0,9]),
-    tube(31, 27.2, 5.3).translate([0,0,9+5])
+    tube(31+0.4, 27.2, 5.3).translate([0,0,9+5])
   ).translate([0,-2.5,0]).rotateX(45);
   return s;
 }
