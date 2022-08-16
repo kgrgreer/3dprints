@@ -12,12 +12,12 @@ const PREVIEW = false;
 const EXPAND  = true;
 
 var SHAPE = [
-  [16,3],    // bottom left
+  [16,5],    // bottom left
   [26,76],   // top left
   [61,76], // top-left corner of ring finger
   [136, 76], // top center
-  [145,-33], // bottom center
-  [116,-33], // corner of inside thumb key
+  [145,-32.5], // bottom center
+  [116,-32.5], // corner of inside thumb key
 ];
 
 var POSTS = [
@@ -25,7 +25,7 @@ var POSTS = [
 ];
 
 var A    = 12;        // Key row slant angle
-var RS   = -115;    // Row Start
+var RS   = -115;      // Row Start
 
 var FT   = 3;         // Faceplate thickness, should be 1.5
 var H    = 12.25;     // Total height of keyboard
@@ -259,7 +259,7 @@ var SWITCH = {
   latchWidth:  3.7,
   latchHeight: 1.4,
 
-  holderThickness: 2.9,
+  holderThickness: 2.5,
   holderHeight:    24,
 
   lipHeight: 1, //6,
@@ -268,7 +268,7 @@ var SWITCH = {
   createHolderOutline: function(vPad) {
     var h = this.holderHeight;
     var t = this.holderThickness;
-    var holder = cube({radius:0.5, size:[this.w+2*t+0.5+vPad, this.w+2*t+2.4, h], center:[true,true,false]}).translate([-vPad/2,0,-h]).setColor([1,1,1]);
+    var holder = cube({radius:0.5, size:[this.w+2*t+0.5+vPad, this.w+2*t+3.5, h], center:[true,true,false]}).translate([-vPad/2,0,-h]).setColor([1,1,1]);
     return holder;
   },
   createLatch: function() {
@@ -368,8 +368,9 @@ function key(s, x, y, reverse, r, config) {
     }
     if ( reverse ) sw = sw.scale([-1,1,1]);
 
+//    sw = sw.rotateZ(A);
     sw = transform(sw);
-    var h = transform(SWITCH.createHolder(config.vPad || 0));
+    var h = transform(SWITCH.createHolder(config.vPad || 0)/*.rotateZ(A)*/);
     h = h.intersect(cube({size:[500,500,20], center: [true, true, false]}));
 
     //s = s.subtract(h.translate([0,0,2]));
@@ -432,20 +433,21 @@ function base(keys, asBase) {
   var blankBase = s;
 
   if ( keys ) {
-    s = row(s, RS, 0, 6, [{tilt: -10, x: 2, vPad: 8},{color: HOME_COLOR, vPad: 4},{tilt: 14, color: RED, x:-2, vPad: 4}], false, true);
-    s = row(s, RS, 0, 6, [{tilt: -10, x: 2, vPad: 8},{xxxcolor: HOME_COLOR, vPad: 4},{tilt: 14, x:-2, vPad: 4}], true, true);
+      var R = 0.4;
+    s = row(s, RS, 0, 6+R, [{tilt: -10, x: 2, vPad: 8},{color: HOME_COLOR, vPad: 4},{tilt: 14, color: RED, x:-2, vPad: 8}], false, true);
+    s = row(s, RS, 0, 6+R, [{tilt: -10, x: 2, vPad: 8},{xxxcolor: HOME_COLOR, vPad: 4},{tilt: 14, x:-2, vPad: 8}], true, true);
 
-    s = row(s, RS+RW, 17, 2, [{tilt: -10},{color: HOME_COLOR, dw: 10},{tilt: 14}], false, true);
-    s = row(s, RS+RW, 17, 2, [{tilt: -10},{color: HOME_COLOR, dw: 10},{tilt: 14}], true, true);
+    s = row(s, RS+RW, 17, 2+R, [{tilt: -10},{color: HOME_COLOR, dw: 10},{tilt: 14}], false, true);
+    s = row(s, RS+RW, 17, 2+R, [{tilt: -10},{color: HOME_COLOR, dw: 10},{tilt: 14}], true, true);
 
-    s = row(s, RS+RW*3, 17, 2.2, [{tilt: -10},{color: HOME_COLOR},{tilt: 14}], false, true);
-    s = row(s, RS+RW*3, 17, 2.2, [{tilt: -10},{color: HOME_COLOR},{tilt: 14}], true, true);
+    s = row(s, RS+RW*3, 17, 2.2+R, [{tilt: -10},{color: HOME_COLOR},{tilt: 14}], false, true);
+    s = row(s, RS+RW*3, 17, 2.2+R, [{tilt: -10},{color: HOME_COLOR},{tilt: 14}], true, true);
 
-    s = row(s, RS+RW*4, 12+2, 2.5, [{tilt: -10},{},{tilt: 14}]);
-    s = row(s, RS+RW*4, 12+2, 2.5, [{tilt: -10},{},{tilt: 14}], true);
+    s = row(s, RS+RW*4, 12+2, 2.5+R, [{tilt: -10},{},{tilt: 14}]);
+    s = row(s, RS+RW*4, 12+2, 2.5+R, [{tilt: -10},{},{tilt: 14}], true);
 
-    s = row(s, RS+RW*2, 23.4, 0, [{tilt: -10},{color: HOME_COLOR},{tilt: 14}], false, true);
-    s = row(s, RS+RW*2, 23.4, 0, [{tilt: -10},{color: HOME_COLOR},{tilt: 14, color: HOME_COLOR}], true, true);
+    s = row(s, RS+RW*2, 23.4, R, [{tilt: -10},{color: HOME_COLOR},{tilt: 14}], false, true);
+    s = row(s, RS+RW*2, 23.4, R, [{tilt: -10},{color: HOME_COLOR},{tilt: 14, color: HOME_COLOR}], true, true);
 
     // thumb key
     function tkey(reverse, a, color, r, x, y, r2, tilt) {
@@ -530,14 +532,14 @@ function cpuHolder(base, d, w, x, hole, opt_y) {
 
   var neg = cube({size:[W, D, H2], center:[1,1,0]});
 
-  s = s.translate([x,-D/2+47.4+(opt_y || 0),0]);
-  neg = neg.translate([x,-D/2+47.4+(opt_y || 0),1]);
+  s = s.translate([x,-D/2+47.4-12.2+(opt_y || 0),0]);
+  neg = neg.translate([x,-D/2+47.4-12.2+(opt_y || 0),1]);
 
   base = base.union(s);
   base = base.subtract(neg);
 
   if ( hole ) {
-    var negative = cube({size:[12,20,5], radius: 2, center:[1,0,0]}).translate([0,D/2,2.2]);
+    var negative = cube({size:[12,20,5], radius: 2, center:[1,0,0]}).translate([0,D/2-12.2,2.2]);
 
     negative = negative.translate([x,20,0]);
     base = base.subtract(negative);
@@ -572,16 +574,21 @@ function main() {
   // Version Engraving
   lid = lid.subtract(createText({text: VERSION, w:6, scale: 0.25, justify: 'C', h: H+0.6}).toSolid().translate([0,20,0]).scale([-1,1,1]));
 
+  // CPU
   bottom = cpuHolder(bottom, 51, 20.8, -45, true, 1.25);
 
-  bottom = cpuHolder(bottom, 48.2-0.4, 15.8-0.4, 17);
-  bottom = cpuHolder(bottom, 48.2-0.4, 15.8-0.4, 17+22);
-  bottom = cpuHolder(bottom, 48.2-0.4, 15.8-0.4, 17+22*2);
+  // Port Expanders
+  bottom = cpuHolder(bottom, 48.2-0.4, 15.8-0.4, 20+17);
+  bottom = cpuHolder(bottom, 48.2-0.4, 15.8-0.4, 20+17+22);
+  bottom = cpuHolder(bottom, 48.2-0.4, 15.8-0.4, 20+17+22*2);
 
   // extra supports
-  bottom = bottom.union(cube({size:[30, 6, H-FT]}).rotateZ(24).translate([62,-25,0]))
-  bottom = bottom.union(cube({size:[30, 6, H-FT]}).rotateZ(24).translate([62,-25,0]).scale([-1,1,1]))
+  // right
+  bottom = bottom.union(cube({size:[30, 6, H-FT]}).rotateZ(14).translate([62,-36,0]))
+  // left
+  bottom = bottom.union(cube({size:[30, 6, H-FT]}).rotateZ(14).translate([62,-36,0]).scale([-1,1,1]))
 
+//return bottom;
  lid = createOLEDHolder().install(lid);
  lid = createTBHolder().install(lid);
 
@@ -595,13 +602,15 @@ function main() {
 
   lid = lid.subtract(cube({size:[200,200,(H-FT)*2],center:true}))
 
+//return bottom.union(lid);
   bottom = bottom.subtract(lid);
 
+//return bottom;
   // Add screw hole and post
   POSTS.forEach(p => {
     [lid, bottom] = post(lid, bottom, p[0], p[1]);
   });
-return lid;
+//return lid;
 
 
 bottom = tilt(bottom);
