@@ -4,7 +4,7 @@ const Z = 40;
 
 const T = 5; // Wall Thickness
 
-const SX = 20;
+const SX = 20; // Strap Width
 const SY = 1.5;
 
 function base() {
@@ -44,7 +44,18 @@ function lid() {
   s = s.subtract(s.scale([1,2,1]).rotateX(50).translate([0,-Y/2,SX/2]));
   s = s.subtract(s.scale([1,2,1]).rotateX(-50).translate([0,Y/2,SX/2]));
 
+  // empty inside
   s = s.subtract(s.scale([(X-T)/X,(Y-T)/Y,LZ/Z]));
+
+  var s2 = s.scale([1,(Y+3)/Y,(Z+1)/Z]);
+  var s3 = cube({size:[SX,2*Y,Z], center: [true,true,false]}).translate([18,0,0]);
+  s3 = s3.union(cube({size:[SX,2*Y,Z], center: [true,true,false]}).translate([-18,0,0]));
+  s3 = s3.union(cube({size:[SX,2*Y,Z], center: [true,true,false]}).translate([18*3,0,0]));
+  s3 = s3.union(cube({size:[SX,2*Y,Z], center: [true,true,false]}).translate([-18*3,0,0]));
+
+  s2 = s2.intersect(s3);
+
+  s = s.union(s2);
   return s;
 }
 
