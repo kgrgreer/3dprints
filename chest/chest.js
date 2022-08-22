@@ -48,8 +48,20 @@ function lid() {
   return s;
 }
 
+function tray() {
+  const TX = X-2, TY = Y-2, TZ = 2*T;
+
+  var s = cube({size:[TX,TY,TZ], center: [true,true,false]});
+  s = s.subtract(cube({size:[TX-3,TY-3,TZ-2], center: [true,true,false]}).translate([0,0,2]));
+
+  s = s.union(cube({size:[1.5,TY,TZ], center: [true,true,false]}).translate([TX/6,0,0]))
+  s = s.union(cube({size:[1.5,TY,TZ], center: [true,true,false]}).translate([-TX/6,0,0]))
+
+  return s;
+}
 
 function main() {
+return tray();
 
   var s = base();
 
