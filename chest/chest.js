@@ -1,5 +1,5 @@
-const X = 130;
-const Y = 70;
+const X = 150;
+const Y = 90;
 const Z = 40;
 
 const T = 5; // Wall Thickness
@@ -23,7 +23,7 @@ function base() {
 
   s = s.union(t.translate([-X/2+SX/2+1,0,0]));
   s = s.union(t.translate([X/2-SX/2-1,0,0]));
-  var d = 18;
+  var d = X/4-SX/1.5-1;
   s = s.union(t.translate([-d,0,0]));
   s = s.union(t.translate([d,0,0]));
 
@@ -47,11 +47,13 @@ function lid() {
   // empty inside
   s = s.subtract(s.scale([(X-T)/X,(Y-T)/Y,LZ/Z]));
 
+  var d = X/4-SX/1.5-1;
+
   var s2 = s.scale([1,(Y+3)/Y,(Z+1)/Z]);
-  var s3 = cube({size:[SX,2*Y,Z], center: [true,true,false]}).translate([18,0,0]);
-  s3 = s3.union(cube({size:[SX,2*Y,Z], center: [true,true,false]}).translate([-18,0,0]));
-  s3 = s3.union(cube({size:[SX,2*Y,Z], center: [true,true,false]}).translate([18*3,0,0]));
-  s3 = s3.union(cube({size:[SX,2*Y,Z], center: [true,true,false]}).translate([-18*3,0,0]));
+  var s3 = cube({size:[SX,2*Y,Z], center: [true,true,false]}).translate([d,0,0]);
+  s3 = s3.union(cube({size:[SX,2*Y,Z], center: [true,true,false]}).translate([-d,0,0]));
+  s3 = s3.union(cube({size:[SX,2*Y,Z], center: [true,true,false]}).translate([-X/2+SX/2+1,0,0]));
+  s3 = s3.union(cube({size:[SX,2*Y,Z], center: [true,true,false]}).translate([+X/2-SX/2-1,0,0]));
 
   s2 = s2.intersect(s3);
 
