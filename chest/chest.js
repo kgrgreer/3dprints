@@ -61,6 +61,7 @@ function lid() {
   return s;
 }
 
+
 function tray() {
   const TX = X-1-T, TY = Y-1-T, TZ = 2*T;
 
@@ -73,15 +74,30 @@ function tray() {
   return s;
 }
 
+
+function ring() {
+    var s = torus({ri: 4, ro: 20});
+
+    var c = cylinder({r1:25, r2:15, h:12});
+
+    c = c.union(s.translate([0,-15,6]));
+
+    c = c.rotateX(90).scale(0.4);
+    return c;
+}
+
+
 function main() {
-
-
+  var r = ring();
   var s = base();
   var t = tray();
 
   s = s.union(t.translate([0,0,Z-2*T]));
 
   s = s.union(lid().translate([0,0,Z+1]));
+
+  s = s.union(r.translate([X/4+6,-Y/2,Z/2+8]));
+  s = s.union(r.translate([-(X/4+6),-Y/2,Z/2+8]));
 
   return s;
 }
