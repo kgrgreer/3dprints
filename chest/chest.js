@@ -96,8 +96,8 @@ function main() {
 
   s = s.union(lid().translate([0,0,Z+1]));
 
-  s = s.union(r.translate([X/4+6,-Y/2,Z/2+8]));
-  s = s.union(r.translate([-(X/4+6),-Y/2,Z/2+8]));
+  s = s.union(r.translate([X/4+5.5,-Y/2,Z/2+8]));
+  s = s.union(r.translate([-(X/4+5.5),-Y/2,Z/2+8]));
 
   return s;
 }
