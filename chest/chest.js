@@ -49,7 +49,7 @@ function lid() {
 }
 
 function tray() {
-  const TX = X-2, TY = Y-2, TZ = 2*T;
+  const TX = X-1-T, TY = Y-1-T, TZ = 2*T;
 
   var s = cube({size:[TX,TY,TZ], center: [true,true,false]});
   s = s.subtract(cube({size:[TX-3,TY-3,TZ-2], center: [true,true,false]}).translate([0,0,2]));
@@ -61,9 +61,12 @@ function tray() {
 }
 
 function main() {
-return tray();
+
 
   var s = base();
+  var t = tray();
+
+  s = s.union(t.translate([0,0,Z-2*T]));
 
   s = s.union(lid().translate([0,0,Z+1]));
 
