@@ -7,6 +7,7 @@ const T = 5; // Wall Thickness
 const SX = 20; // Strap Width
 const SY = 1.5;
 
+const D = X/4-SX/1.5-2;
 function base() {
   var s = cube({size:[X,Y,Z], center: [true,true,false]});
 
@@ -23,9 +24,8 @@ function base() {
 
   s = s.union(t.translate([-X/2+SX/2+1,0,0]));
   s = s.union(t.translate([X/2-SX/2-1,0,0]));
-  var d = X/4-SX/1.5-1;
-  s = s.union(t.translate([-d,0,0]));
-  s = s.union(t.translate([d,0,0]));
+  s = s.union(t.translate([-D,0,0]));
+  s = s.union(t.translate([D,0,0]));
 
   // remove insides
   s = s.subtract(cube({size:[X-2*T,Y-T,Z], center: [true,true,false]}).translate([0,0,T]));
@@ -50,8 +50,8 @@ function lid() {
   var d = X/4-SX/1.5-1;
 
   var s2 = s.scale([1,(Y+3)/Y,(Z+1)/Z]);
-  var s3 = cube({size:[SX,2*Y,Z], center: [true,true,false]}).translate([d,0,0]);
-  s3 = s3.union(cube({size:[SX,2*Y,Z], center: [true,true,false]}).translate([-d,0,0]));
+  var s3 = cube({size:[SX,2*Y,Z], center: [true,true,false]}).translate([D,0,0]);
+  s3 = s3.union(cube({size:[SX,2*Y,Z], center: [true,true,false]}).translate([-D,0,0]));
   s3 = s3.union(cube({size:[SX,2*Y,Z], center: [true,true,false]}).translate([-X/2+SX/2+1,0,0]));
   s3 = s3.union(cube({size:[SX,2*Y,Z], center: [true,true,false]}).translate([+X/2-SX/2-1,0,0]));
 
