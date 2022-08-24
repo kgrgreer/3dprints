@@ -101,7 +101,7 @@ function ring() {
 
 
 function bolt() {
-  return sphere({r:2,fn:10}).scale([1,0.8,1]).setColor([0.8,0.8,0]);
+  return sphere({r:2,fn:10}).scale([1,1,1]).setColor([0.8,0.8,0]);
 }
 
 
