@@ -91,12 +91,12 @@ function ring() {
     c = c.union(s.translate([0,-15,6]));
 
     c = c.rotateX(90).scale(0.4);
-    return c;
+    return c.setColor([0.5,0.5,0.5]);
 }
 
 
 function bolt() {
-  return sphere({r:2,fn:10}).scale([1,0.8,1]).setColor([1,1,0]);
+  return sphere({r:2,fn:10}).scale([1,0.8,1]).setColor([0.8,0.8,0]);
 }
 
 
