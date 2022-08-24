@@ -8,6 +8,7 @@ const SX = 20; // Strap Width
 const SY = 1.5;
 
 const D = X/4-SX/1.5-2;
+
 function base() {
   var s = cube({size:[X,Y,Z], center: [true,true,false]});
 
@@ -26,6 +27,13 @@ function base() {
   s = s.union(t.translate([X/2-SX/2-1,0,0]));
   s = s.union(t.translate([-D,0,0]));
   s = s.union(t.translate([D,0,0]));
+
+  for ( var i = 1 ; i <= 2 ; i++ )
+  for ( var j = -1 ; j <= 1 ; j += 2 )
+  for ( var k = -1 ; k <= 1 ; k += 2 ) {
+    s = s.union(bolt().translate([(-X/2+SX/2+1)*j,k*(-Y/2-2), i*Z/3]));
+    s = s.union(bolt().translate([D*j,k*(-Y/2-2), i*Z/3]));
+  }
 
   // remove insides
   s = s.subtract(cube({size:[X-2*T,Y-T,Z], center: [true,true,false]}).translate([0,0,T]));
@@ -84,6 +92,11 @@ function ring() {
 
     c = c.rotateX(90).scale(0.4);
     return c;
+}
+
+
+function bolt() {
+  return sphere({r:2,fn:10}).scale([1,0.8,1]).setColor([1,1,0]);
 }
 
 
