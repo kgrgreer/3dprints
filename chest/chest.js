@@ -66,6 +66,11 @@ function lid() {
   s2 = s2.intersect(s3);
 
   s = s.union(s2);
+
+  for ( var i = -1 ; i <= 1 ; i++ )
+    for ( var j = -1 ; j <= 1 ; j+=2 )
+    s = s.union(bolt().translate([j*X/2,i*Y/3,5]));
+
   return s;
 }
 
