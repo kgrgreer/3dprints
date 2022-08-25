@@ -9,6 +9,18 @@ const SY = 1.5;
 
 const D = X/4-SX/1.5-2;
 
+function text(t, opt_scale) {
+ var scale = opt_scale || 1;
+ var o     = [];
+ var l     = vector_text(0, 0, t);
+
+ l.forEach(function (s) {
+   o.push(rectangular_extrude(s, {w: scale*4, h: scale*1/0.2}));
+ });
+
+ return union(o);
+}
+
 function base() {
   var s = cube({size:[X,Y,Z], center: [true,true,false]});
 
@@ -40,6 +52,8 @@ function base() {
 
   // remove ledge
   s = s.subtract(cube({size:[X-T,Y-T,Z], center: [true,true,false]}).translate([0,0,Z-2*T]));
+
+  s = s.subtract(text("Property of Alexey Greer\n\nMfg. by: KGR, Dec. 2022\n\n\nMADE IN CANADA").scale([0.2,0.2,0.2]).rotateZ(0).rotateX(180).translate([-X/3,-Y/4,1]));
 
   return s;
 }
