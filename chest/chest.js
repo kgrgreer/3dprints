@@ -74,8 +74,11 @@ function lid() {
   for ( var i = 1 ; i <= 2 ; i++ )
   for ( var j = -1 ; j <= 1 ; j += 2 )
   for ( var k = -1 ; k <= 1 ; k += 2 ) {
-    s = s.union(bolt().translate([(-X/2+SX/2+1)*j,k*(-Y/2-2), i*Z/3]));
-    s = s.union(bolt().translate([D*j,k*(-Y/2-2), i*Z/3]));
+      var d = [0,3,14];
+    // outside bolts
+    s = s.union(bolt().translate([(-X/2+SX/2+1)*j,k*(-Y/2-2+d[i]), i*Z/3]));
+    // inside bolts
+    s = s.union(bolt().translate([D*j,k*(-Y/2-2+d[i]), i*Z/3]));
   }
 
   for ( var j = -1 ; j <= 1 ; j += 2 )
