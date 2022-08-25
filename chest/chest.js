@@ -111,7 +111,7 @@ function ring() {
     c = c.union(s.translate([0,-15,6]));
 
     c = c.rotateX(90).scale(0.4);
-    return c.setColor([0.5,0.5,0.5]);
+    return c.setColor([0.56,0.56,0.56]);
 }
 
 
