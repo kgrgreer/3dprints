@@ -78,13 +78,10 @@ function lid() {
     s = s.union(bolt().translate([D*j,k*(-Y/2-2), i*Z/3]));
   }
 
-/*
-  for ( var i = 1 ; i <= 2 ; i++ )
   for ( var j = -1 ; j <= 1 ; j += 2 )
   for ( var k = -1 ; k <= 1 ; k += 2 ) {
-    s = s.union(bolt().translate([D*j,k*(-Y/2-2), i*Z/3]));
+    s = s.union(bolt().translate([j*(X/3.5),k*(-Y/2-2), Z/8]));
   }
-  */
 
   return s;
 }
