@@ -120,11 +120,21 @@ function bolt() {
   return sphere({r:2,fn:10}).scale([1,1,1]).setColor([0.8,0.8,0]);
 }
 
+function foot() {
+  var s = cube({size:[30,10,7],center:[true,true,false]})
+
+  s = s.subtract(s.rotateY(-45).translate([18,0,0]));
+  s = s.rotateZ(180);
+  s = s.translate([-15,5,0]);
+  return s;
+}
 
 function main() {
+
   var r = ring();
   var s = base();
   var t = tray();
+  var f = foot();
 
   s = s.union(t.translate([0,0,Z-2*T]));
 
@@ -132,6 +142,14 @@ function main() {
 
   s = s.union(r.translate([X/4+5.5,-Y/2,Z/2+8]));
   s = s.union(r.translate([-(X/4+5.5),-Y/2,Z/2+8]));
+
+  s = s.translate([0,0,7]);
+
+  s = s.union(f.translate([X/2,Y/2-10,0]))
+  s = s.union(f.translate([X/2,-Y/2,0]))
+  f = f.rotateZ(180);
+  s = s.union(f.translate([-X/2,Y/2,0]))
+  s = s.union(f.translate([-X/2,-Y/2+10,0]))
 
   return s;
 }
