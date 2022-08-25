@@ -53,7 +53,7 @@ function base() {
   // remove ledge
   s = s.subtract(cube({size:[X-T,Y-T,Z], center: [true,true,false]}).translate([0,0,Z-2*T]));
 
-  s = s.subtract(text("Property of Alexey Greer\n\nMfg. by: KGR, Dec. 2022\n\n\nMADE IN CANADA").scale([0.2,0.2,0.2]).rotateZ(0).rotateX(180).translate([-X/3,-Y/4,1]));
+  // s = s.subtract(text("Property of Alexey Greer\n\nMfg. by: KGR, Dec. 2022\n\n\nMADE IN CANADA").scale([0.2,0.2,0.2]).rotateZ(0).rotateX(180).translate([-X/3,-Y/4,1]));
 
   return s;
 }
@@ -149,10 +149,14 @@ function main() {
   var s = base();
   var t = tray();
   var f = foot();
+  var l = lid();
+
+  t = t.translate([0,0,25]);
+  l = l.translate([0,0,40]);
 
   s = s.union(t.translate([0,0,Z-2*T]));
 
-  s = s.union(lid().translate([0,0,Z+1]));
+  s = s.union(l.translate([0,0,Z+1]));
 
   s = s.union(r.translate([X/4+5.5,-Y/2,Z/2+8]));
   s = s.union(r.translate([-(X/4+5.5),-Y/2,Z/2+8]));
