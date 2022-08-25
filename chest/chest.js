@@ -81,9 +81,10 @@ function lid() {
     s = s.union(bolt().translate([D*j,k*(-Y/2-2+d[i]), i*Z/3]));
   }
 
+  // bolts above rings
   for ( var j = -1 ; j <= 1 ; j += 2 )
   for ( var k = -1 ; k <= 1 ; k += 2 ) {
-    s = s.union(bolt().translate([j*(X/3.5),k*(-Y/2-2), Z/8]));
+    // s = s.union(bolt().translate([j*(X/3.5),k*(-Y/2-2), Z/8]));
   }
 
   return s;
