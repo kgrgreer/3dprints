@@ -119,14 +119,20 @@ function tray() {
 
 
 function ring() {
-    var s = torus({ri: 4, ro: 20});
+    var r1 = torus({ri: 3, ro: 20}).translate([0,-20,6]);
+    var r2 = torus({ri: 4, ro: 20}).translate([0,-20,6]);
 
-    var c = cylinder({r1:25, r2:15, h:12});
+    var s = cylinder({r1:25, r2:15, h:12});
 
-    c = c.union(s.translate([0,-15,6]));
+    s = s.subtract(r2);
 
-    c = c.rotateX(90).scale(0.4);
-    return c.setColor([0.56,0.56,0.56]);
+    for ( var i = 0 ;i <= 70 ; i += 4 )
+    s = s.subtract(r1.translate([0,5,-6]).rotateX(-i).translate([0,-5,6]))
+
+    s = s.union(r1);
+
+    s = s.rotateX(90).scale(0.4);
+    return s.setColor([0.56,0.56,0.56]);
 }
 
 
@@ -144,6 +150,7 @@ function foot() {
 }
 
 function main() {
+return ring();
 
   var r = ring();
   var s = base();
