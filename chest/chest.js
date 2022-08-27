@@ -65,6 +65,7 @@ function lid() {
   const LZ = Z-7;
   var s = cube({size:[X,Y,LZ], center: [true,true,false]});
 
+  // cut out slants in lid
   s = s.subtract(s.scale([1,2,1]).rotateX(50).translate([0,-Y/2,SX/2]));
   s = s.subtract(s.scale([1,2,1]).rotateX(-50).translate([0,Y/2,SX/2]));
 
@@ -73,13 +74,15 @@ function lid() {
 
   var d = X/4-SX/1.5-1;
 
-  var s2 = s.scale([1,(Y+3)/Y,(Z+1)/Z]);
+  var s2 = s.scale([1,(Y+3)/Y,(Z+1)/Z]); // slightly larger lid
   var s3 = cube({size:[SX,2*Y,Z], center: [true,true,false]}).translate([D,0,0]);
   s3 = s3.union(cube({size:[SX,2*Y,Z], center: [true,true,false]}).translate([-D,0,0]));
   s3 = s3.union(cube({size:[SX,2*Y,Z], center: [true,true,false]}).translate([-X/2+SX/2+1,0,0]));
   s3 = s3.union(cube({size:[SX,2*Y,Z], center: [true,true,false]}).translate([+X/2-SX/2-1,0,0]));
 
   s2 = s2.intersect(s3);
+
+  s = s.subtract(cube({size:[200,1,100], center: true}).translate([0,0,LZ-1+50]));
 
   s = s.union(s2);
 
@@ -153,6 +156,7 @@ function foot() {
 
 function main() {
 
+return lid();
   var r = ring();
   var s = base();
   var t = tray();
