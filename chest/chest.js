@@ -83,6 +83,8 @@ function lid() {
   s2 = s2.intersect(s3);
 
   s = s.subtract(cube({size:[200,1,100], center: true}).translate([0,0,LZ-1+50]));
+  s = s.subtract(cube({size:[200,1,100], center: true}).translate([0,0,LZ-1+59]).rotateX(59));
+  s = s.subtract(cube({size:[200,1,100], center: true}).translate([0,0,LZ-1+59]).rotateX(-59));
 
   s = s.union(s2);
 
