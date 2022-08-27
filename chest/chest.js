@@ -1,3 +1,5 @@
+// TODO: grooves in lid
+
 const X = 150;
 const Y = 90;
 const Z = 40;
@@ -150,7 +152,6 @@ function foot() {
 }
 
 function main() {
-return ring();
 
   var r = ring();
   var s = base();
