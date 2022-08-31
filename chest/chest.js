@@ -23,6 +23,7 @@ function text(t, opt_scale) {
  return union(o);
 }
 
+
 function base() {
   var s = cube({size:[X,Y,Z], center: [true,true,false]});
 
@@ -102,6 +103,14 @@ function lid() {
     s = s.union(bolt().translate([D*j,k*(-Y/2-2+d[i]), i*Z/3]));
   }
 
+  for ( var j = -1 ; j <= 1 ; j += 2 )
+  for ( var k = -1 ; k <= 1 ; k += 2 ) {
+    // outside bolts
+    s = s.union(bolt().translate([(-X/2+SX/2+1)*j,k*(Y/6), Z-6.25]));
+    // inside bolts
+    s = s.union(bolt().translate([D*j,k*(Y/6), Z-6.25]));
+  }
+
   // bolts above rings
   for ( var j = -1 ; j <= 1 ; j += 2 )
   for ( var k = -1 ; k <= 1 ; k += 2 ) {
@@ -129,7 +138,7 @@ function ring() {
     var r1 = torus({ri: 3, ro: 20}).translate([0,-20,6]);
     var r2 = torus({ri: 4, ro: 20}).translate([0,-20,6]);
 
-    var s = cylinder({r1:25, r2:15, h:12});
+    var s = cylinder({r1:25, r2:15, h:13, fn: 6}).translate([0,0,-1]);
 
     s = s.subtract(r2);
 
@@ -144,7 +153,7 @@ function ring() {
 
 
 function bolt() {
-  return sphere({r:2,fn:10}).scale([1,1,1]).setColor([0.8,0.8,0]);
+  return sphere({r:2,fn:8}).scale([1,1,1]).setColor([0.8,0.8,0]);
 }
 
 function foot() {
@@ -158,7 +167,6 @@ function foot() {
 
 function main() {
 
-return lid();
   var r = ring();
   var s = base();
   var t = tray();
