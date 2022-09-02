@@ -153,7 +153,12 @@ function ring() {
 
 
 function bolt() {
-  return sphere({r:2,fn:8}).scale([1,1,1]).setColor([0.8,0.8,0]);
+  var s = sphere({r:2,fn:8}).scale([1,1,1]).setColor([0.8,0.8,0]);
+
+  s = s.intersect(cube({size:[20,20,20], center: [1,1,0]}));
+  s = s.rotateX(90);
+
+  return s;
 }
 
 function foot() {
@@ -166,7 +171,6 @@ function foot() {
 }
 
 function main() {
-
   var r = ring();
   var s = base();
   var t = tray();
