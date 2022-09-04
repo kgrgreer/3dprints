@@ -156,6 +156,7 @@ function bolt() {
   var s = sphere({r:2,fn:8}).scale([1,1,1]).setColor([0.8,0.8,0]);
 
   s = s.intersect(cube({size:[20,20,20], center: [1,1,0]}));
+  s = s.union(cylinder({r:2, fn:8}).translate([0,0,-1])).translate([0,0,-1]);
   s = s.rotateX(90);
 
   return s;
