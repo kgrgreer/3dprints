@@ -91,7 +91,7 @@ function lid() {
 
   for ( var i = -1 ; i <= 1 ; i++ )
     for ( var j = -1 ; j <= 1 ; j+=2 )
-    s = s.union(bolt().translate([j*X/2,i*Y/3,5]));
+    s = s.union(bolt(90*j).translate([j*X/2,i*Y/3,5]));
 
   for ( var i = 1 ; i <= 2 ; i++ )
   for ( var j = -1 ; j <= 1 ; j += 2 )
@@ -152,12 +152,14 @@ function ring() {
 }
 
 
-function bolt() {
+function bolt(z) {
   var s = sphere({r:2,fn:8}).scale([1,1,1]).setColor([0.8,0.8,0]);
 
-  s = s.intersect(cube({size:[20,20,20], center: [1,1,0]}));
+  s = s.intersect(cube({size:[20,20,1.7], center: [1,1,0]}));
   s = s.union(cylinder({r:2, fn:8}).translate([0,0,-1])).translate([0,0,-1]);
   s = s.rotateX(90);
+
+  s = s.rotateZ(z || 0);
 
   return s;
 }
