@@ -46,8 +46,8 @@ function base() {
   for ( var i = 1 ; i <= 2 ; i++ )
   for ( var j = -1 ; j <= 1 ; j += 2 )
   for ( var k = -1 ; k <= 1 ; k += 2 ) {
-    s = s.union(bolt().translate([(-X/2+SX/2+1)*j,k*(-Y/2-2), i*Z/3]));
-    s = s.union(bolt().translate([D*j,k*(-Y/2-2), i*Z/3]));
+    s = s.union(bolt(k == 1 ? 0 : 180).translate([(-X/2+SX/2+1)*j,k*(-Y/2-2), i*Z/3]));
+    s = s.union(bolt(k == 1 ? 0 : 180).translate([D*j,k*(-Y/2-2), i*Z/3]));
   }
 
   // remove insides
@@ -64,11 +64,12 @@ function base() {
 
 function lid() {
   const LZ = Z-7;
+  const A = 50
   var s = cube({size:[X,Y,LZ], center: [true,true,false]});
 
   // cut out slants in lid
-  s = s.subtract(s.scale([1,2,1]).rotateX(50).translate([0,-Y/2,SX/2]));
-  s = s.subtract(s.scale([1,2,1]).rotateX(-50).translate([0,Y/2,SX/2]));
+  s = s.subtract(s.scale([1,2,1]).rotateX(A).translate([0,-Y/2,SX/2]));
+  s = s.subtract(s.scale([1,2,1]).rotateX(-A).translate([0,Y/2,SX/2]));
 
   // empty inside
   s = s.subtract(s.scale([(X-T)/X,(Y-T)/Y,LZ/Z]));
@@ -89,26 +90,28 @@ function lid() {
 
   s = s.union(s2);
 
+  // side bolts
   for ( var i = -1 ; i <= 1 ; i++ )
     for ( var j = -1 ; j <= 1 ; j+=2 )
-    s = s.union(bolt(90*j).translate([j*X/2,i*Y/3,5]));
+    s = s.union(bolt(90*j).translate([j*(X/2+0.5),i*Y/3,5]));
+
 
   for ( var i = 1 ; i <= 2 ; i++ )
   for ( var j = -1 ; j <= 1 ; j += 2 )
   for ( var k = -1 ; k <= 1 ; k += 2 ) {
-      var d = [0,3,14];
+      var d = [0,2.6,13.6];
     // outside bolts
-    s = s.union(bolt().translate([(-X/2+SX/2+1)*j,k*(-Y/2-2+d[i]), i*Z/3]));
+    s = s.union(bolt(0,k == 1 ? -(90-A) : (90-A)-180).translate([(-X/2+SX/2+1)*j,k*(-Y/2-2+d[i]), i*Z/3]));
     // inside bolts
-    s = s.union(bolt().translate([D*j,k*(-Y/2-2+d[i]), i*Z/3]));
+    s = s.union(bolt(0,k == 1 ? -(90-A) : (90-A)-180).translate([D*j,k*(-Y/2-2+d[i]), i*Z/3]));
   }
 
   for ( var j = -1 ; j <= 1 ; j += 2 )
   for ( var k = -1 ; k <= 1 ; k += 2 ) {
     // outside bolts
-    s = s.union(bolt().translate([(-X/2+SX/2+1)*j,k*(Y/6), Z-6.25]));
+    s = s.union(bolt(0,-90).translate([(-X/2+SX/2+1)*j,k*(Y/6), Z-5.8]));
     // inside bolts
-    s = s.union(bolt().translate([D*j,k*(Y/6), Z-6.25]));
+    s = s.union(bolt(0,-90).translate([D*j,k*(Y/6), Z-5.8]));
   }
 
   // bolts above rings
@@ -152,16 +155,17 @@ function ring() {
 }
 
 
-function bolt(z) {
-  var s = sphere({r:2,fn:8}).scale([1,1,1]).setColor([0.8,0.8,0]);
+function bolt(z, x) {
+  var s = sphere({r:2,fn:8}).scale([1,1,1]);
 
   s = s.intersect(cube({size:[20,20,1.7], center: [1,1,0]}));
   s = s.union(cylinder({r:2, fn:8}).translate([0,0,-1])).translate([0,0,-1]);
   s = s.rotateX(90);
 
   s = s.rotateZ(z || 0);
+  s = s.rotateX(x || 0);
 
-  return s;
+  return s.setColor([0.8,0.8,0]);
 }
 
 function foot() {
