@@ -4,7 +4,7 @@
 // https://www.thingiverse.com/thing:4093446
 // https://www.thingiverse.com/thing:1161312
 
-const PREVIEW = false;
+const PREVIEW = true;
 
 const X = 180;
 
@@ -13,7 +13,7 @@ const Y = 180*18/24;
 const Z = 80*18/24;
 */
 const Y = 30;
-const Z = 40;
+const Z = 80*18/24 //40;
 
 const T = 4; // Wall Thickness
 
@@ -32,42 +32,21 @@ const D = X/4-SX/1.5-2; // TODO: remove
 
 const FLOOR_D = 3; // depth of floor
 
-function text(t, opt_scale) {
- var scale = opt_scale || 1;
- var o     = [];
- var l     = vector_text(0, 0, t);
-
- l.forEach(function (s) {
-   o.push(rectangular_extrude(s, {w: scale*4, h: scale*1/0.2}));
- });
-
- return union(o);
-}
-
-
-function drillHoles(s, depth) {
-  var hole = cylinder({r:3.4/2, h:20});
-  var bolt = cylinder({r:BOLT_R, h: BOLT_D, fn: 6});
-  hole = hole.union(bolt);
-  hole = hole.rotateX(-90);
-  hole = union(
-      hole.translate([HINGE_W/2,0,0]),
-      hole.translate([-HINGE_W/2,0,0])
-      )
-  hole = hole.translate([0,Y/2-T, depth]);
-
-  hole = hole.setColor([0,0,0]);
-  s = s.union(cube({size:[26,2.4,10], center:[1,0,1]}).translate([(BAND_W-BAND_W/2+X/2)/2,Y/2,depth]));
-  s = s.union(cube({size:[26,2.4,10], center:[1,0,1]}).translate([-(BAND_W-BAND_W/2+X/2)/2,Y/2,depth]));
-  s = s.subtract(hole.translate([(BAND_W-BAND_W/2+X/2)/2,0,0]));
-  s = s.subtract(hole.translate([-(BAND_W-BAND_W/2+X/2)/2,0,0]));
-
-  return s;
-}
-
 
 function apply(s, o) {
     return PREVIEW ? s.union(o) : s.subtract(o);
+}
+
+
+function bands() {
+  var b = cube({size:[BAND_W, 200, 100], center:[1,1,0]})
+
+  return union(
+      b.translate([BAND_W,0,0]),
+      b.translate([-BAND_W,0,0]),
+      b.translate([BAND_W/2-X/2,0,0]),
+      b.translate([-BAND_W/2+X/2,0,0])
+      )
 }
 
 
@@ -112,6 +91,58 @@ function base() {
   s = apply(s, r.translate([(BAND_W-BAND_W/2+X/2)/2,-Y/2,Z/2+8]));
   s = apply(s, r.translate([-(BAND_W-BAND_W/2+X/2)/2,-Y/2,Z/2+8]));
 
+  return s;
+}
+
+
+function bolt(z, x) {
+  var s = sphere({r:BOLT_R,fn:8}).scale([1,1,1]);
+
+  s = s.intersect(cube({size:[20,20,3.8], center: [1,1,0]}));
+  s = s.union(cylinder({r:10/2, fn:8}).translate([0,0,-1])).translate([0,0,-1]);
+  s = s.union(cylinder({r:0.7, h:10}).translate([0,0,-10]))
+  s = s.rotateX(90);
+
+  s = s.rotateZ(z || 0);
+  s = s.rotateX(x || 0);
+
+  if ( ! PREVIEW ) s = s.scale([1.04,1,1.04]);
+
+  return s.setColor([0.56,0.56,0.56]);
+}
+
+
+function drillHoles(s, depth) {
+  var hole = cylinder({r:3.4/2, h:20});
+  var bolt = cylinder({r:BOLT_R, h: BOLT_D, fn: 6});
+  hole = hole.union(bolt);
+  hole = hole.rotateX(-90);
+  hole = union(
+      hole.translate([HINGE_W/2,0,0]),
+      hole.translate([-HINGE_W/2,0,0])
+      )
+  hole = hole.translate([0,Y/2-T, depth]);
+
+  hole = hole.setColor([0,0,0]);
+ // s = s.union(cube({size:[26,2.4,10+5], center:[1,0,1]}).translate([(BAND_W-BAND_W/2+X/2)/2,Y/2,depth-5/2]));
+  var plate = cube({size:[26,2.4,10+4], center:[1,0,1]}).translate([0,0,-4/2]);
+ plate = plate.subtract(plate.translate([0,0,2]).rotateX(-25).translate([0,0,-10]))
+  s = s.union(plate.translate([-(BAND_W-BAND_W/2+X/2)/2,Y/2,depth]));
+  s = s.union(plate.translate([(BAND_W-BAND_W/2+X/2)/2,Y/2,depth]));
+
+  s = s.subtract(hole.translate([(BAND_W-BAND_W/2+X/2)/2,0,0]));
+  s = s.subtract(hole.translate([-(BAND_W-BAND_W/2+X/2)/2,0,0]));
+
+  return s;
+}
+
+
+function foot() {
+  var s = cube({size:[25,10,7],center:[true,true,false]}).translate([-2.5,0,0])
+
+  s = s.subtract(s.rotateY(-60).translate([13,0,0]));
+  s = s.rotateZ(180);
+  s = s.translate([-15,5,0]);
   return s;
 }
 
@@ -183,14 +214,26 @@ function lid() {
 }
 
 
-function tray() {
-  const TX = X-1-T, TY = Y-1-T, TZ = 22;
+function lid2() {
+  const LZ = Z-2;
+ var s = cylinder({r:(Y-T)/2/Math.sqrt(0.75), h:X, fn: 8, center:[1,1,1]}).rotateZ(360/16).rotateY(90);
+  s = s.subtract(s.scale([(X-T)/X,(Y-T)/Y,LZ/Z]));
+//  s = s.subtract(s.scale([0.98,0.98,0.98]))
 
-  var s = cube({size:[TX,TY,TZ], center: [true,true,false]});
-  s = s.subtract(cube({size:[TX-3,TY-3,TZ-2], center: [true,true,false]}).translate([0,0,2]));
+  var bs = bands();
+  var c = cube({size:[2,200,200],center:true}).rotateY(-90);
+  var star = union(c.rotateX(90), c.rotateX(360/8), c.rotateX(-360/8));
 
-  s = s.union(cube({size:[1.5,TY,TZ], center: [true,true,false]}).translate([TX/6,0,0]))
-  s = s.union(cube({size:[1.5,TY,TZ], center: [true,true,false]}).translate([-TX/6,0,0]))
+  star = star.subtract(bs);
+  star = star.subtract(s.scale([1,0.99,0.99]));
+  s = s.subtract(star);
+
+  s = s.union(s.scale([1,1.02,1.02]).intersect(bs))
+
+  s = s.translate([0,0,-6])
+  s = s.subtract(cube({size:[200, 200, -200], center:[1,1,0]}));
+
+  s = drillHoles(s, HINGE_H);
 
   return s;
 }
@@ -220,70 +263,34 @@ function ring() {
 }
 
 
-function bolt(z, x) {
-  var s = sphere({r:BOLT_R,fn:8}).scale([1,1,1]);
+function text(t, opt_scale) {
+ var scale = opt_scale || 1;
+ var o     = [];
+ var l     = vector_text(0, 0, t);
 
-  s = s.intersect(cube({size:[20,20,1.7], center: [1,1,0]}));
-  s = s.union(cylinder({r:10/2, fn:8}).translate([0,0,-1])).translate([0,0,-1]);
-  s = s.union(cylinder({r:0.7, h:10}).translate([0,0,-10]))
-  s = s.rotateX(90);
+ l.forEach(function (s) {
+   o.push(rectangular_extrude(s, {w: scale*4, h: scale*1/0.2}));
+ });
 
-  s = s.rotateZ(z || 0);
-  s = s.rotateX(x || 0);
-
-  if ( ! PREVIEW ) s = s.scale([1.04,1,1.04]);
-
-  return s.setColor([0.56,0.56,0.56]);
+ return union(o);
 }
 
 
-function foot() {
-  var s = cube({size:[25,10,7],center:[true,true,false]}).translate([-2.5,0,0])
+function tray() {
+  const TX = X-1-T, TY = Y-1-T, TZ = 22;
 
-  s = s.subtract(s.rotateY(-60).translate([13,0,0]));
-  s = s.rotateZ(180);
-  s = s.translate([-15,5,0]);
-  return s;
-}
+  var s = cube({size:[TX,TY,TZ], center: [true,true,false]});
+  s = s.subtract(cube({size:[TX-3,TY-3,TZ-2], center: [true,true,false]}).translate([0,0,2]));
 
-
-function lid2() {
-  const LZ = Z-2;
- var s = cylinder({r:(Y-T)/2/Math.sqrt(0.75), h:X, fn: 8, center:[1,1,1]}).rotateZ(360/16).rotateY(90);
-  s = s.subtract(s.scale([(X-T)/X,(Y-T)/Y,LZ/Z]));
-//  s = s.subtract(s.scale([0.98,0.98,0.98]))
-
-  var bs = bands();
-  var c = cube({size:[2,200,200],center:true}).rotateY(-90);
-  var star = union(c.rotateX(90), c.rotateX(360/8), c.rotateX(-360/8));
-
-  star = star.subtract(bs);
-  star = star.subtract(s.scale([1,0.99,0.99]));
-  s = s.subtract(star);
-
-  s = s.union(s.scale([1,1.02,1.02]).intersect(bs))
-
-  s = s.translate([0,0,-6])
-  s = s.subtract(cube({size:[200, 200, -200], center:[1,1,0]}));
-
-  s = drillHoles(s, HINGE_H);
+  s = s.union(cube({size:[1.5,TY,TZ], center: [true,true,false]}).translate([TX/6,0,0]))
+  s = s.union(cube({size:[1.5,TY,TZ], center: [true,true,false]}).translate([-TX/6,0,0]))
 
   return s;
 }
 
-function bands() {
-  var b = cube({size:[BAND_W, 200, 100], center:[1,1,0]})
-
-  return union(
-      b.translate([BAND_W,0,0]),
-      b.translate([-BAND_W,0,0]),
-      b.translate([BAND_W/2-X/2,0,0]),
-      b.translate([-BAND_W/2+X/2,0,0])
-      )
-}
 
 function main() {
-//    return base();
+    return base();
 
     return base().intersect(
         cube({size:[55,1000,100],center:[0,1,0]}).translate([-90,0,0])
