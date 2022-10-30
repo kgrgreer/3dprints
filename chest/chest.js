@@ -1,10 +1,5 @@
 // TODO:
-//   fix hinge hole width and position
-//   fix slant bolt positions
-//   add rings in base()
-//   fix size of lid
-//   check bolt size
-
+//  fix slant bolt positions
 
 // https://www.thingiverse.com/thing:4093446
 // https://www.thingiverse.com/thing:1161312
@@ -12,22 +7,30 @@
 const PREVIEW = false;
 
 const X = 180;
+
+/*
 const Y = 180*18/24;
 const Z = 80*18/24;
+*/
+const Y = 30;
+const Z = 40;
 
-const T = 8; // Wall Thickness
+const T = 4; // Wall Thickness
 
 const SX = 20; // Strap Width
 const SY = 1.5;
 
-const HINGE_H = 6;
-const HINGE_W = 15;
+const HINGE_H = 15/2;
+const HINGE_W = 16.2;
 
 const BAND_W = 26;
 
 const BOLT_D = 3;
+const BOLT_R = 9/2*1.05;
 
 const D = X/4-SX/1.5-2; // TODO: remove
+
+const FLOOR_D = 3; // depth of floor
 
 function text(t, opt_scale) {
  var scale = opt_scale || 1;
@@ -43,17 +46,19 @@ function text(t, opt_scale) {
 
 
 function drillHoles(s, depth) {
-  var hole = cylinder({r:3.4/2, h:10});
-  var bolt = cylinder({r:9/2, h: -2*BOLT_D, fn: 6}).rotateZ(360/12);
+  var hole = cylinder({r:3.4/2, h:20});
+  var bolt = cylinder({r:BOLT_R, h: BOLT_D, fn: 6});
   hole = hole.union(bolt);
   hole = hole.rotateX(-90);
   hole = union(
       hole.translate([HINGE_W/2,0,0]),
       hole.translate([-HINGE_W/2,0,0])
       )
-  hole = hole.translate([0,Y/2-BOLT_D, depth]);
+  hole = hole.translate([0,Y/2-T, depth]);
 
   hole = hole.setColor([0,0,0]);
+  s = s.union(cube({size:[26,2.4,10], center:[1,0,1]}).translate([(BAND_W-BAND_W/2+X/2)/2,Y/2,depth]));
+  s = s.union(cube({size:[26,2.4,10], center:[1,0,1]}).translate([-(BAND_W-BAND_W/2+X/2)/2,Y/2,depth]));
   s = s.subtract(hole.translate([(BAND_W-BAND_W/2+X/2)/2,0,0]));
   s = s.subtract(hole.translate([-(BAND_W-BAND_W/2+X/2)/2,0,0]));
 
@@ -70,14 +75,15 @@ function base() {
   var s = cube({size:[X,Y,Z], center: [true,true,false]});
 
   // subtract horizontal grooves
-  var b = cube({size:[X,Y,1], center: [true,true,false]});
-  b = b.subtract(cube({size:[X-1,Y-1,1], center: [true,true,false]}));
+  var b = cube({size:[X,Y,2], center: [true,true,false]});
+  b = b.subtract(cube({size:[X,Y-2,2], center: [true,true,false]}));
   b = b.subtract(bands())
-  s = s.subtract(b.translate([0,0,Z/3]));
-  s = s.subtract(b.translate([0,0,2*Z/3]));
+  b = b.setColor([0,0,0]);
+  s = s.subtract(b.translate([0,0,Z/3-1]));
+  s = s.subtract(b.translate([0,0,2*Z/3-1]));
 
   // add vertical bands
-  s = s.union(s.scale([1,1.02,1]).intersect(bands()));
+  s = s.union(s.scale([1,1.1,1]).intersect(bands()));
 
   //      b.translate([-BAND_W,0,0]),
 //      b.translate([BAND_W/2-X/2,0,0]),
@@ -86,21 +92,25 @@ function base() {
   for ( var i = 1 ; i <= 2 ; i++ )
   for ( var j = -1 ; j <= 1 ; j += 2 )
   for ( var k = -1 ; k <= 1 ; k += 2 ) {
-    // outside
     s = apply(s, bolt(k == 1 ? 0 : 180).translate([(BAND_W)*j,k*(-Y/2-2), i*Z/3]));
     // inside
     s = apply(s, bolt(k == 1 ? 0 : 180).translate([(BAND_W/2-X/2)*j,k*(-Y/2-2), i*Z/3]));
   }
 
   // remove insides
-  s = s.subtract(cube({size:[X-2*T,Y-T,Z], center: [true,true,false]}).translate([0,0,T]));
+  s = s.subtract(cube({size:[X-2*T,Y-2*T,Z], center: [true,true,false]}).translate([0,0,FLOOR_D]));
 
-  // remove ledge
-  s = s.subtract(cube({size:[X-T,Y-T,Z], center: [true,true,false]}).translate([0,0,Z-2*T]));
+  // add ledge
+  s = s.union(cube({size:[6,Y,Z-14], center:[1,1,0]}).translate([X/2-5,0,0]))
+  s = s.union(cube({size:[6,Y,Z-14], center:[1,1,0]}).translate([-(X/2-5),0,0]))
 
   // s = s.subtract(text("Property of Alexey Greer\n\nMfg. by: KGR, Dec. 2022\n\n\nMADE IN CANADA").scale([0.2,0.2,0.2]).rotateZ(0).rotateX(180).translate([-X/3,-Y/4,1]));
 
   s = drillHoles(s, Z-HINGE_H );
+
+  var r = ring();
+  s = apply(s, r.translate([(BAND_W-BAND_W/2+X/2)/2,-Y/2,Z/2+8]));
+  s = apply(s, r.translate([-(BAND_W-BAND_W/2+X/2)/2,-Y/2,Z/2+8]));
 
   return s;
 }
@@ -174,7 +184,7 @@ function lid() {
 
 
 function tray() {
-  const TX = X-1-T, TY = Y-1-T, TZ = 2*T;
+  const TX = X-1-T, TY = Y-1-T, TZ = 22;
 
   var s = cube({size:[TX,TY,TZ], center: [true,true,false]});
   s = s.subtract(cube({size:[TX-3,TY-3,TZ-2], center: [true,true,false]}).translate([0,0,2]));
@@ -205,16 +215,17 @@ function ring() {
 
     if ( ! PREVIEW ) s = s.scale([1.04,1,1.04]);
 
+   s = s.scale(1.25)
     return s.setColor([0.56,0.56,0.56]);
 }
 
 
 function bolt(z, x) {
-  var s = sphere({r:8/2,fn:8}).scale([1,1,1]);
+  var s = sphere({r:BOLT_R,fn:8}).scale([1,1,1]);
 
   s = s.intersect(cube({size:[20,20,1.7], center: [1,1,0]}));
-  s = s.union(cylinder({r:8/2, fn:8}).translate([0,0,-1])).translate([0,0,-1]);
-  s = s.union(cylinder({r:0.3, h:5}).translate([0,0,-5]))
+  s = s.union(cylinder({r:10/2, fn:8}).translate([0,0,-1])).translate([0,0,-1]);
+  s = s.union(cylinder({r:0.7, h:10}).translate([0,0,-10]))
   s = s.rotateX(90);
 
   s = s.rotateZ(z || 0);
@@ -272,30 +283,33 @@ function bands() {
 }
 
 function main() {
+//    return base();
+
+    return base().intersect(
+        cube({size:[55,1000,100],center:[0,1,0]}).translate([-90,0,0])
+        );
 return union(
     base(),
     lid2().translate([0,0,Z+5]));
+
+
 //    return base();
 
     // return base();
 //    return lid2();
 //   return bolt();
    // return ring().rotateX(-90);
-  var r = ring();
   var s = base();
   var t = tray();
   var f = foot();
   var l = lid2();
 
   t = t.translate([0,0,25]);
-  l = l.translate([0,0,40]);
+  l = l.translate([0,0,50]);
 
   s = s.union(t.translate([0,0,Z-2*T]));
 
   s = s.union(l.translate([0,0,Z+1]));
-
-  s = apply(s, r.translate([(BAND_W-BAND_W/2+X/2)/2,-Y/2,Z/2+8]));
-  s = apply(s, r.translate([-(BAND_W-BAND_W/2+X/2)/2,-Y/2,Z/2+8]));
 
   s = s.translate([0,0,7]);
 
