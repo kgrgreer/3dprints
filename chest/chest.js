@@ -1,29 +1,27 @@
 // TODO:
 //  fix slant bolt positions
+//  add bolts on sides
 
 // https://www.thingiverse.com/thing:4093446
 // https://www.thingiverse.com/thing:1161312
 
-const PREVIEW = true;
+const PREVIEW = false;
 
 const X = 180;
 
-/*
-const Y = 180*18/24;
-const Z = 80*18/24;
-*/
-const Y = 30;
-const Z = 80*18/24 //40;
+const Y = 180*18/24; const Z = 80*18/24;
+// const Y = 30; const Z = 40;
 
-const T = 4; // Wall Thickness
+const T = 3.8; // Wall Thickness
 
-const SX = 20; // Strap Width
+const SX = 18; // Strap Width
 const SY = 1.5;
 
 const HINGE_H = 15/2;
 const HINGE_W = 16.2;
 
-const BAND_W = 26;
+const BAND_W = 24;
+const BAND_D = 2.2;
 
 const BOLT_D = 3;
 const BOLT_R = 9/2*1.05;
@@ -55,18 +53,22 @@ function base() {
 
   // subtract horizontal grooves
   var b = cube({size:[X,Y,2], center: [true,true,false]});
-  b = b.subtract(cube({size:[X,Y-2,2], center: [true,true,false]}));
-  b = b.subtract(bands())
+  b = b.subtract(cube({size:[X-2,Y-2,2], center: [true,true,false]}));
+  b = b.subtract(bands().subtract(cube({size:[X,Y-3,2], center: [true,true,false]})))
   b = b.setColor([0,0,0]);
   s = s.subtract(b.translate([0,0,Z/3-1]));
   s = s.subtract(b.translate([0,0,2*Z/3-1]));
 
   // add vertical bands
-  s = s.union(s.scale([1,1.1,1]).intersect(bands()));
+  s = s.union(s.scale([1,(Y+BAND_D)/Y,1]).intersect(bands()));
 
   //      b.translate([-BAND_W,0,0]),
 //      b.translate([BAND_W/2-X/2,0,0]),
 
+
+  // side bolts
+  for ( var j = -1 ; j <= 1 ; j+=2 )
+    s = apply(s, bolt(90*j).translate([j*(X/2+0.5),0,5*Z/6]));
 
   for ( var i = 1 ; i <= 2 ; i++ )
   for ( var j = -1 ; j <= 1 ; j += 2 )
@@ -83,7 +85,7 @@ function base() {
   s = s.union(cube({size:[6,Y,Z-14], center:[1,1,0]}).translate([X/2-5,0,0]))
   s = s.union(cube({size:[6,Y,Z-14], center:[1,1,0]}).translate([-(X/2-5),0,0]))
 
-  // s = s.subtract(text("Property of Alexey Greer\n\nMfg. by: KGR, Dec. 2022\n\n\nMADE IN CANADA").scale([0.2,0.2,0.2]).rotateZ(0).rotateX(180).translate([-X/3,-Y/4,1]));
+  s = s.subtract(text("Property of Alexey Greer\n\nMfg. by: KGR, Dec. 2022\n\n\nMADE IN CANADA").scale([0.3,0.3,0.3]).rotateZ(0).rotateX(180).translate([-X/3,-Y/4,1]));
 
   s = drillHoles(s, Z-HINGE_H );
 
@@ -96,11 +98,11 @@ function base() {
 
 
 function bolt(z, x) {
-  var s = sphere({r:BOLT_R,fn:8}).scale([1,1,1]);
+  var s = sphere({r:BOLT_R,fn:7}).rotateZ(360/28).scale([1,1,1]);
 
-  s = s.intersect(cube({size:[20,20,3.8], center: [1,1,0]}));
-  s = s.union(cylinder({r:10/2, fn:8}).translate([0,0,-1])).translate([0,0,-1]);
-  s = s.union(cylinder({r:0.7, h:10}).translate([0,0,-10]))
+  s = s.intersect(cube({size:[20,20,4], center: [1,1,0]}));
+  s = s.union(cylinder({r:10/2, fn:7}).rotateZ(360/28).translate([0,0,-1])).translate([0,0,-1]);
+  s = s.union(cylinder({r:0.8, h:10}).translate([0,0,-10]))
   s = s.rotateX(90);
 
   s = s.rotateZ(z || 0);
@@ -113,7 +115,7 @@ function bolt(z, x) {
 
 
 function drillHoles(s, depth) {
-  var hole = cylinder({r:3.4/2, h:20});
+  var hole = cylinder({r:3.6/2, h:20});
   var bolt = cylinder({r:BOLT_R, h: BOLT_D, fn: 6});
   hole = hole.union(bolt);
   hole = hole.rotateX(-90);
@@ -125,7 +127,7 @@ function drillHoles(s, depth) {
 
   hole = hole.setColor([0,0,0]);
  // s = s.union(cube({size:[26,2.4,10+5], center:[1,0,1]}).translate([(BAND_W-BAND_W/2+X/2)/2,Y/2,depth-5/2]));
-  var plate = cube({size:[26,2.4,10+4], center:[1,0,1]}).translate([0,0,-4/2]);
+  var plate = cube({size:[30,2.4,10+4], center:[1,0,1]}).translate([0,0,-4/2]);
  plate = plate.subtract(plate.translate([0,0,2]).rotateX(-25).translate([0,0,-10]))
   s = s.union(plate.translate([-(BAND_W-BAND_W/2+X/2)/2,Y/2,depth]));
   s = s.union(plate.translate([(BAND_W-BAND_W/2+X/2)/2,Y/2,depth]));
