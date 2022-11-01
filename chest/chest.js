@@ -5,7 +5,7 @@
 // https://www.thingiverse.com/thing:4093446
 // https://www.thingiverse.com/thing:1161312
 
-const PREVIEW = false;
+const PREVIEW = true;
 
 const X = 180;
 
@@ -85,7 +85,7 @@ function base() {
   s = s.union(cube({size:[6,Y,Z-14], center:[1,1,0]}).translate([X/2-5,0,0]))
   s = s.union(cube({size:[6,Y,Z-14], center:[1,1,0]}).translate([-(X/2-5),0,0]))
 
-  s = s.subtract(text("Property of Alexey Greer\n\nMfg. by: KGR, Dec. 2022\n\n\nMADE IN CANADA").scale([0.3,0.3,0.3]).rotateZ(0).rotateX(180).translate([-X/3,-Y/4,1]));
+  // s = s.subtract(text("Property of Alexey Greer\n\nMfg. by: KGR, Dec. 2022\n\n\nMADE IN CANADA").scale([0.3,0.3,0.3]).rotateZ(0).rotateX(180).translate([-X/3,-Y/4,1.5]));
 
   s = drillHoles(s, Z-HINGE_H );
 
@@ -218,7 +218,7 @@ function lid() {
 
 function lid2() {
   const LZ = Z-2;
- var s = cylinder({r:(Y-T)/2/Math.sqrt(0.75), h:X, fn: 8, center:[1,1,1]}).rotateZ(360/16).rotateY(90);
+ var s = cylinder({r:Y/2/Math.sqrt(0.75)-T-1.1, h:X, fn: 8, center:[1,1,1]}).rotateZ(360/16).rotateY(90);
   s = s.subtract(s.scale([(X-T)/X,(Y-T)/Y,LZ/Z]));
 //  s = s.subtract(s.scale([0.98,0.98,0.98]))
 
@@ -228,14 +228,18 @@ function lid2() {
 
   star = star.subtract(bs);
   star = star.subtract(s.scale([1,0.99,0.99]));
-  s = s.subtract(star);
+  s = s.subtract(star.setColor([0,0,0]));
 
-  s = s.union(s.scale([1,1.02,1.02]).intersect(bs))
+  s = s.union(s.scale([1,(Y+BAND_D)/Y,(Y+BAND_D)/Y]).intersect(bs))
 
-  s = s.translate([0,0,-6])
+  s = s.translate([0,0,-28+BAND_W-10])
   s = s.subtract(cube({size:[200, 200, -200], center:[1,1,0]}));
 
   s = drillHoles(s, HINGE_H);
+
+  // side bolts
+    for ( var j = -1 ; j <= 1 ; j+=2 )
+    s = apply(s, bolt(90*j).translate([j*(X/2+0.5),0,Z/6]));
 
   return s;
 }
@@ -266,7 +270,7 @@ function ring() {
 
 
 function text(t, opt_scale) {
- var scale = opt_scale || 1;
+ var scale = opt_scale || 1.4;
  var o     = [];
  var l     = vector_text(0, 0, t);
 
@@ -292,6 +296,7 @@ function tray() {
 
 
 function main() {
+    return base().union(lid2().translate([0,0,Z+.1]));
     return base();
 
     return base().intersect(
