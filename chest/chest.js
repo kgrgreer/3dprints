@@ -5,7 +5,7 @@
 // https://www.thingiverse.com/thing:4093446
 // https://www.thingiverse.com/thing:1161312
 
-const PREVIEW = true;
+const PREVIEW = false;
 
 const X = 180;
 
@@ -149,78 +149,10 @@ function foot() {
 }
 
 
-function lid() {
-  const LZ = Z-7;
-  const A = 50
-  var s = cube({size:[X,Y,LZ], center: [true,true,false]});
-
-  // cut out slants in lid
-  s = s.subtract(s.scale([1,2,1]).rotateX(A).translate([0,-Y/2,SX/2]));
-  s = s.subtract(s.scale([1,2,1]).rotateX(-A).translate([0,Y/2,SX/2]));
-
-  // empty inside
-  s = s.subtract(s.scale([(X-T)/X,(Y-T)/Y,LZ/Z]));
-
-  var d = X/4-SX/1.5-1;
-
-  var s2 = s.scale([1,(Y+3)/Y,(Z+1)/Z]); // slightly larger lid
-  var s3 = cube({size:[SX,2*Y,Z], center: [true,true,false]}).translate([D,0,0]);
-  s3 = s3.union(cube({size:[SX,2*Y,Z], center: [true,true,false]}).translate([-D,0,0]));
-  s3 = s3.union(cube({size:[SX,2*Y,Z], center: [true,true,false]}).translate([-X/2+SX/2+1,0,0]));
-  s3 = s3.union(cube({size:[SX,2*Y,Z], center: [true,true,false]}).translate([+X/2-SX/2-1,0,0]));
-
-  s2 = s2.intersect(s3);
-
-  s = s.subtract(cube({size:[200,1,100], center: true}).translate([0,0,LZ-1+50]));
-  s = s.subtract(cube({size:[200,1,100], center: true}).translate([0,0,LZ-1+59]).rotateX(59));
-  s = s.subtract(cube({size:[200,1,100], center: true}).translate([0,0,LZ-1+59]).rotateX(-59));
-
-  s = s.union(s2);
-
-  // side bolts
-  for ( var i = -1 ; i <= 1 ; i++ )
-    for ( var j = -1 ; j <= 1 ; j+=2 )
-    s = apply(s, bolt(90*j).translate([j*(X/2+0.5),i*Y/3,5]));
-
-  // bolts on slopes
-  for ( var i = 1 ; i <= 2 ; i++ )
-  for ( var j = -1 ; j <= 1 ; j += 2 )
-  for ( var k = -1 ; k <= 1 ; k += 2 ) {
-      var d = [/*top*/8,/*bottom*/1.7,/*middle*/13];
-    // outside bolts
-    s = apply(s, bolt(0,k == 1 ? -(90-A) : (90-A)-180).translate([(BAND_W)*j,k*(-Y/2-2+d[i]), i*Z/3]));
-    // inside bolts
-    s = apply(s, bolt(0,k == 1 ? -(90-A) : (90-A)-180).translate([(BAND_W/2-X/2)*j,k*(-Y/2-2+d[i]), i*Z/3]));
-  }
-
-  // bolts on roof
-  for ( var j = -1 ; j <= 1 ; j += 2 )
-  for ( var k = -1 ; k <= 1 ; k += 2 ) {
-    // outside bolts
-    s = apply(s, bolt(0,-90).translate([(-X/2+SX/2+1)*j,k*(Y/6), Z-5.6]));
-    // inside bolts
-    s = apply(s, bolt(0,-90).translate([D*j,k*(Y/6), Z-5.6]));
-  }
-
-  /*
-  // bolts above rings
-  for ( var j = -1 ; j <= 1 ; j += 2 )
-  for ( var k = -1 ; k <= 1 ; k += 2 ) {
-    s = s.union(bolt().translate([j*(X/3.5),k*(-Y/2-2), Z/8]));
-  }
-  */
-
-  s = drillHoles(s, HINGE_H);
-
-  return s;
-}
-
-
 function lid2() {
   const LZ = Z-2;
- var s = cylinder({r:Y/2/Math.sqrt(0.75)-T-1.1, h:X, fn: 8, center:[1,1,1]}).rotateZ(360/16).rotateY(90);
-  s = s.subtract(s.scale([(X-T)/X,(Y-T)/Y,LZ/Z]));
-//  s = s.subtract(s.scale([0.98,0.98,0.98]))
+ var s = cylinder({r:Y/2+1.65*T, h:X, fn: 8, center:[1,1,1]}).rotateZ(360/16).rotateY(90);
+  s = s.subtract(s.scale([(X-2*T)/X,(Y-2*T)/Y,(Z-T)/Z]));
 
   var bs = bands();
   var c = cube({size:[2,200,200],center:true}).rotateY(-90);
@@ -229,6 +161,24 @@ function lid2() {
   star = star.subtract(bs);
   star = star.subtract(s.scale([1,0.99,0.99]));
   s = s.subtract(star.setColor([0,0,0]));
+
+  var b = bolt().rotateX(-90).translate([0,0,Y/2+2]);
+  var b2 = union(
+      b.translate([0,Y/8-4,0]),
+      b.translate([0,-Y/8+4,0])
+  );
+  var b3 = union(
+      b2,
+      b2.rotateX(360/8),
+      b2.rotateX(-360/8),
+  )
+  var b4 = union(
+      b3.translate([BAND_W,0,0]),
+      b3.translate([-BAND_W,0,0]),
+      b3.translate([BAND_W/2-X/2,0,0]),
+      b3.translate([-BAND_W/2+X/2,0,0])
+      )
+  s = apply(s, b4)
 
   s = s.union(s.scale([1,(Y+BAND_D)/Y,(Y+BAND_D)/Y]).intersect(bs))
 
@@ -241,6 +191,7 @@ function lid2() {
     for ( var j = -1 ; j <= 1 ; j+=2 )
     s = apply(s, bolt(90*j).translate([j*(X/2+0.5),0,Z/6]));
 
+  s = s.intersect(cube({size:[1000,1000,1000], center: [1,1,0]}))
   return s;
 }
 
@@ -296,7 +247,13 @@ function tray() {
 
 
 function main() {
-    return base().union(lid2().translate([0,0,Z+.1]));
+    return lid2();
+    /*
+    return lid2().intersect(
+        cube({size:[55,Y,100],center:[0,1,0]}).translate([-90,Y-15,0])
+        )*/
+        return base().union(lid2().translate([0,0,Z+20]))
+    return base().union(lid2().translate([0,0,Z+10]));
     return base();
 
     return base().intersect(
