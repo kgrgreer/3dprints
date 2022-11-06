@@ -182,7 +182,7 @@ function lid2() {
 
   s = s.union(s.scale([1,(Y+BAND_D)/Y,(Y+BAND_D)/Y]).intersect(bs))
 
-  s = s.translate([0,0,-28+BAND_W-10])
+  s = s.translate([0,0,-28+BAND_W-6])
   s = s.subtract(cube({size:[200, 200, -200], center:[1,1,0]}));
 
   s = drillHoles(s, HINGE_H);
