@@ -100,9 +100,10 @@ function base() {
 function bolt(z, x) {
   var s = sphere({r:BOLT_R,fn:7}).rotateZ(360/28).scale([1,1,1]);
 
+  const H = 4.8;
   s = s.intersect(cube({size:[20,20,4], center: [1,1,0]}));
   s = s.union(cylinder({r:10/2, fn:7}).rotateZ(360/28).translate([0,0,-1])).translate([0,0,-1]);
-  s = s.union(cylinder({r:0.8, h:10}).translate([0,0,-10]))
+  s = s.union(cylinder({r:0.8, h:H}).translate([0,0,-H]))
   s = s.rotateX(90);
 
   s = s.rotateZ(z || 0);
@@ -247,6 +248,8 @@ function tray() {
 
 
 function main() {
+    return base();
+//    return foot().rotateX(180);
     return lid2();
     /*
     return lid2().intersect(
