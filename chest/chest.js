@@ -235,20 +235,21 @@ function text(t, opt_scale) {
 
 
 function tray() {
-  const TX = X-1-T, TY = Y-1-T, TZ = 22;
+  const TX = X-3-2*T, TY = Y-6-2*T, TZ = 22;
 
   var s = cube({size:[TX,TY,TZ], center: [true,true,false]});
-  s = s.subtract(cube({size:[TX-3,TY-3,TZ-2], center: [true,true,false]}).translate([0,0,2]));
+  s = s.subtract(cube({size:[TX-6,TY-6,TZ-1.2], center: [true,true,false]}).translate([0,0,2.4]));
 
-  s = s.union(cube({size:[1.5,TY,TZ], center: [true,true,false]}).translate([TX/6,0,0]))
-  s = s.union(cube({size:[1.5,TY,TZ], center: [true,true,false]}).translate([-TX/6,0,0]))
+  s = s.union(cube({size:[3,TY,TZ], center: [true,true,false]}).translate([TX/6,0,0]))
+  s = s.union(cube({size:[3,TY,TZ], center: [true,true,false]}).translate([-TX/6,0,0]))
 
   return s;
 }
 
 
 function main() {
-    return base();
+    return tray();
+    return base().union(tray().translate([0,0,Z-13]))
 //    return foot().rotateX(180);
     return lid2();
     /*
