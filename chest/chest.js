@@ -4,8 +4,9 @@
 
 // https://www.thingiverse.com/thing:4093446
 // https://www.thingiverse.com/thing:1161312
+// https://www.amazon.ca/Thickness-Welded-Sewing-Collars-D-Rings/dp/B08T9KGKSJ/
 
-const PREVIEW = false;
+const PREVIEW = true;
 
 const X = 180;
 
@@ -198,19 +199,26 @@ function lid2() {
 
 
 function ring() {
-    var r1 = torus({ri: 3, ro: 20}).translate([0,-20,6]);
-    var r2 = torus({ri: 4, ro: 20}).translate([0,-20,6]);
+    var r1 = torus({ri: 3, ro: 20}).union(torus({ri: 3, ro: 20}).rotateZ(5)).union(torus({ri: 3, ro: 20}).rotateZ(2.5)).union(torus({ri: 3, ro: 20}).rotateZ(-2.5))
+r1 = r1.subtract(cube({size:[33,20,10], center: true}).translate([0,20,0]))
 
-    var s = cylinder({r1:25, r2:15, h:14, fn: 6}).translate([0,1,-2]);
+    r1 = r1.translate([0,-20,6]);
+    r1 = r1.union(cylinder({h:34,r:3.2, fn:132}).rotateY(90).translate([-17,-7.5,6]))
 
-   if ( PREVIEW ) {
-    s = s.subtract(r2);
+   r1 = r1.scale([1.2,1.2,1.2])
 
+    var s = cylinder({r1:25, r2:15, h:14, fn: 6}).translate([0,0,0]);
+    s = s.union(cylinder({r:25, h: 3, fn:6}).translate([0,0,-3]))
+
+ /*  if ( PREVIEW || true ) {
+    s = s.subtract(r1.scale([1.05,1.05,1.05]));
      for ( var i = 0 ;i <= 70 ; i += 4 )
        s = s.subtract(r1.translate([0,5,-6]).rotateX(-i).translate([0,-5,6]))
    }
-
-    s = s.union(r1);
+*/
+    //s = s.subtract(r1.translate([0,0,0]));
+    s = s.subtract(r1.translate([0,2.03,0]).scale([1.05,1.08,1.05]));
+    s = s.union(r1.translate([0,1.5,0.3]));
 
     s = s.rotateX(90).scale(0.4);
 
@@ -248,6 +256,7 @@ function tray() {
 
 
 function main() {
+    return ring().rotateX(-90).translate([0,0,2]).scale([0.965,0.965,0.965])
     return tray();
     return base().union(tray().translate([0,0,Z-13]))
 //    return foot().rotateX(180);
