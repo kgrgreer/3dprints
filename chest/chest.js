@@ -6,7 +6,7 @@
 // https://www.thingiverse.com/thing:1161312
 // https://www.amazon.ca/Thickness-Welded-Sewing-Collars-D-Rings/dp/B08T9KGKSJ/
 
-const PREVIEW = true;
+const PREVIEW = false;
 
 const X = 180;
 
@@ -69,7 +69,7 @@ function base() {
 
   // side bolts
   for ( var j = -1 ; j <= 1 ; j+=2 )
-    s = apply(s, bolt(90*j).translate([j*(X/2+0.5),0,5*Z/6]));
+    s = apply(s, bolt(90*j).translate([j*(X/2+1.5),0,5*Z/6]));
 
   for ( var i = 1 ; i <= 2 ; i++ )
   for ( var j = -1 ; j <= 1 ; j += 2 )
@@ -87,6 +87,7 @@ function base() {
   s = s.union(cube({size:[6,Y,Z-14], center:[1,1,0]}).translate([-(X/2-5),0,0]))
 
   // s = s.subtract(text("Property of Alexey Greer\n\nMfg. by: KGR, Dec. 2022\n\n\nMADE IN CANADA").scale([0.3,0.3,0.3]).rotateZ(0).rotateX(180).translate([-X/3,-Y/4,1.5]));
+  s = s.subtract(text("Property of Ivy Paull\n\nMade by Uncle Kevin, 2022\n\n\nMADE IN CANADA").scale([0.3,0.3,0.3]).rotateZ(0).rotateX(180).translate([-X/3,-Y/4,1.5]));
 
   s = drillHoles(s, Z-HINGE_H );
 
@@ -191,7 +192,7 @@ function lid2() {
 
   // side bolts
     for ( var j = -1 ; j <= 1 ; j+=2 )
-    s = apply(s, bolt(90*j).translate([j*(X/2+0.5),0,Z/6]));
+    s = apply(s, bolt(90*j).translate([j*(X/2+1.5),0,Z/6]));
 
   s = s.intersect(cube({size:[1000,1000,1000], center: [1,1,0]}))
   return s;
@@ -252,11 +253,12 @@ function tray() {
 
 
 function main() {
+    return base();
+    return lid2();
     return ring().rotateX(-90).translate([0,0,2]).scale([0.964,0.964,0.964])
     return tray();
     return base().union(tray().translate([0,0,Z-13]))
 //    return foot().rotateX(180);
-    return lid2();
     /*
     return lid2().intersect(
         cube({size:[55,Y,100],center:[0,1,0]}).translate([-90,Y-15,0])
