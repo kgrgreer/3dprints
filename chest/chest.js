@@ -92,8 +92,8 @@ function base() {
   s = drillHoles(s, Z-HINGE_H );
 
   var r = ring();
-  s = apply(s, r.translate([(BAND_W-BAND_W/2+X/2)/2,-Y/2,Z/2+8]));
-  s = apply(s, r.translate([-(BAND_W-BAND_W/2+X/2)/2,-Y/2,Z/2+8]));
+  s = apply(s, r.translate([(BAND_W-BAND_W/2+X/2)/2,-Y/2-1,Z/2+8]));
+  s = apply(s, r.translate([-(BAND_W-BAND_W/2+X/2)/2,-Y/2-1,Z/2+8]));
 
   return s;
 }
@@ -255,6 +255,7 @@ function tray() {
 function main() {
     return base();
     return lid2();
+    return tray();
     return ring().rotateX(-90).translate([0,0,2]).scale([0.964,0.964,0.964])
     return tray();
     return base().union(tray().translate([0,0,Z-13]))
