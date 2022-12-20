@@ -87,7 +87,8 @@ function base() {
   s = s.union(cube({size:[6,Y,Z-14], center:[1,1,0]}).translate([-(X/2-5),0,0]))
 
   // s = s.subtract(text("Property of Alexey Greer\n\nMfg. by: KGR, Dec. 2022\n\n\nMADE IN CANADA").scale([0.3,0.3,0.3]).rotateZ(0).rotateX(180).translate([-X/3,-Y/4,1.5]));
-  s = s.subtract(text("Property of Ivy Paull\n\nMade by Uncle Kevin, 2022\n\n\nMADE IN CANADA").scale([0.3,0.3,0.3]).rotateZ(0).rotateX(180).translate([-X/3,-Y/4,1.5]));
+  // s = s.subtract(text("Property of Kendall Greer\n\nMade by Uncle Kevin, 2022\n\n\nMADE IN CANADA").scale([0.34,0.34,0.3]).rotateZ(0).rotateX(180).translate([-X/2.5,-Y/4,1.5]));
+  s = s.subtract(text("Property of Barron Greer\n\nMade by Uncle Kevin, 2022\n\n\nMADE IN CANADA").scale([0.34,0.34,0.3]).rotateZ(0).rotateX(180).translate([-X/2.5,-Y/4,1.5]));
 
   s = drillHoles(s, Z-HINGE_H );
 
