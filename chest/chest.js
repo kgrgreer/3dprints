@@ -254,6 +254,9 @@ function tray() {
 
 
 function main() {
+    return bolt().rotateX(-90).translate([0,0,2]).intersect(cube({size:[20,20,20],center:[true,true,false]}));
+    return ring().rotateX(-90).translate([0,0,2]).scale([0.964,0.964,0.964])
+    return foot();
     return base();
     return lid2();
     return tray();
