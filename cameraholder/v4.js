@@ -28,9 +28,6 @@ function main() {
 
   s = s.rotateY(-40);
 
-    s = s.subtract(cylinder({r:1, h:100}).translate([0,15,0]));
-  s = s.subtract(cylinder({r:1, h:100}).translate([0,-15,0]));
-
   s = s.rotateY(40);
 
 s = s.union(s.translate([0,0,-0.25]))
@@ -39,5 +36,10 @@ s = s.union(s.translate([0,0,-1]))
 s = s.union(s.translate([0,0,-0.125]))
 
 s  = s.intersect(cube({size:[100,100,100], center:[1,1,0]}));
+
+    s = s.subtract(cylinder({r:1, h:100}).translate([0,15,0]));
+  s = s.subtract(cylinder({r:1, h:100}).translate([0,-15,0]));
+
+
   return s;
 }
