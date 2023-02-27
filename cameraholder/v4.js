@@ -3,7 +3,7 @@ function cs(r, p) {
   var s = cube({size:[r*2,r*2,2], center: [1,1,0]});
   if ( p ) {
       for ( var i = 0 ; i < 4 ; i++ ) {
-     var c = cube([r*p,r*p,2]).subtract(cylinder({fn:60,r: r*p,h:2}));
+     var c = cube([r*p,r*p,2]).subtract(cylinder({fn:12,r: r*p,h:2}));
     s = s.subtract(c.translate([r-r*p,r-r*p,0]));
     s = s.rotateZ(90);
       }
@@ -33,6 +33,11 @@ function main() {
 
   s = s.rotateY(40);
 
-s  = s.intersect(cube({size:[100,100,100], center:[1,1,0]}))
+s = s.union(s.translate([0,0,-0.25]))
+s = s.union(s.translate([0,0,-0.5]))
+s = s.union(s.translate([0,0,-1]))
+s = s.union(s.translate([0,0,-0.125]))
+
+s  = s.intersect(cube({size:[100,100,100], center:[1,1,0]}));
   return s;
 }
