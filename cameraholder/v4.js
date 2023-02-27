@@ -18,8 +18,8 @@ function interp(s, e, p) {
 function main() {
      var s = [];
 
-  for ( var i = 0 ; i < 20 ; i += 1*.15 ) {
-    var t = cs(interp(70/2, 45/2, interp(Math.sqrt(i/20), Math.pow(i/20,0.1), i/20)), Math.sqrt((i+1)/21)).translate([0,0,i*0.98]);
+  for ( var i = 0 ; i < 20 ; i = (i * 1.02 + 0.1 + i)/2 ) {
+    var t = cs(interp(70/2, 45/2, interp(Math.sqrt(i/20), Math.pow(i/20,0.1), i/20)), Math.sqrt((i+0.25)/20.25)).translate([0,0,i*0.98]);
     t = t.rotateY(i*2)
     s.push(t);
   }
