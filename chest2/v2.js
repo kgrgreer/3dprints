@@ -10,13 +10,16 @@ function cs(r, p, e, floor, bottom) {
       c.translate([-d,-d,0])
       ]);
     if ( floor ) {
+        if ( ! bottom ) {
       s = s.union(cube({size:[0.5,0.5,2], center:[1,1,0]}).translate([d/2.4,r,0]))
       s = s.union(cube({size:[0.5,0.5,2], center:[1,1,0]}).translate([-d/2.4,r,0]))
+        }
       s = s.union(cube({size:[2*d,2*r,2], center:[1,1,0]}));
       s = s.union(cube({size:[2*r,2*d,2], center:[1,1,0]}));
     }
-    if ( ! bottom )
-      s = s.subtract(s.scale([0.975,0.95,1]));
+    if ( ! bottom ) {
+      s = s.subtract(cs(r-1, p, 0, true, true));
+    }
     return s;
 }
 
@@ -41,8 +44,8 @@ function main() {
     var t = cs(
         spline(i/20, [[0,60/2],[0.2,58/2],[0.5,60/2],[0.8,62/2],[1,64/2]]),
 //        interp(62/2, 62/2, i/40),
-        interp(0.1, 0.7, i/20),
-        interp(1.2, 1, i/20),
+        interp(0.1, 0.2, i/20),
+        interp(1.5, 1, i/20),
         i > 1.25,
         i < 2
         ).translate([0,0,i*1.5]);
