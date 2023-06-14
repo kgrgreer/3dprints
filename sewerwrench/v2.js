@@ -1,7 +1,7 @@
 const R1 = (94)/2+10;
 const R2 = (104)/2+16;
 const H  = 12;
-const FN = 160;
+const FN = 120;
 
 function main() {
   var s = cylinder({h:H, r: R2, fn: FN})
@@ -23,5 +23,5 @@ function main() {
       s = s.union(cube({size:[10,32,H]}).translate([R1-10,0,0]).rotateZ((i+0.5)/4*360));
     }
 
-    return s.rotateZ(90+45);
+    return s.rotateZ(90+60).scale([1,1,1.4]);
 }
