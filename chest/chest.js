@@ -68,8 +68,10 @@ function base() {
 
 
   // side bolts
-  for ( var j = -1 ; j <= 1 ; j+=2 )
+  for ( var j = -1 ; j <= 1 ; j+=2 ) {
     s = apply(s, bolt(90*j).translate([j*(X/2+1.5),0,5*Z/6]));
+    s = s.subtract(cube({size:[2,4,20],center:[1,1,0]}).translate([-j,0,0]).rotateY(5*j).rotateX(-35).translate([j*(X/2+1),0,5*Z/6]));
+  }
 
   for ( var i = 1 ; i <= 2 ; i++ )
   for ( var j = -1 ; j <= 1 ; j += 2 )
