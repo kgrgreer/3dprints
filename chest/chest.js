@@ -83,12 +83,13 @@ function base() {
   s = s.subtract(cube({size:[X-2*T,Y-2*T,Z], center: [true,true,false]}).translate([0,0,FLOOR_D]));
 
   // add ledge
-  s = s.union(cube({size:[6,Y,Z-14], center:[1,1,0]}).translate([X/2-5,0,0]))
-  s = s.union(cube({size:[6,Y,Z-14], center:[1,1,0]}).translate([-(X/2-5),0,0]))
+  var ledge = cube({size:[6,Y,10], center:[1,1,0]}).subtract(cube({size:[6,Y,12], center:[1,1,0]}).rotateY(-35).translate([0,0,-4])).translate([X/2-5,0,Z-14-10]);
+  s = s.union(ledge)
+  s = s.union(ledge.scale([-1,1,1]));
 
   // s = s.subtract(text("Property of Alexey Greer\n\nMfg. by: KGR, Dec. 2022\n\n\nMADE IN CANADA").scale([0.3,0.3,0.3]).rotateZ(0).rotateX(180).translate([-X/3,-Y/4,1.5]));
   // s = s.subtract(text("Property of Kendall Greer\n\nMade by Uncle Kevin, 2022\n\n\nMADE IN CANADA").scale([0.34,0.34,0.3]).rotateZ(0).rotateX(180).translate([-X/2.5,-Y/4,1.5]));
-  s = s.subtract(text("Property of Barron Greer\n\nMade by Uncle Kevin, 2022\n\n\nMADE IN CANADA").scale([0.34,0.34,0.3]).rotateZ(0).rotateX(180).translate([-X/2.5,-Y/4,1.5]));
+  // s = s.subtract(text("Property of Terry Greer\n\nMade by Brother Kevin, 2023\n\n\nMADE IN CANADA").scale([0.34,0.34,0.3]).rotateZ(0).rotateX(180).translate([-X/2.5,-Y/4,1.5]));
 
   s = drillHoles(s, Z-HINGE_H );
 
@@ -254,9 +255,9 @@ function tray() {
 
 
 function main() {
-    return bolt().rotateX(-90).translate([0,0,2]).intersect(cube({size:[20,20,20],center:[true,true,false]}));
-    return ring().rotateX(-90).translate([0,0,2]).scale([0.964,0.964,0.964])
-    return foot();
+//    return bolt().rotateX(-90).translate([0,0,2]).intersect(cube({size:[20,20,20],center:[true,true,false]}));
+//    return ring().rotateX(-90).translate([0,0,2]).scale([0.964,0.964,0.964])
+ //   return foot();
     return base();
     return lid2();
     return tray();
