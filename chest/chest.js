@@ -1,8 +1,4 @@
-// TODO:
-//  fix slant bolt positions
-//  add bolts on sides
-
-// https://www.thingiverse.com/thing:4093446
+/ https://www.thingiverse.com/thing:4093446
 // https://www.thingiverse.com/thing:1161312
 // https://www.amazon.ca/Thickness-Welded-Sewing-Collars-D-Rings/dp/B08T9KGKSJ/
 
@@ -68,7 +64,7 @@ function base() {
 
 
   // side bolts
-  for ( var j = -1 ; j <= 1 ; j+=2 ) {
+  for ( var j = -1 ; j <= 1 ; j += 2 ) {
     s = apply(s, bolt(90*j).translate([j*(X/2+1.5),0,5*Z/6]));
     s = s.subtract(cube({size:[2,4,20],center:[1,1,0]}).translate([-j,0,0]).rotateY(5*j).rotateX(-35).translate([j*(X/2+1),0,5*Z/6]));
   }
@@ -91,7 +87,7 @@ function base() {
 
   // s = s.subtract(text("Property of Alexey Greer\n\nMfg. by: KGR, Dec. 2022\n\n\nMADE IN CANADA").scale([0.3,0.3,0.3]).rotateZ(0).rotateX(180).translate([-X/3,-Y/4,1.5]));
   // s = s.subtract(text("Property of Kendall Greer\n\nMade by Uncle Kevin, 2022\n\n\nMADE IN CANADA").scale([0.34,0.34,0.3]).rotateZ(0).rotateX(180).translate([-X/2.5,-Y/4,1.5]));
-  // s = s.subtract(text("Property of Terry Greer\n\nMade by Brother Kevin, 2023\n\n\nMADE IN CANADA").scale([0.34,0.34,0.3]).rotateZ(0).rotateX(180).translate([-X/2.5,-Y/4,1.5]));
+  s = s.subtract(text("Made for Terry Greer\n\nBy Kevin Greer\n\nWith Love, 2023\n\n\nMADE IN CANADA").scale([0.34,0.34,0.3]).rotateZ(0).rotateX(180).translate([-X/2.5,-Y/4,1.5]));
 
   s = drillHoles(s, Z-HINGE_H );
 
@@ -195,8 +191,10 @@ function lid2() {
   s = drillHoles(s, HINGE_H);
 
   // side bolts
-    for ( var j = -1 ; j <= 1 ; j+=2 )
+  for ( var j = -1 ; j <= 1 ; j += 2 ) {
     s = apply(s, bolt(90*j).translate([j*(X/2+1.5),0,Z/6]));
+    s = s.subtract(cube({size:[2,4,20],center:[1,1,0]}).translate([-j,0,0]).rotateY(5*j).rotateX(55+180).translate([j*(X/2+1),0,Z/6]));
+  }
 
   s = s.intersect(cube({size:[1000,1000,1000], center: [1,1,0]}))
   return s;
@@ -257,10 +255,11 @@ function tray() {
 
 
 function main() {
+//    return tray();
 //    return bolt().rotateX(-90).translate([0,0,2]).intersect(cube({size:[20,20,20],center:[true,true,false]}));
 //    return ring().rotateX(-90).translate([0,0,2]).scale([0.964,0.964,0.964])
  //   return foot();
-    return base();
+ //   return base();
     return lid2();
     return tray();
     return ring().rotateX(-90).translate([0,0,2]).scale([0.964,0.964,0.964])
