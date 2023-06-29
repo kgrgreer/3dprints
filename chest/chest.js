@@ -1,3 +1,5 @@
+// TODO: make lid thinner
+
 / https://www.thingiverse.com/thing:4093446
 // https://www.thingiverse.com/thing:1161312
 // https://www.amazon.ca/Thickness-Welded-Sewing-Collars-D-Rings/dp/B08T9KGKSJ/
@@ -193,7 +195,7 @@ function lid2() {
   // side bolts
   for ( var j = -1 ; j <= 1 ; j += 2 ) {
     s = apply(s, bolt(90*j).translate([j*(X/2+1.5),0,Z/6]));
-    s = s.subtract(cube({size:[2,4,20],center:[1,1,0]}).translate([-j,0,0]).rotateY(5*j).rotateX(55+180).translate([j*(X/2+1),0,Z/6]));
+    s = s.subtract(cube({size:[2,4,20],center:[1,1,0]}).translate([-j,0,0]).rotateY(5*j).rotateX(55+90).translate([j*(X/2+1),0,Z/6]));
   }
 
   s = s.intersect(cube({size:[1000,1000,1000], center: [1,1,0]}))
@@ -255,6 +257,8 @@ function tray() {
 
 
 function main() {
+    return lid2();
+    return foot().rotateX(180);
 //    return tray();
 //    return bolt().rotateX(-90).translate([0,0,2]).intersect(cube({size:[20,20,20],center:[true,true,false]}));
 //    return ring().rotateX(-90).translate([0,0,2]).scale([0.964,0.964,0.964])
