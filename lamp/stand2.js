@@ -1,4 +1,4 @@
-const R = 50;
+const R = 80;
 const H = 150;
 
 function interp(x, s, e) {
@@ -29,28 +29,13 @@ function spline3(x, a) {
 
 function main() {
     var s = [];
-    var sl = [[0,0],[0.2,100],[1,50]];
+    var sl = [[0,0],[0.01,R],[1,R]];
 
-    for ( var i = 0 ; i <= 1 ; i += 1/100 ) {
-        var [x,y] = [i, i* 50]; //spline3(i, sl);
-        console.log(i,x,y);
-
-        s.push(cube({size:[10,10,10]}).translate([y, 0, x*130]))
-    }
     for ( var i = 0 ; i <= 1 ; i += 1/100 ) {
         var [x,y] = spline3(i, sl);
         console.log(i,x,y);
 
         s.push(cube({size:[10,10,10]}).translate([y, 0, x*130]))
     }
-/*
-    for ( var i = 0 ; i <= 1 ; i+=0.1/20) {
-        var c = cube({size:[10,10,10]});
-        var x = spline3(i,sl);
-        // c = c.rotateX(interp(0,90,i))
-        c = c.translate([x,0,i*H])
-        s.push(c);
-    }
-    */
     return union(s);
 }
