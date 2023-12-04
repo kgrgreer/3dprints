@@ -3,6 +3,18 @@ const R2 = (104)/2+16;
 const H  = 12;
 const FN = 120;
 
+function text(t, opt_scale) {
+ var scale = opt_scale || 1.4;
+ var o     = [];
+ var l     = vector_text(0, 0, t);
+
+ l.forEach(function (s) {
+   o.push(rectangular_extrude(s, {w: scale*4, h: scale*1/0.2}));
+ });
+
+ return union(o);
+}
+
 function main() {
   var s = cylinder({h:H, r: R2, fn: FN})
 
@@ -23,5 +35,8 @@ function main() {
       s = s.union(cube({size:[10,32,H]}).translate([R1-10,0,0]).rotateZ((i+0.5)/4*360));
     }
 
-    return s.rotateZ(90+60).scale([1,1,1.4]);
+    s = s.subtract(text("SEWER WRENCH",0.8).rotateZ(90).scale([0.3,0.3,0.3]).translate([3,75,H-0.4]));
+
+    s = s.rotateZ(90+60).scale([1,1,1.4]);
+    return s;
 }
