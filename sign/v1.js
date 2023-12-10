@@ -1,6 +1,6 @@
 const W = 200;
 const H = 120;
-const T = 1;
+const T = 1.5;
 const WHITE = [1,1,1];
 const BLACK = [0,0,0];
 const RED = [1,0,0];
@@ -10,8 +10,8 @@ function createText(m) {
 
     return Object.assign({
       text: 'A',
-      w: 5,
-      h: 8,          // depth
+      w: 3.4,
+      h: 6,          // depth
       scale: 0.15,
       justify: 'L',  // justification: R, C or defaults to Left
       a: 0,          // angle of rotation
@@ -43,16 +43,17 @@ function createText(m) {
 
 
 function main() {
-  var s = cube({size:[W,H,5],center:[1,1,0]}).setColor(WHITE);
+  var s = cube({size:[W,H,3],center:[1,1,0]}).setColor(WHITE);
 
-  s = s.subtract(cube({size:[W-T*2,H-T*2,1],center:[1,1,0]}).setColor(BLACK).translate([0,0,4]));
+  s = s.subtract(cube({size:[W-T*2,H-T*2,1],center:[1,1,0]}).setColor(BLACK).translate([0,0,2]));
 //  s = s.union(cube({size:[W-T*2,(H-T*2)/2,1],center:[1,1,0]}).setColor(WHITE).translate([0,28,3.5]));
 
   var pp = createText({text: 'Private Property',   justify: 'C', scale: 0.7, color: RED});
-  var units = createText({text: 'Units 403 / 404', justify: 'C', scale: 0.3, color: WHITE});
+  var units = createText({text: 'Units 403 / 404', justify: 'C', scale: 0.35, color: WHITE});
 
   s = s.union(units.toSolid().translate([0,24,0]));
   s = s.union(pp.toSolid().translate([0,-12,0]));
 
+  s = s.intersect(cube({size:[1000,1000,1000],center:[1,1,0]}))
   return s;
 }
