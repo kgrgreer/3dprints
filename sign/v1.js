@@ -49,7 +49,7 @@ function main() {
 //  s = s.union(cube({size:[W-T*2,(H-T*2)/2,1],center:[1,1,0]}).setColor(WHITE).translate([0,28,3.5]));
 
   var pp = createText({text: 'Private Property',   justify: 'C', scale: 0.7, color: RED});
-  var units = createText({text: 'Units 403 / 404', justify: 'C', scale: 0.35, color: WHITE});
+  var units = createText({text: 'Units 403 / 404', justify: 'C', w: 4, scale: 0.35, color: WHITE});
 
   s = s.union(units.toSolid().translate([0,24,0]));
   s = s.union(pp.toSolid().translate([0,-12,0]));
