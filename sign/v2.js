@@ -49,9 +49,9 @@ function main() {
   s = s.subtract(cube({size:[W-T*2,H-T*2,2],center:[1,1,0]}).setColor(BLACK).translate([0,0,1.4]));
 //  s = s.union(cube({size:[W-T*2,(H-T*2)/2,1],center:[1,1,0]}).setColor(WHITE).translate([0,28,3.5]));
 
-  var pp1 = createText({text: 'Private',   justify: 'C', scale: 1.2, w: PREVIEW ? 3.4 : 3.8, color: RED});
-  var pp2 = createText({text: 'Property',   justify: 'C', scale: 1.2, w: PREVIEW ? 3.4 : 3.8, color: RED});
-  var units = createText({text: 'Units 403 / 404', justify: 'C', w: 4, scale: 0.65, color: WHITE});
+  var pp1 = createText({text: 'Private',           justify: 'C', scale: 1.2,  w: PREVIEW ? 3.4 : 4, color: RED});
+  var pp2 = createText({text: 'Property',          justify: 'C', scale: 1.2,  w: PREVIEW ? 3.4 : 4, color: RED});
+  var units = createText({text: 'Units 403 / 404', justify: 'C', scale: 0.65, w: 4,                 color: WHITE});
 
   // return pp1.toSolid().intersect(cube({size:[1000,1000,1000],center:[1,1,0]}));
 //  return units.toSolid().intersect(cube({size:[1000,1000,1000],center:[1,1,0]}));
