@@ -1,3 +1,7 @@
+// TODO:
+// make wholes larger
+// make headband trench wider
+
 const e  = 0.5
 const RO = 3+e;
 const RI = 2+e/2;
@@ -55,7 +59,7 @@ function createArm() {
      if ( i > 0.15 ) {
          s = s.subtract(cube({size:[6,1,3]}).translate([2.5,2.5+(1-i),0]));
      }
-         s = s.translate([0,-1,45*i]).rotateX(18*i);
+     s = s.translate([0,-1,45*i]).rotateX(18*i);
      a.push(s);
   }
 
