@@ -19,7 +19,8 @@ function hook(y, w) {
   s = s.union(cylinder({r:10/2,h:H}).translate([w/2+15,20+9/2,0]));
   s = s.union(cylinder({r:10/2,h:H}).translate([-w/2-15,20+9/2,0]));
 
-  s = s.union(cube({size:[25,25,H]}).rotateZ(45).translate([0,-12.5,0]));
+  // Support Diamond
+  s = s.union(cube({size:[20,20,H],center:[1,1,0]}).rotateZ(45).scale([1,1.8,1]).translate([0,5,0]));
 
   s = s.translate(([0,-y,0]));
 
@@ -60,8 +61,12 @@ stem = stem.union(c);
 
  s = s.translate([-5,68,0]).union(hanger);
 
-// s = s.rotateZ(90);
+s = s.rotateZ(90);
+
+// thicken stem at weak point
+s = s.union(cube({size:[20,10,H], center:[1,1,0]}).translate([-13,-2,0]));
 
  s = s.intersect(cube({size:[200,200,2*H], center:[1,1,0]}));
+
  return s;
 }
