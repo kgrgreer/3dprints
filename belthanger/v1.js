@@ -68,5 +68,8 @@ s = s.union(cube({size:[20,10,H], center:[1,1,0]}).translate([-13,-2,0]));
 
  s = s.intersect(cube({size:[200,200,2*H], center:[1,1,0]}));
 
+ s = s.union(cylinder({r:12,h:H}).translate([97,0,0]));
+ s = s.subtract(cylinder({r:H*1.5/2,h:H}).translate([97,0,0]));
+
  return s;
 }
