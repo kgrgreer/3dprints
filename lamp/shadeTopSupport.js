@@ -16,7 +16,7 @@ function holder() {
 
 function main() {
         s = sphere({r:R+20, fn: FN});
-    var inside = sphere({r:R+20-1, fn: FN});
+    var inside = sphere({r:R+20-1.2, fn: FN});
     s = s.subtract(inside);
 
     s = s.scale([1,1,3]);
